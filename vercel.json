@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "name": "back_studying",
+  "name": "back_studying_for_tests",
   "builds": [
      { "src": "src/index.ts", "use": "@vercel/node" }
   ],
