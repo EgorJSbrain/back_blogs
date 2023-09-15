@@ -2,13 +2,12 @@ import { db } from "../db/db"
 import { CreateVideoDto } from "../dtos/create-video.dto"
 import { IVideo } from "../types/videos"
 
-
 export const VideoService = {
   async getVideos () {
     try {
-      const videos = db.videos
+      const videos = db<IVideo>().videos
 
-      return videos
+      return videos || []
     } catch {
       return []
     }
@@ -16,10 +15,9 @@ export const VideoService = {
 
   async getVideoById (id: number) {
     try {
-      const video = db.videos.find(item => item.id === id)
+      const video = db<IVideo>().videos.find(item => item.id === id)
 
       return video
-      return {}
     } catch {
       return null
     }
@@ -29,13 +27,18 @@ export const VideoService = {
     try {
       const createdVideo = {
         id: Number(new Date()),
-        title: data.title
+        title: data.title,
+        author: data.author,
+        availableResolutions: data.availableResolutions,
+        minAgeRestriction: null,
+        canBeDownloaded: true,
+        createdAt: new Date().toISOString(),
+        publicationDate: new Date().toISOString(),
       }
 
-      db.videos.push(createdVideo)
+      db<IVideo>().videos.push(createdVideo)
 
       return createdVideo
-      return {}
     } catch {
       return null
     }
@@ -43,14 +46,14 @@ export const VideoService = {
 
   async updateVideo (id: number, data: CreateVideoDto) {
     try {
-      const video = db.videos.find(item => item.id === id)
-console.log('---', video)
+      const video = db<IVideo>().videos.find(item => item.id === id)
+
       const updatedVideo = {
         ...video,
         ...data,
       }
-      console.log('-updatedVideo--', updatedVideo)
-      const updatedVideos = db.videos.map(video => {
+
+      const updatedVideos = db<IVideo>().videos.map(video => {
         if (video.id === id) {
           return {
             ...video,
@@ -61,9 +64,7 @@ console.log('---', video)
         }
       })
 
-      console.log('-!!!-----updatedVideos--', updatedVideos)
-
-      db.videos = updatedVideos
+      db<IVideo>().videos = updatedVideos
 
       return updatedVideo
     } catch {
@@ -73,23 +74,13 @@ console.log('---', video)
 
   async deleteVideo (id: number) {
     try {
-      const videos = db.videos.filter(item => item.id !== id)
+      const videos = db<IVideo>().videos.filter(item => item.id !== id)
 
-      db.videos = videos
+      db<IVideo>().videos = videos
 
       return true
     } catch {
       return null
     }
   },
-
-  async deleteAll () {
-    
-    try {
-      db.videos = []
-      return true
-    } catch {
-      return null
-    }
-  }
 }
