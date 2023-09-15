@@ -30,6 +30,8 @@ videosRouter.get('/:id', async (req: Request, res: Response) => {
 
 videosRouter.post('/', async (req: Request, res: Response) => {
   const title = req.body.title
+  const author = req.body.author
+  const availableResolutions = req.body.availableResolutions
 
   if (!title) {
     res.sendStatus(CodeResponseEnum.BAD_REQUEST_400)
@@ -37,7 +39,11 @@ videosRouter.post('/', async (req: Request, res: Response) => {
     return
   }
 
-  const video = await VideoService.createVideo({ title })
+  const video = await VideoService.createVideo({
+    title,
+    author,
+    availableResolutions
+  })
 
   if (!video) {
     return res.sendStatus(CodeResponseEnum.BAD_REQUEST_400)
@@ -54,24 +60,4 @@ videosRouter.put('/:id', async (req: Request, res: Response) => {
   }
 
   res.status(CodeResponseEnum.OK_200).send(video)
-})
-
-videosRouter.delete('/:id', async (req: Request, res: Response) => {
-  const video = await VideoService.deleteVideo(Number(req.params.id))
-
-  if (!video) {
-    return res.sendStatus(CodeResponseEnum.BAD_REQUEST_400)
-  }
-
-  res.status(CodeResponseEnum.OK_200).send(video)
-})
-
-videosRouter.delete('/', async (req: Request, res: Response) => {
-  const response = await VideoService.deleteAll()
-
-  if (!response) {
-    return res.sendStatus(CodeResponseEnum.BAD_REQUEST_400)
-  }
-
-  res.sendStatus(CodeResponseEnum.OK_200)
 })
