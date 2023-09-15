@@ -1,3 +1,5 @@
 import { IVideo } from "../types/videos";
 
-export const db: IVideo[] = []
+export const db: Record<string, IVideo[]> = {
+  videos: []
+}
