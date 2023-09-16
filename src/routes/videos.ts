@@ -126,7 +126,7 @@ videosRouter.put('/:id', async (req: Request, res: Response) => {
     return res.sendStatus(CodeResponseEnum.NOT_FOUND_404)
   }
 
-  res.status(CodeResponseEnum.OK_200).send(video)
+  res.status(CodeResponseEnum.NO_CONTENT_204).send(video)
 })
 
 videosRouter.delete('/:id', async (req: Request, res: Response) => {
