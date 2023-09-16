@@ -4,7 +4,7 @@ export const GlobalService = {
   async deleteAll () {
     
     try {
-      db(true)
+      db(undefined, true)
 
       return true
     } catch {
