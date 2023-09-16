@@ -33,16 +33,16 @@ export const VideoService = {
 
   async createVideo (data: CreateVideoDto) {
     try {
-      const cretedDate = Number(new Date()) + 1000 * 60 * 60 * 24
+      const createdDate = Number(new Date()) + 1000 * 60 * 60 * 48
 
       const createdVideo = {
         id: Number(new Date()),
         title: data.title,
         author: data.author,
         availableResolutions: data.availableResolutions,
-        minAgeRestriction: null,
-        canBeDownloaded: true,
-        createdAt: new Date(cretedDate).toISOString(),
+        minAgeRestriction: data.minAgeRestriction || null,
+        canBeDownloaded: data.canBeDownloaded,
+        createdAt: new Date(createdDate).toISOString(),
         publicationDate: new Date().toISOString(),
       }
 

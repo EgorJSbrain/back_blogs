@@ -75,6 +75,8 @@ videosRouter.get('/:id', async (req: Request, res: Response) => {
 videosRouter.post('/', async (req: Request, res: Response) => {
   const title = req.body.title
   const author = req.body.author
+  const minAgeRestriction = req.body.minAgeRestriction
+  const canBeDownloaded = req.body.canBeDownloaded
   const availableResolutions = req.body.availableResolutions as VideoAvailableResolutions[]
 
   const errors = inputValidation(title, author, availableResolutions)
@@ -90,7 +92,9 @@ videosRouter.post('/', async (req: Request, res: Response) => {
   const video = await VideoService.createVideo({
     title,
     author,
-    availableResolutions
+    availableResolutions,
+    canBeDownloaded,
+    minAgeRestriction,
   })
 
   if (!video) {
