@@ -5,6 +5,10 @@ import { IVideo } from "../types/videos"
 export const VideoService = {
   async getVideos () {
     try {
+      if (!db<IVideo>().videos) {
+        return []
+      }
+
       const videos = db<IVideo>().videos
 
       return videos || []
@@ -15,6 +19,10 @@ export const VideoService = {
 
   async getVideoById (id: number) {
     try {
+      if (!db<IVideo>().videos) {
+        return null
+      }
+
       const video = db<IVideo>().videos.find(item => item.id === id)
 
       return video
@@ -36,6 +44,12 @@ export const VideoService = {
         publicationDate: new Date().toISOString(),
       }
 
+      const existedVideos = db<IVideo>().videos
+
+      if (!existedVideos) {
+        db('videos')
+      }
+
       db<IVideo>().videos.push(createdVideo)
 
       return createdVideo
@@ -46,6 +60,10 @@ export const VideoService = {
 
   async updateVideo (id: number, data: CreateVideoDto) {
     try {
+      if (!db<IVideo>().videos) {
+        return null
+      }
+
       const video = db<IVideo>().videos.find(item => item.id === id)
 
       const updatedVideo = {
@@ -74,6 +92,10 @@ export const VideoService = {
 
   async deleteVideo (id: number) {
     try {
+      if (!db<IVideo>().videos) {
+        return null
+      }
+
       const videos = db<IVideo>().videos.filter(item => item.id !== id)
 
       db<IVideo>().videos = videos
