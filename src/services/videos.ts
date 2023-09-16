@@ -41,7 +41,7 @@ export const VideoService = {
         author: data.author,
         availableResolutions: data.availableResolutions,
         minAgeRestriction: data.minAgeRestriction || null,
-        canBeDownloaded: data.canBeDownloaded,
+        canBeDownloaded: data.canBeDownloaded || false,
         createdAt: new Date(createdDate).toISOString(),
         publicationDate: new Date().toISOString(),
       }

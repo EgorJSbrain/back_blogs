@@ -63,7 +63,12 @@ videosRouter.get('/', async (req: Request, res: Response) => {
 })
 
 videosRouter.get('/:id', async (req: Request, res: Response) => {
-  const video = await VideoService.getVideoById(Number(req.params.id))
+  const id = req.params.id
+  const video = await VideoService.getVideoById(Number(id))
+
+  if (!id) {
+    return res.sendStatus(CodeResponseEnum.NOT_FOUND_404)
+  }
 
   if (!video) {
     return res.sendStatus(CodeResponseEnum.NOT_FOUND_404)
