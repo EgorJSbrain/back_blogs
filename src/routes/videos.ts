@@ -110,6 +110,12 @@ videosRouter.post('/', async (req: Request, res: Response) => {
 })
 
 videosRouter.put('/:id', async (req: Request, res: Response) => {
+  const id = req.params.id
+
+  if (!id) {
+    return res.sendStatus(CodeResponseEnum.NOT_FOUND_404)
+  }
+
   const title = req.body.title || ''
   const author = req.body.author || ''
   const availableResolutions = req.body.availableResolutions || null
@@ -139,6 +145,12 @@ videosRouter.put('/:id', async (req: Request, res: Response) => {
 })
 
 videosRouter.delete('/:id', async (req: Request, res: Response) => {
+  const id = req.params.id
+
+  if (!id) {
+    return res.sendStatus(CodeResponseEnum.NOT_FOUND_404)
+  }
+
   const response = await VideoService.deleteVideo(Number(req.params.id))
 
   if (!response) {
