@@ -20,6 +20,9 @@ const errorConstructor = (field: string, message: string): Error => ({
   field
 })
 
+// TO DO
+// add param like options { field: '', message: '' }
+
 const inputValidation = (title: string, author: string, availableResolutions: VideoAvailableResolutions[] | null) => {
   const errors: Error[] = []
 
@@ -62,7 +65,7 @@ videosRouter.get('/', async (req: Request, res: Response) => {
   res.status(CodeResponseEnum.OK_200).send(videos)
 })
 
-videosRouter.get('/:id', async (req: Request, res: Response) => {
+videosRouter.get('/:id?', async (req: Request, res: Response) => {
   const id = req.params.id
   const video = await VideoService.getVideoById(Number(id))
 
@@ -109,7 +112,7 @@ videosRouter.post('/', async (req: Request, res: Response) => {
   res.status(CodeResponseEnum.CREATED_201).send(video)
 })
 
-videosRouter.put('/:id', async (req: Request, res: Response) => {
+videosRouter.put('/:id?', async (req: Request, res: Response) => {
   const id = req.params.id
 
   if (!id) {
@@ -144,7 +147,7 @@ videosRouter.put('/:id', async (req: Request, res: Response) => {
   res.status(CodeResponseEnum.NO_CONTENT_204).send(video)
 })
 
-videosRouter.delete('/:id', async (req: Request, res: Response) => {
+videosRouter.delete('/:id?', async (req: Request, res: Response) => {
   const id = req.params.id
 
   if (!id) {
