@@ -160,5 +160,5 @@ videosRouter.delete('/:id?', async (req: Request, res: Response) => {
     return res.sendStatus(CodeResponseEnum.NOT_FOUND_404)
   }
 
-  res.sendStatus(CodeResponseEnum.NO_CONTENT_204)
+  res.sendStatus(CodeResponseEnum.NOT_FOUND_404)
 })
