@@ -75,9 +75,10 @@ videosRouter.put('/:id', async (req: Request, res: Response) => {
   const author = req.body.author
   const minAgeRestriction = req.body.minAgeRestriction
   const canBeDownloaded = req.body.canBeDownloaded
-  const availableResolutions = req.body.availableResolutions as VideoAvailableResolutions[]
+  const publicationDate = req.body.publicationDate
+  const availableResolutions = req.body.availableResolutions
 
-  const errors = inputValidation(title, author, availableResolutions, minAgeRestriction, canBeDownloaded)
+  const errors = inputValidation(title, author, availableResolutions, minAgeRestriction, canBeDownloaded, publicationDate)
 
   const existedVideo = await VideoService.getVideoById(Number(req.params.id))
 
