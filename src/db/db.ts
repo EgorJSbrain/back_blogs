@@ -1,5 +1,3 @@
-import { IVideo } from "../types/videos";
-
 export let dbData: Record<string, any[]> = {}
 
 export const db = <T,>(data?: string, clearData?: boolean): Record<string, T[]> => {
