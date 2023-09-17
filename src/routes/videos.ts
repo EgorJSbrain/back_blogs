@@ -71,10 +71,13 @@ videosRouter.put('/:id', async (req: Request, res: Response) => {
     return res.sendStatus(CodeResponseEnum.NOT_FOUND_404)
   }
 
-  const title = req.body.title || ''
-  const author = req.body.author || ''
-  const availableResolutions = req.body.availableResolutions || null
-  const errors = inputValidation(title, author, availableResolutions)
+  const title = req.body.title
+  const author = req.body.author
+  const minAgeRestriction = req.body.minAgeRestriction
+  const canBeDownloaded = req.body.canBeDownloaded
+  const availableResolutions = req.body.availableResolutions as VideoAvailableResolutions[]
+
+  const errors = inputValidation(title, author, availableResolutions, minAgeRestriction, canBeDownloaded)
 
   const existedVideo = await VideoService.getVideoById(Number(req.params.id))
 
