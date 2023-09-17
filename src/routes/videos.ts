@@ -39,7 +39,7 @@ videosRouter.post('/', async (req: Request, res: Response) => {
   const canBeDownloaded = req.body.canBeDownloaded
   const availableResolutions = req.body.availableResolutions as VideoAvailableResolutions[]
 
-  const errors = inputValidation(title, author, availableResolutions, minAgeRestriction)
+  const errors = inputValidation(title, author, availableResolutions, minAgeRestriction, canBeDownloaded)
 
   if (errors?.length) {
     return res.status(CodeResponseEnum.BAD_REQUEST_400).send(
