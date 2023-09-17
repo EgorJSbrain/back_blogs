@@ -59,7 +59,7 @@ export const inputValidation = (
     errors.push(errorConstructor(VideoInputFields.availableResolutions, errorMessage.availableResolutionsRequired))
   }
 
-  if (typeof canBeDownloaded === 'boolean') {
+  if (canBeDownloaded && typeof canBeDownloaded !== 'boolean') {
     errors.push(errorConstructor(VideoInputFields.canBeDownloaded, errorMessage.canBeDownloaded))
   }
 
