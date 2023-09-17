@@ -2,7 +2,7 @@ import { Router, Request, Response } from "express";
 import { VideoService } from "../services/videos";
 import { CodeResponseEnum } from "../constants/global";
 import { VideoAvailableResolutions } from "../constants/videos";
-import { inputCreateValidation, inputUpdateValidation } from "./utils";
+import { inputCreateValidation } from "./utils";
 
 export const videosRouter = Router({})
 
@@ -36,8 +36,10 @@ videosRouter.post('/', async (req: Request, res: Response) => {
   const title = req.body.title
   const author = req.body.author
   const availableResolutions = req.body.availableResolutions
+  const minAgeRestriction = req.body.minAgeRestriction
+  const canBeDownloaded = req.body.canBeDownloaded
 
-  const errors = inputCreateValidation(title, author, availableResolutions)
+  const errors = inputCreateValidation(title, author, availableResolutions, minAgeRestriction, canBeDownloaded)
 
   if (errors?.length) {
     return res.status(CodeResponseEnum.BAD_REQUEST_400).send(
@@ -73,7 +75,7 @@ videosRouter.put('/:id', async (req: Request, res: Response) => {
   const minAgeRestriction = req.body.minAgeRestriction
   const canBeDownloaded = req.body.canBeDownloaded
 
-  const errors = inputUpdateValidation(title, author, availableResolutions, minAgeRestriction, canBeDownloaded)
+  const errors = inputCreateValidation(title, author, availableResolutions, minAgeRestriction, canBeDownloaded)
 
   const existedVideo = await VideoService.getVideoById(Number(req.params.id))
 
