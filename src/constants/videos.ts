@@ -13,6 +13,7 @@ export const enum VideoInputFields {
   title = "title",
   author = "author",
   availableResolutions = "availableResolutions",
+  minAgeRestriction = "minAgeRestriction",
 }
 
 export const videoAvailableResolutions = [
@@ -27,8 +28,10 @@ export const videoAvailableResolutions = [
 ]
 
 export const errorMessage = {
-  title: 'Title is required field',
-  author: 'Author is required field',
-  availableResolutions: 'Available resolution include not supported format',
-  availableResolutionsRequired: 'Available resolution is required field',
+  title: "Title is required field",
+  maxTitleLength: "Length of title shouldn't be more than 40 symbols",
+  author: "Author is required field",
+  availableResolutions: "Available resolution include not supported format",
+  availableResolutionsRequired: "Available resolution is required field",
+  ageRestriction: "Age should be more than 1 and not more than 18",
 }

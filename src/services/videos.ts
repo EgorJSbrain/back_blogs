@@ -1,6 +1,7 @@
 import { db } from "../db/db"
 import { CreateVideoDto } from "../dtos/create-video.dto"
 import { IVideo } from "../types/videos"
+import { generateNewVideo } from "./utils"
 
 export const VideoService = {
   async getVideos () {
@@ -33,18 +34,7 @@ export const VideoService = {
 
   async createVideo (data: CreateVideoDto) {
     try {
-      const createdDate = Number(new Date()) - 1000 * 60 * 60 * 24
-
-      const createdVideo = {
-        id: Number(new Date()),
-        title: data.title,
-        author: data.author,
-        availableResolutions: data.availableResolutions,
-        minAgeRestriction: data.minAgeRestriction || null,
-        canBeDownloaded: data.canBeDownloaded || false,
-        createdAt: new Date(createdDate).toISOString(),
-        publicationDate: new Date().toISOString(),
-      }
+      const createdVideo = generateNewVideo(data)
 
       const existedVideos = db<IVideo>().videos
 
@@ -67,6 +57,10 @@ export const VideoService = {
       }
 
       const video = db<IVideo>().videos.find(item => item.id === id)
+
+      if (!video) {
+        return null
+      }
 
       const updatedVideo = {
         ...video,
@@ -95,6 +89,12 @@ export const VideoService = {
   async deleteVideo (id: number) {
     try {
       if (!db<IVideo>().videos) {
+        return null
+      }
+  
+      const existedVideo = db<IVideo>().videos.find(item => item.id === id)
+
+      if (!existedVideo) {
         return null
       }
 
