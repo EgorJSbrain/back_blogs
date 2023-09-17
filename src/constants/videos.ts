@@ -14,6 +14,7 @@ export const enum VideoInputFields {
   author = "author",
   availableResolutions = "availableResolutions",
   minAgeRestriction = "minAgeRestriction",
+  canBeDownloaded = 'canBeDownloaded'
 }
 
 export const videoAvailableResolutions = [
@@ -34,4 +35,5 @@ export const errorMessage = {
   availableResolutions: "Available resolution include not supported format",
   availableResolutionsRequired: "Available resolution is required field",
   ageRestriction: "Age should be more than 1 and not more than 18",
+  canBeDownloaded: "canBeDownloaded should be boolean type",
 }

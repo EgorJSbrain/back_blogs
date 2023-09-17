@@ -26,7 +26,8 @@ export const inputValidation = (
   title: string,
   author: string,
   availableResolutions: VideoAvailableResolutions[] | null,
-  minAgeRestriction?: number
+  minAgeRestriction?: number,
+  canBeDownloaded?: boolean
 ) => {
   const errors: Error[] = []
 
@@ -34,36 +35,68 @@ export const inputValidation = (
     videoAvailableResolutions.includes(availableResolution)
   )
 
-  if (!title || !author || !includeUnavailableResolution || !availableResolutions || (minAgeRestriction || minAgeRestriction === 0)) {
-    if (!title) {
-      errors.push(errorConstructor(VideoInputFields.title, errorMessage.title))
-    } else if (title && title.length > TITLE_MAX_LENGTH) {
-      errors.push(errorConstructor(VideoInputFields.title, errorMessage.maxTitleLength))
-    }
-
-    if (
-      (minAgeRestriction || minAgeRestriction === 0) &&
-      (minAgeRestriction < MIN_AGE_RESTRICTION || minAgeRestriction > MAX_AGE_RESTRICTION)
-    ) {
-      errors.push(errorConstructor(VideoInputFields.minAgeRestriction, errorMessage.ageRestriction))
-    }
-
-    if (!author) {
-      errors.push(errorConstructor(VideoInputFields.author, errorMessage.author))
-    }
-
-    if (!availableResolutions) {
-      errors.push(errorConstructor(VideoInputFields.availableResolutions, errorMessage.availableResolutionsRequired))
-    }
-
-    if (!includeUnavailableResolution && availableResolutions) {
-      errors.push(errorConstructor(
-        VideoInputFields.availableResolutions,
-        errorMessage.availableResolutions
-      ))
-    }
-
+  if (!title) {
+    errors.push(errorConstructor(VideoInputFields.title, errorMessage.title))
+  } else if (title && title.length > TITLE_MAX_LENGTH) {
+    errors.push(errorConstructor(VideoInputFields.title, errorMessage.maxTitleLength))
   }
+
+  if (
+    (minAgeRestriction || minAgeRestriction === 0) &&
+    (minAgeRestriction < MIN_AGE_RESTRICTION || minAgeRestriction > MAX_AGE_RESTRICTION)
+  ) {
+    errors.push(errorConstructor(VideoInputFields.minAgeRestriction, errorMessage.ageRestriction))
+  }
+
+  if (!author) {
+    errors.push(errorConstructor(VideoInputFields.author, errorMessage.author))
+  }
+
+  if (!availableResolutions) {
+    errors.push(errorConstructor(VideoInputFields.availableResolutions, errorMessage.availableResolutionsRequired))
+  }
+
+  if (typeof canBeDownloaded === 'boolean') {
+    errors.push(errorConstructor(VideoInputFields.canBeDownloaded, errorMessage.canBeDownloaded))
+  }
+
+  if (!includeUnavailableResolution && availableResolutions) {
+    errors.push(errorConstructor(
+      VideoInputFields.availableResolutions,
+      errorMessage.availableResolutions
+    ))
+  }
+
+  // if (!title || !author || !includeUnavailableResolution || !availableResolutions || (minAgeRestriction || minAgeRestriction === 0)) {
+  //   if (!title) {
+  //     errors.push(errorConstructor(VideoInputFields.title, errorMessage.title))
+  //   } else if (title && title.length > TITLE_MAX_LENGTH) {
+  //     errors.push(errorConstructor(VideoInputFields.title, errorMessage.maxTitleLength))
+  //   }
+
+  //   if (
+  //     (minAgeRestriction || minAgeRestriction === 0) &&
+  //     (minAgeRestriction < MIN_AGE_RESTRICTION || minAgeRestriction > MAX_AGE_RESTRICTION)
+  //   ) {
+  //     errors.push(errorConstructor(VideoInputFields.minAgeRestriction, errorMessage.ageRestriction))
+  //   }
+
+  //   if (!author) {
+  //     errors.push(errorConstructor(VideoInputFields.author, errorMessage.author))
+  //   }
+
+  //   if (!availableResolutions) {
+  //     errors.push(errorConstructor(VideoInputFields.availableResolutions, errorMessage.availableResolutionsRequired))
+  //   }
+
+  //   if (!includeUnavailableResolution && availableResolutions) {
+  //     errors.push(errorConstructor(
+  //       VideoInputFields.availableResolutions,
+  //       errorMessage.availableResolutions
+  //     ))
+  //   }
+
+  // }
 
   return errors
 }
