@@ -1,5 +1,3 @@
-import { VideoAvailableResolutions } from "../constants/videos"
-
 export interface IVideo {
   id: number
   title: string

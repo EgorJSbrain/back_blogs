@@ -1,5 +1,6 @@
 import { db } from "../db/db"
 import { CreateVideoDto } from "../dtos/create-video.dto"
+import { UpdateVideoDto } from "../dtos/update-video.dto"
 import { IVideo } from "../types/videos"
 import { generateNewVideo } from "./utils"
 
@@ -50,7 +51,7 @@ export const VideoService = {
     }
   },
 
-  async updateVideo (id: number, data: CreateVideoDto) {
+  async updateVideo (id: number, data: UpdateVideoDto) {
     try {
       if (!db<IVideo>().videos) {
         return null

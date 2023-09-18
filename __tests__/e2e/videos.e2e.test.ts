@@ -2,6 +2,7 @@ import request from 'supertest'
 import { app } from '../../src/app'
 import { HTTP_STATUSES, RouterPaths } from '../../src/constants/global'
 import { videosTestManager } from '../utils/videosTestManger'
+import { VideoAvailableResolutions } from '../../src/constants/videos'
 
 const getRequest = () => request(app)
 
@@ -27,7 +28,7 @@ describe('VISEOS tests', () => {
   })
 
   it ('POST - success - creating video with correct data', async () => {
-    const data = { title: 'some title', author: 'author name', availableResolutions: ['P720'] }
+    const data = { title: 'some title', author: 'author name', availableResolutions: [VideoAvailableResolutions.P1440] }
 
     const { entity } = await videosTestManager.createVideo(data, HTTP_STATUSES.CREATED_201)
 
@@ -37,7 +38,7 @@ describe('VISEOS tests', () => {
   })
 
   it ('PUT - success updating video with correct data', async () => {
-    const creatingData = { title: 'some title', author: 'author name', availableResolutions: ['P720'] }
+    const creatingData = { title: 'some title', author: 'author name', availableResolutions: [VideoAvailableResolutions.P1440] }
     const updatingData = { title: 'new title' }
 
     const { entity: createdVideo } = await videosTestManager.createVideo(creatingData, HTTP_STATUSES.CREATED_201)
@@ -57,7 +58,7 @@ describe('VISEOS tests', () => {
   })
 
   it ('PUT - fail updating video with incorrect id', async () => {
-    const creatingData = { title: 'some title', author: 'author name', availableResolutions: ['P720'] }
+    const creatingData = { title: 'some title', author: 'author name', availableResolutions: [VideoAvailableResolutions.P1440] }
     const updatingData = { title: 'new title' }
 
     await videosTestManager.createVideo(creatingData, HTTP_STATUSES.CREATED_201)
@@ -69,7 +70,7 @@ describe('VISEOS tests', () => {
   })
 
   it ('DELETE - success delete video with correct id', async () => {
-    const creatingData = { title: 'some title', author: 'author name', availableResolutions: ['P720'] }
+    const creatingData = { title: 'some title', author: 'author name', availableResolutions: [VideoAvailableResolutions.P1440] }
 
     const { entity } = await videosTestManager.createVideo(creatingData, HTTP_STATUSES.CREATED_201)
 
@@ -79,7 +80,7 @@ describe('VISEOS tests', () => {
   })
 
   it ('DELETE - fail delete video with incorrect id', async () => {
-    const creatingData = { title: 'some title', author: 'author name', availableResolutions: ['P720'] }
+    const creatingData = { title: 'some title', author: 'author name', availableResolutions: [VideoAvailableResolutions.P1440] }
 
     await videosTestManager.createVideo(creatingData, HTTP_STATUSES.CREATED_201)
 
