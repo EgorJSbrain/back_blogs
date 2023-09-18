@@ -1,15 +1,15 @@
 import { Router, Request, Response } from "express";
 import { GlobalService } from "../services";
-import { CodeResponseEnum } from "../constants/global";
+import { HTTP_STATUSES } from "../constants/global";
 
 export const globalRouter = Router({})
 
-globalRouter.delete('/', async (req: Request, res: Response) => {
+globalRouter.delete('/all-data', async (req: Request, res: Response) => {
   const response = await GlobalService.deleteAll()
 
   if (!response) {
-    return res.sendStatus(CodeResponseEnum.BAD_REQUEST_400)
+    return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
   }
 
-  res.sendStatus(CodeResponseEnum.NO_CONTENT_204)
+  res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
 })
