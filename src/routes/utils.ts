@@ -28,7 +28,8 @@ export const inputValidation = (
   author: string,
   availableResolutions: VideoAvailableResolutions[] | null,
   minAgeRestriction?: number,
-  canBeDownloaded?: boolean
+  canBeDownloaded?: boolean,
+  publicationDate?: string
 ) => {
   const errors: Error[] = []
 
@@ -52,7 +53,7 @@ export const inputValidation = (
   if (!author) {
     errors.push(errorConstructor(VideoInputFields.author, errorMessage.author))
   } else if (author && author.length > AUTHOR_MAX_LENGTH) {
-    errors.push(errorConstructor(VideoInputFields.author, errorMessage.maxTitleLength))
+    errors.push(errorConstructor(VideoInputFields.author, errorMessage.maxAuthorLength))
   }
 
   if (!availableResolutions) {
@@ -61,6 +62,10 @@ export const inputValidation = (
 
   if (canBeDownloaded && typeof canBeDownloaded !== 'boolean') {
     errors.push(errorConstructor(VideoInputFields.canBeDownloaded, errorMessage.canBeDownloaded))
+  }
+
+  if (publicationDate && typeof publicationDate !== 'string') {
+    errors.push(errorConstructor(VideoInputFields.publicationDate, errorMessage.publicationDate))
   }
 
   if (!includeUnavailableResolution && availableResolutions) {

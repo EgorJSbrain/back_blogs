@@ -80,7 +80,7 @@ videosRouter.put('/:id', async (req: Request, res: Response) => {
   const canBeDownloaded = req.body.canBeDownloaded || existedVideo?.canBeDownloaded
   const availableResolutions = req.body.availableResolutions || existedVideo?.availableResolutions
 
-  const errors = inputValidation(title, author, availableResolutions, minAgeRestriction, canBeDownloaded)
+  const errors = inputValidation(title, author, availableResolutions, minAgeRestriction, canBeDownloaded, publicationDate)
 
   if (!existedVideo) {
     return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
