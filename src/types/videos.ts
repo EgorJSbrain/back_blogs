@@ -4,7 +4,7 @@ export interface IVideo {
   id: number
   title: string
   author: string
-  availableResolutions: VideoAvailableResolutions[]
+  availableResolutions: string[]
   createdAt: string
   publicationDate: string
   minAgeRestriction?: number | null
