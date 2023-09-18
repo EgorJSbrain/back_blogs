@@ -27,7 +27,7 @@ export const inputValidation = (
   title: string,
   author: string,
   availableResolutions: VideoAvailableResolutions[] | null,
-  minAgeRestriction?: number,
+  minAgeRestriction?: number | null,
   canBeDownloaded?: boolean,
   publicationDate?: string
 ) => {

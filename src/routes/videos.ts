@@ -2,12 +2,15 @@ import { Router, Request, Response } from "express";
 
 import { VideoService } from "../services/videos";
 import { HTTP_STATUSES } from "../constants/global";
-import { VideoAvailableResolutions } from "../constants/videos";
 import { inputValidation } from "./utils";
+import { RequestWithBody, RequestWithParams, RequestWithParamsAndBody } from "../types/global";
+import { CreateVideoDto } from "../dtos/create-video.dto";
+import { IVideo } from "../types/videos";
+import { UpdateVideoDto } from "../dtos/update-video.dto";
 
 export const videosRouter = Router({})
 
-videosRouter.get('/', async (req: Request, res: Response) => {
+videosRouter.get('/', async (_: Request, res: Response<IVideo[]>) => {
   const videos = await VideoService.getVideos()
 
   if (!videos) {
@@ -17,7 +20,7 @@ videosRouter.get('/', async (req: Request, res: Response) => {
   res.status(HTTP_STATUSES.OK_200).send(videos)
 })
 
-videosRouter.get('/:id', async (req: Request, res: Response) => {
+videosRouter.get('/:id', async (req: RequestWithParams<{ id: string }>, res: Response<IVideo>) => {
   const id = req.params.id
 
   if (!id) {
@@ -33,7 +36,7 @@ videosRouter.get('/:id', async (req: Request, res: Response) => {
   res.status(HTTP_STATUSES.OK_200).send(video)
 })
 
-videosRouter.post('/', async (req: Request, res: Response) => {
+videosRouter.post('/', async (req: RequestWithBody<CreateVideoDto>, res: Response) => {
   const title = req.body.title
   const author = req.body.author
   const minAgeRestriction = req.body.minAgeRestriction
@@ -65,7 +68,7 @@ videosRouter.post('/', async (req: Request, res: Response) => {
   res.status(HTTP_STATUSES.CREATED_201).send(video)
 })
 
-videosRouter.put('/:id', async (req: Request, res: Response) => {
+videosRouter.put('/:id', async (req: RequestWithParamsAndBody<{ id: string }, UpdateVideoDto>, res: Response) => {
   const id = req.params.id
 
   if (!id) {
@@ -74,11 +77,12 @@ videosRouter.put('/:id', async (req: Request, res: Response) => {
 
   const existedVideo = await VideoService.getVideoById(Number(req.params.id))
 
-  const title = req.body.title || existedVideo?.title
-  const author = req.body.author || existedVideo?.author
+  const title = req.body.title || existedVideo?.title || ''
+  const author = req.body.author || existedVideo?.author || ''
   const minAgeRestriction = req.body.minAgeRestriction || existedVideo?.minAgeRestriction
   const canBeDownloaded = req.body.canBeDownloaded || existedVideo?.canBeDownloaded
   const availableResolutions = req.body.availableResolutions || existedVideo?.availableResolutions
+  const publicationDate = req.body.publicationDate || existedVideo?.publicationDate
 
   const errors = inputValidation(title, author, availableResolutions, minAgeRestriction, canBeDownloaded, publicationDate)
 
@@ -103,7 +107,7 @@ videosRouter.put('/:id', async (req: Request, res: Response) => {
   res.status(HTTP_STATUSES.NO_CONTENT_204).send(video)
 })
 
-videosRouter.delete('/:id', async (req: Request, res: Response) => {
+videosRouter.delete('/:id', async (req: RequestWithParams<{ id: string }>, res: Response) => {
   const id = req.params.id
 
   if (!id) {
