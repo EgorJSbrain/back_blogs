@@ -37,15 +37,17 @@ videosRouter.get('/:id', async (req: RequestWithParams<{ id: string }>, res: Res
 })
 
 videosRouter.post('/', async (req: RequestWithBody<CreateVideoDto>, res: Response) => {
-  const title = req.body.title
-  const author = req.body.author
-  const minAgeRestriction = req.body.minAgeRestriction
-  const canBeDownloaded = req.body.canBeDownloaded
-  const availableResolutions = req.body.availableResolutions
+  const creatingData = {
+    title: req.body.title,
+    author: req.body.author,
+    minAgeRestriction: req.body.minAgeRestriction,
+    canBeDownloaded: req.body.canBeDownloaded,
+    availableResolutions: req.body.availableResolutions,
+  }
 
-  const errors = inputValidation(title, author, availableResolutions, minAgeRestriction, canBeDownloaded)
+  const errors = inputValidation(creatingData)
 
-  if (errors?.length) {
+  if (!!errors?.length) {
     return res.status(HTTP_STATUSES.BAD_REQUEST_400).send(
       {
         errorsMessages: errors
@@ -53,13 +55,7 @@ videosRouter.post('/', async (req: RequestWithBody<CreateVideoDto>, res: Respons
     )
   }
 
-  const video = await VideoService.createVideo({
-    title,
-    author,
-    availableResolutions,
-    canBeDownloaded,
-    minAgeRestriction,
-  })
+  const video = await VideoService.createVideo(creatingData)
 
   if (!video) {
     return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
@@ -77,18 +73,20 @@ videosRouter.put('/:id', async (req: RequestWithParamsAndBody<{ id: string }, Up
 
   const existedVideo = await VideoService.getVideoById(Number(req.params.id))
 
-  const title = req.body.title || existedVideo?.title || ''
-  const author = req.body.author || existedVideo?.author || ''
-  const minAgeRestriction = req.body.minAgeRestriction || existedVideo?.minAgeRestriction
-  const canBeDownloaded = req.body.canBeDownloaded || existedVideo?.canBeDownloaded
-  const availableResolutions = req.body.availableResolutions || existedVideo?.availableResolutions
-  const publicationDate = req.body.publicationDate || existedVideo?.publicationDate
-
-  const errors = inputValidation(title, author, availableResolutions, minAgeRestriction, canBeDownloaded, publicationDate)
-
   if (!existedVideo) {
     return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
   }
+
+  const updatedVideo = {
+    title: req.body.title || existedVideo?.title || '',
+    author: req.body.author || existedVideo?.author || '',
+    minAgeRestriction: req.body.minAgeRestriction || existedVideo?.minAgeRestriction || null,
+    canBeDownloaded: req.body.canBeDownloaded || existedVideo?.canBeDownloaded,
+    availableResolutions: req.body.availableResolutions || existedVideo?.availableResolutions,
+    publicationDate: req.body.publicationDate || existedVideo?.publicationDate,
+  }
+
+  const errors = inputValidation(updatedVideo)
 
   if (errors?.length) {
     return res.status(HTTP_STATUSES.BAD_REQUEST_400).send(
@@ -98,7 +96,7 @@ videosRouter.put('/:id', async (req: RequestWithParamsAndBody<{ id: string }, Up
     )
   }
 
-  const video = await VideoService.updateVideo(Number(req.params.id), req.body)
+  const video = await VideoService.updateVideo(Number(req.params.id), updatedVideo)
 
   if (!video) {
     return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)

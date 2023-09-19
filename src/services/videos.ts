@@ -70,10 +70,7 @@ export const VideoService = {
 
       const updatedVideos = db<IVideo>().videos.map(video => {
         if (video.id === id) {
-          return {
-            ...video,
-            ...data,
-          }
+          return updatedVideo
         } else {
           return video
         }

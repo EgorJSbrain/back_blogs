@@ -20,16 +20,22 @@ const errorConstructor = (field: string, message: string): Error => ({
   field
 })
 
-// TO DO
-// add param like options { field: '', message: '' }
-
-export const inputValidation = (
-  title: string,
-  author: string,
-  availableResolutions: VideoAvailableResolutions[] | null,
-  minAgeRestriction?: number | null,
-  canBeDownloaded?: boolean,
-  publicationDate?: string
+export const inputValidation = ({
+  title,
+  author,
+  availableResolutions,
+  minAgeRestriction,
+  canBeDownloaded,
+  publicationDate,
+}:
+  {
+    title: string,
+    author: string,
+    availableResolutions: VideoAvailableResolutions[] | null,
+    minAgeRestriction?: number | null,
+    canBeDownloaded?: boolean,
+    publicationDate?: string
+  }
 ) => {
   const errors: Error[] = []
 
