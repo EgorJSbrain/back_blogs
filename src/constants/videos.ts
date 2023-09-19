@@ -1,4 +1,4 @@
-export const enum VideoAvailableResolutions {
+export enum VideoAvailableResolutions {
   P144 = "P144",
   P240 = "P240",
   P360 = "P360",
@@ -9,7 +9,7 @@ export const enum VideoAvailableResolutions {
   P2160 = "P2160"
 }
 
-export const enum VideoInputFields {
+export enum VideoInputFields {
   title = "title",
   author = "author",
   availableResolutions = "availableResolutions",
