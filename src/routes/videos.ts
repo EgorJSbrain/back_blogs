@@ -7,6 +7,7 @@ import { RequestWithBody, RequestWithParams, RequestWithParamsAndBody } from "..
 import { CreateVideoDto } from "../dtos/create-video.dto";
 import { IVideo } from "../types/videos";
 import { UpdateVideoDto } from "../dtos/update-video.dto";
+import { VideoInputFields } from "../constants/videos";
 
 export const videosRouter = Router({})
 
@@ -77,16 +78,16 @@ videosRouter.put('/:id', async (req: RequestWithParamsAndBody<{ id: string }, Up
     return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
   }
 
-  const inputData = {
-    title: req.body.title || '',
-    author: req.body.author || '',
-    minAgeRestriction: req.body.minAgeRestriction || null,
-    canBeDownloaded: req.body.canBeDownloaded,
-    availableResolutions: req.body.availableResolutions,
-    publicationDate: req.body.publicationDate,
+  const updatedVideo = {
+    title: req.body.hasOwnProperty(VideoInputFields.title) ? (req.body.title || '') : existedVideo?.title,
+    author: req.body.hasOwnProperty(VideoInputFields.author) ? (req.body.author || '') : existedVideo?.author,
+    minAgeRestriction: req.body.hasOwnProperty(VideoInputFields.minAgeRestriction) ? req.body.minAgeRestriction : (existedVideo?.minAgeRestriction  || null),
+    canBeDownloaded: req.body.hasOwnProperty(VideoInputFields.canBeDownloaded) ? req.body.canBeDownloaded : existedVideo?.canBeDownloaded,
+    availableResolutions: req.body.hasOwnProperty(VideoInputFields.availableResolutions) ? req.body.availableResolutions : existedVideo?.availableResolutions,
+    publicationDate: req.body.hasOwnProperty(VideoInputFields.publicationDate) ? req.body.publicationDate : existedVideo?.publicationDate,
   }
 
-  const errors = inputValidation(inputData)
+  const errors = inputValidation(updatedVideo)
 
   if (errors?.length) {
     return res.status(HTTP_STATUSES.BAD_REQUEST_400).send(
@@ -94,15 +95,6 @@ videosRouter.put('/:id', async (req: RequestWithParamsAndBody<{ id: string }, Up
         errorsMessages: errors
       }
     )
-  }
-
-  const updatedVideo = {
-    title: req.body.title || existedVideo?.title || '',
-    author: req.body.author || existedVideo?.author || '',
-    minAgeRestriction: req.body.minAgeRestriction || existedVideo?.minAgeRestriction || null,
-    canBeDownloaded: req.body.canBeDownloaded || existedVideo?.canBeDownloaded,
-    availableResolutions: req.body.availableResolutions || existedVideo?.availableResolutions,
-    publicationDate: req.body.publicationDate || existedVideo?.publicationDate,
   }
 
   const video = await VideoService.updateVideo(Number(req.params.id), updatedVideo)
