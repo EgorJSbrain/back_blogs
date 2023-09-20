@@ -43,9 +43,14 @@ describe('VISEOS tests', () => {
 
     const { entity: createdVideo } = await videosTestManager.createVideo(creatingData, HTTP_STATUSES.CREATED_201)
 
+    const data = {
+      ...createdVideo,
+      ...updatingData,
+    }
+
     await getRequest()
       .put(`${RouterPaths.videos}/${createdVideo.id}`)
-      .send(updatingData)
+      .send(data)
       .expect(HTTP_STATUSES.NO_CONTENT_204)
 
     const existedVideo = await getRequest().get(`${RouterPaths.videos}/${createdVideo.id}`).expect(HTTP_STATUSES.OK_200)
