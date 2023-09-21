@@ -1,12 +1,12 @@
-import { DBfields } from "../db/constants"
-import { db } from "../db/db"
-import { CreateBlogDto } from "../dtos/blogs/create-blog.dto"
-import { UpdateBlogDto } from "../dtos/blogs/update-blog.dto"
-import { IBlog } from "../types/blogs"
-import { generateNewBlog } from "./utils"
+import { DBfields } from '../db/constants'
+import { db } from '../db/db'
+import { CreateBlogDto } from '../dtos/blogs/create-blog.dto'
+import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
+import { IBlog } from '../types/blogs'
+import { generateNewBlog } from './utils'
 
 export const BlogsService = {
-  async getBlogs () {
+  async getBlogs() {
     try {
       if (!db<IBlog>().blogs) {
         return []
@@ -20,13 +20,13 @@ export const BlogsService = {
     }
   },
 
-  async getBlogById (id: string) {
+  async getBlogById(id: string) {
     try {
       if (!db<IBlog>().blogs) {
         return null
       }
 
-      const blog = db<IBlog>().blogs.find(item => item.id === id)
+      const blog = db<IBlog>().blogs.find((item) => item.id === id)
 
       return blog
     } catch {
@@ -34,7 +34,7 @@ export const BlogsService = {
     }
   },
 
-  async createBlog (data: CreateBlogDto) {
+  async createBlog(data: CreateBlogDto) {
     try {
       const createdBlog = generateNewBlog(data)
 
@@ -52,13 +52,13 @@ export const BlogsService = {
     }
   },
 
-  async updateBlog (id: string, data: UpdateBlogDto) {
+  async updateBlog(id: string, data: UpdateBlogDto) {
     try {
       if (!db<IBlog>().blogs) {
         return null
       }
 
-      const blog = db<IBlog>().blogs.find(item => item.id === id)
+      const blog = db<IBlog>().blogs.find((item) => item.id === id)
 
       if (!blog) {
         return null
@@ -66,10 +66,10 @@ export const BlogsService = {
 
       const updatedBlog = {
         ...blog,
-        ...data,
+        ...data
       }
 
-      const updatedBlogs = db<IBlog>().blogs.map(blog => {
+      const updatedBlogs = db<IBlog>().blogs.map((blog) => {
         if (blog.id === id) {
           return updatedBlog
         } else {
@@ -85,19 +85,19 @@ export const BlogsService = {
     }
   },
 
-  async deleteBlog (id: string) {
+  async deleteBlog(id: string) {
     try {
       if (!db<IBlog>().blogs) {
         return null
       }
-  
-      const existedBlog = db<IBlog>().blogs.find(item => item.id === id)
+
+      const existedBlog = db<IBlog>().blogs.find((item) => item.id === id)
 
       if (!existedBlog) {
         return null
       }
 
-      const blogs = db<IBlog>().blogs.filter(item => item.id !== id)
+      const blogs = db<IBlog>().blogs.filter((item) => item.id !== id)
 
       db<IBlog>().blogs = blogs
 
@@ -105,5 +105,5 @@ export const BlogsService = {
     } catch {
       return null
     }
-  },
+  }
 }

@@ -1,4 +1,4 @@
 export enum DBfields {
   videos = 'videos',
-  blogs = 'blogs',
+  blogs = 'blogs'
 }

@@ -4,11 +4,11 @@ export enum HTTP_STATUSES {
   NO_CONTENT_204 = 204,
 
   BAD_REQUEST_400 = 400,
-  NOT_FOUND_404 = 404,
+  NOT_FOUND_404 = 404
 }
 
 export const RouterPaths = {
   videos: '/videos',
   blogs: '/blogs',
-  testing: '/testing',
+  testing: '/testing'
 }
