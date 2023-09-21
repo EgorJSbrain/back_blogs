@@ -1,17 +1,17 @@
 import request from 'supertest'
 import { app } from '../../src/app'
 import { HTTP_STATUSES, RouterPaths } from '../../src/constants/global'
-import { videosTestManager } from '../utils/videosTestManger'
+import { videosTestManager } from '../utils/videosTestManager'
 import { VideoAvailableResolutions } from '../../src/constants/videos'
 
 const getRequest = () => request(app)
 
-describe('VISEOS tests', () => {
+describe('VIDEOS tests', () => {
   beforeAll(async () => {
     await getRequest().delete(`${RouterPaths.testing}/data`)
   })
 
-  it('GET - success - get empty array of video', async () => {
+  it('GET - success - get empty array of videos', async () => {
     await getRequest().get(RouterPaths.videos).expect(HTTP_STATUSES.OK_200, [])
   })
 
