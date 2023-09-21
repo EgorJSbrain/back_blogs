@@ -1,6 +1,6 @@
-import { Router, Request, Response } from "express";
-import { GlobalService } from "../services";
-import { HTTP_STATUSES } from "../constants/global";
+import { Router, Request, Response } from 'express'
+import { GlobalService } from '../services'
+import { HTTP_STATUSES } from '../constants/global'
 
 export const globalRouter = Router({})
 
