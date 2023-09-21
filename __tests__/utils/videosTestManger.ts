@@ -1,6 +1,6 @@
 import { app } from "../../src/app";
 import { HTTP_STATUSES, RouterPaths } from "../../src/constants/global";
-import { CreateVideoDto } from "../../src/dtos/create-video.dto";
+import { CreateVideoDto } from "../../src/dtos/videos/create-video.dto";
 import request from 'supertest'
 
 export const videosTestManager = {
