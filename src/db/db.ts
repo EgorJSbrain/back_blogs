@@ -1,6 +1,14 @@
+export const authUser = {
+  login: 'admin',
+  password: 'YWRtaW46cXdlcnR5'
+}
+
 export let dbData: Record<string, any[]> = {}
 
-export const db = <T,>(data?: string, clearData?: boolean): Record<string, T[]> => {
+export const db = <T>(
+  data?: string,
+  clearData?: boolean
+): Record<string, T[]> => {
   if (clearData) {
     dbData = {}
 
