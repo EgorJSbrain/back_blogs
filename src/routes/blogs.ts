@@ -19,6 +19,7 @@ import {
   validationResult
 } from 'express-validator'
 import { BlogsCreateUpdateValidation, transformErrors } from '../utils/validation/inputValidations'
+import { authMiddleware } from '../middlewares'
 
 export const blogsRouter = Router({})
 
@@ -53,6 +54,7 @@ blogsRouter.get(
 
 blogsRouter.post(
   '/',
+  authMiddleware,
   BlogsCreateUpdateValidation(),
   async (req: RequestWithBody<CreateBlogDto>, res: Response) => {
     const creatingData = {
@@ -81,6 +83,7 @@ blogsRouter.post(
 
 blogsRouter.put(
   '/:id',
+  authMiddleware,
   BlogsCreateUpdateValidation(),
   async (
     req: RequestWithParamsAndBody<{ id: string }, UpdateBlogDto>,
@@ -130,6 +133,7 @@ blogsRouter.put(
 
 blogsRouter.delete(
   '/:id',
+  authMiddleware,
   async (req: RequestWithParams<{ id: string }>, res: Response) => {
     const id = req.params.id
 
