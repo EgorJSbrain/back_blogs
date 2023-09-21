@@ -1,10 +1,11 @@
+import { DBfields } from "../db/constants"
 import { db } from "../db/db"
-import { CreateVideoDto } from "../dtos/create-video.dto"
-import { UpdateVideoDto } from "../dtos/update-video.dto"
+import { CreateVideoDto } from "../dtos/videos/create-video.dto"
+import { UpdateVideoDto } from "../dtos/videos/update-video.dto"
 import { IVideo } from "../types/videos"
 import { generateNewVideo } from "./utils"
 
-export const VideoService = {
+export const VideosService = {
   async getVideos () {
     try {
       if (!db<IVideo>().videos) {
@@ -40,7 +41,7 @@ export const VideoService = {
       const existedVideos = db<IVideo>().videos
 
       if (!existedVideos) {
-        db('videos')
+        db(DBfields.videos)
       }
 
       db<IVideo>().videos.push(createdVideo)

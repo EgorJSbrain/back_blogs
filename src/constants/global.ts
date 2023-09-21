@@ -9,5 +9,6 @@ export enum HTTP_STATUSES {
 
 export const RouterPaths = {
   videos: '/videos',
+  blogs: '/blogs',
   testing: '/testing',
 }
