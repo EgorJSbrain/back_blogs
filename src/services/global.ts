@@ -1,8 +1,7 @@
-import { db } from "../db/db"
+import { db } from '../db/db'
 
 export const GlobalService = {
-  async deleteAll () {
-    
+  async deleteAll() {
     try {
       db(undefined, true)
 

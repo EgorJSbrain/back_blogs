@@ -1,12 +1,12 @@
-import { DBfields } from "../db/constants"
-import { db } from "../db/db"
-import { CreateVideoDto } from "../dtos/videos/create-video.dto"
-import { UpdateVideoDto } from "../dtos/videos/update-video.dto"
-import { IVideo } from "../types/videos"
-import { generateNewVideo } from "./utils"
+import { DBfields } from '../db/constants'
+import { db } from '../db/db'
+import { CreateVideoDto } from '../dtos/videos/create-video.dto'
+import { UpdateVideoDto } from '../dtos/videos/update-video.dto'
+import { IVideo } from '../types/videos'
+import { generateNewVideo } from './utils'
 
 export const VideosService = {
-  async getVideos () {
+  async getVideos() {
     try {
       if (!db<IVideo>().videos) {
         return []
@@ -20,13 +20,13 @@ export const VideosService = {
     }
   },
 
-  async getVideoById (id: number) {
+  async getVideoById(id: number) {
     try {
       if (!db<IVideo>().videos) {
         return null
       }
 
-      const video = db<IVideo>().videos.find(item => item.id === id)
+      const video = db<IVideo>().videos.find((item) => item.id === id)
 
       return video
     } catch {
@@ -34,7 +34,7 @@ export const VideosService = {
     }
   },
 
-  async createVideo (data: CreateVideoDto) {
+  async createVideo(data: CreateVideoDto) {
     try {
       const createdVideo = generateNewVideo(data)
 
@@ -52,13 +52,13 @@ export const VideosService = {
     }
   },
 
-  async updateVideo (id: number, data: UpdateVideoDto) {
+  async updateVideo(id: number, data: UpdateVideoDto) {
     try {
       if (!db<IVideo>().videos) {
         return null
       }
 
-      const video = db<IVideo>().videos.find(item => item.id === id)
+      const video = db<IVideo>().videos.find((item) => item.id === id)
 
       if (!video) {
         return null
@@ -66,10 +66,10 @@ export const VideosService = {
 
       const updatedVideo = {
         ...video,
-        ...data,
+        ...data
       }
 
-      const updatedVideos = db<IVideo>().videos.map(video => {
+      const updatedVideos = db<IVideo>().videos.map((video) => {
         if (video.id === id) {
           return updatedVideo
         } else {
@@ -85,19 +85,19 @@ export const VideosService = {
     }
   },
 
-  async deleteVideo (id: number) {
+  async deleteVideo(id: number) {
     try {
       if (!db<IVideo>().videos) {
         return null
       }
-  
-      const existedVideo = db<IVideo>().videos.find(item => item.id === id)
+
+      const existedVideo = db<IVideo>().videos.find((item) => item.id === id)
 
       if (!existedVideo) {
         return null
       }
 
-      const videos = db<IVideo>().videos.filter(item => item.id !== id)
+      const videos = db<IVideo>().videos.filter((item) => item.id !== id)
 
       db<IVideo>().videos = videos
 
@@ -105,5 +105,5 @@ export const VideosService = {
     } catch {
       return null
     }
-  },
+  }
 }
