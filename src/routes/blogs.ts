@@ -13,11 +13,12 @@ import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
 import { BlogInputFields } from '../constants/blogs'
 
 import {
+  FieldValidationError,
   Result,
   ValidationError,
   validationResult
 } from 'express-validator'
-import { BlogsCreateUpdateValidation } from '../utils/validation/inputValidations'
+import { BlogsCreateUpdateValidation, transformErrors } from '../utils/validation/inputValidations'
 
 export const blogsRouter = Router({})
 
@@ -64,7 +65,7 @@ blogsRouter.post(
 
     if (!resultValidation.isEmpty()) {
       return res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
-        errorsMessages: resultValidation.array({ onlyFirstError: true })
+        errorsMessages: transformErrors(resultValidation.array({ onlyFirstError: true }) as FieldValidationError[])
       })
     }
 
@@ -113,7 +114,7 @@ blogsRouter.put(
 
     if (!resultValidation.isEmpty()) {
       return res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
-        errorsMessages: resultValidation.array({ onlyFirstError: true })
+        errorsMessages: transformErrors(resultValidation.array({ onlyFirstError: true }) as FieldValidationError[])
       })
     }
 

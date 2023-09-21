@@ -12,3 +12,8 @@ export const RouterPaths = {
   blogs: '/blogs',
   testing: '/testing'
 }
+
+export type Error = {
+  message: string
+  field: string
+}
