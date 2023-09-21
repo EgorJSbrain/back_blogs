@@ -1,3 +1,8 @@
+const TITLE_MAX_LENGTH = 40
+const AUTHOR_MAX_LENGTH = 20
+const AGE_RESTRICTION_MIN = 1
+const AGE_RESTRICTION_MAX = 18
+
 export enum VideoAvailableResolutions {
   P144 = "P144",
   P240 = "P240",
@@ -31,12 +36,12 @@ export const videoAvailableResolutions = [
 
 export const errorMessage = {
   title: "Title is required field",
-  maxTitleLength: "Length of title shouldn't be more than 40 symbols",
+  maxTitleLength: `Length of title shouldn't be more than ${TITLE_MAX_LENGTH} symbols`,
   author: "Author is required field",
-  maxAuthorLength: "Length of author shouldn't be more than 20 symbols",
+  maxAuthorLength: `Length of author shouldn't be more than ${AUTHOR_MAX_LENGTH} symbols`,
   availableResolutions: "Available resolution include not supported format",
   availableResolutionsRequired: "Available resolution is required field",
-  ageRestriction: "Age should be more than 1 and not more than 18",
+  ageRestriction: `Age should be more than ${AGE_RESTRICTION_MIN} and not more than ${AGE_RESTRICTION_MAX}`,
   canBeDownloaded: "canBeDownloaded should be boolean type",
   publicationDate: "publicationDate should be string type",
 }
