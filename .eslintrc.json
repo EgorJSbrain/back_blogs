@@ -31,6 +31,7 @@
         "@typescript-eslint/semi": "error",
         "space-before-function-paren": "off",
         "@typescript-eslint/space-before-function-paren": "off",
-        "@typescript-eslint/ban-types": "off"
+        "@typescript-eslint/ban-types": "off",
+        "max-len": ["error", { "code": 120 }]
     }
 }
