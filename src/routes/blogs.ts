@@ -8,6 +8,9 @@ import { CreateBlogDto } from "../dtos/blogs/create-blog.dto";
 import { UpdateBlogDto } from "../dtos/blogs/update-blog.dto";
 import { BlogInputFields } from "../constants/blogs";
 
+import { Result, ValidationError, body, validationResult } from 'express-validator';
+import { BlogsCreateUpdateValidation } from "../utils/validation/inputValidations";
+
 export const blogsRouter = Router({})
 
 blogsRouter.get('/', async (_: Request, res: Response<IBlog[]>) => {
@@ -36,20 +39,19 @@ blogsRouter.get('/:id', async (req: RequestWithParams<{ id: string }>, res: Resp
   res.status(HTTP_STATUSES.OK_200).send(blog)
 })
 
-blogsRouter.post('/', async (req: RequestWithBody<CreateBlogDto>, res: Response) => {
+blogsRouter.post('/', BlogsCreateUpdateValidation(), async (req: RequestWithBody<CreateBlogDto>, res: Response) => {
   const creatingData = {
     [BlogInputFields.name]: req.body.name,
     [BlogInputFields.description]: req.body.description,
     [BlogInputFields.websiteUrl]: req.body.websiteUrl,
   }
 
-  const errors: any[] = []
-  // const errors = inputValidation(creatingData)
+  const resultValidation: Result<ValidationError> = validationResult(req);
 
-  if (!!errors?.length) {
+  if (!resultValidation.isEmpty()) {
     return res.status(HTTP_STATUSES.BAD_REQUEST_400).send(
       {
-        errorsMessages: errors
+        errorsMessages: resultValidation.array({ onlyFirstError: true })
       }
     )
   }
@@ -63,7 +65,11 @@ blogsRouter.post('/', async (req: RequestWithBody<CreateBlogDto>, res: Response)
   res.status(HTTP_STATUSES.CREATED_201).send(blog)
 })
 
-blogsRouter.put('/:id', async (req: RequestWithParamsAndBody<{ id: string }, UpdateBlogDto>, res: Response) => {
+blogsRouter.put(
+  '/:id',
+  BlogsCreateUpdateValidation(),
+  async (req: RequestWithParamsAndBody<{ id: string }, UpdateBlogDto>, res: Response
+) => {
   const id = req.params.id
 
   if (!id) {
@@ -88,13 +94,12 @@ blogsRouter.put('/:id', async (req: RequestWithParamsAndBody<{ id: string }, Upd
       (existedBlog?.websiteUrl || ''),
   }
 
-  const errors: any[] = []
-  // const errors = inputValidation(updatedBlog)
+  const resultValidation: Result<ValidationError> = validationResult(req);
 
-  if (errors?.length) {
+  if (!resultValidation.isEmpty()) {
     return res.status(HTTP_STATUSES.BAD_REQUEST_400).send(
       {
-        errorsMessages: errors
+        errorsMessages: resultValidation.array({ onlyFirstError: true })
       }
     )
   }
