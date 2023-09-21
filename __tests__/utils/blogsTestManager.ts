@@ -1,15 +1,15 @@
 import { app } from "../../src/app";
 import { HTTP_STATUSES, RouterPaths } from "../../src/constants/global";
-import { CreateVideoDto } from "../../src/dtos/create-video.dto";
 import request from 'supertest'
+import { CreateBlogDto } from "../../src/dtos/blogs/create-blog.dto";
 
-export const videosTestManager = {
-  async createVideo(
-    data: CreateVideoDto,
+export const blogsTestManager = {
+  async createBlog(
+    data: CreateBlogDto,
     expectedStatusCode: HTTP_STATUSES = HTTP_STATUSES.CREATED_201
   ) {
     const response = await request(app)
-      .post(RouterPaths.videos)
+      .post(RouterPaths.blogs)
       .send(data)
       .expect(expectedStatusCode)
 

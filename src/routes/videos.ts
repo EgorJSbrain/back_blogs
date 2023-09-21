@@ -1,18 +1,18 @@
 import { Router, Request, Response } from "express";
 
-import { VideoService } from "../services/videos";
+import { VideosService } from "../services/videos";
 import { HTTP_STATUSES } from "../constants/global";
 import { inputValidation } from "./utils";
 import { RequestWithBody, RequestWithParams, RequestWithParamsAndBody } from "../types/global";
-import { CreateVideoDto } from "../dtos/create-video.dto";
+import { CreateVideoDto } from "../dtos/videos/create-video.dto";
 import { IVideo } from "../types/videos";
-import { UpdateVideoDto } from "../dtos/update-video.dto";
+import { UpdateVideoDto } from "../dtos/videos/update-video.dto";
 import { VideoInputFields } from "../constants/videos";
 
 export const videosRouter = Router({})
 
 videosRouter.get('/', async (_: Request, res: Response<IVideo[]>) => {
-  const videos = await VideoService.getVideos()
+  const videos = await VideosService.getVideos()
 
   if (!videos) {
     return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
@@ -28,7 +28,7 @@ videosRouter.get('/:id', async (req: RequestWithParams<{ id: string }>, res: Res
     return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
   }
 
-  const video = await VideoService.getVideoById(Number(id))
+  const video = await VideosService.getVideoById(Number(id))
 
   if (!video) {
     return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -39,11 +39,11 @@ videosRouter.get('/:id', async (req: RequestWithParams<{ id: string }>, res: Res
 
 videosRouter.post('/', async (req: RequestWithBody<CreateVideoDto>, res: Response) => {
   const creatingData = {
-    title: req.body.title,
-    author: req.body.author,
-    minAgeRestriction: req.body.minAgeRestriction,
-    canBeDownloaded: req.body.canBeDownloaded,
-    availableResolutions: req.body.availableResolutions,
+    [VideoInputFields.title]: req.body.title,
+    [VideoInputFields.author]: req.body.author,
+    [VideoInputFields.minAgeRestriction]: req.body.minAgeRestriction,
+    [VideoInputFields.canBeDownloaded]: req.body.canBeDownloaded,
+    [VideoInputFields.availableResolutions]: req.body.availableResolutions,
   }
 
   const errors = inputValidation(creatingData)
@@ -56,7 +56,7 @@ videosRouter.post('/', async (req: RequestWithBody<CreateVideoDto>, res: Respons
     )
   }
 
-  const video = await VideoService.createVideo(creatingData)
+  const video = await VideosService.createVideo(creatingData)
 
   if (!video) {
     return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
@@ -72,19 +72,31 @@ videosRouter.put('/:id', async (req: RequestWithParamsAndBody<{ id: string }, Up
     return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
   }
 
-  const existedVideo = await VideoService.getVideoById(Number(req.params.id))
+  const existedVideo = await VideosService.getVideoById(Number(id))
 
   if (!existedVideo) {
     return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
   }
 
   const updatedVideo = {
-    title: req.body.hasOwnProperty(VideoInputFields.title) ? (req.body.title || '') : existedVideo?.title,
-    author: req.body.hasOwnProperty(VideoInputFields.author) ? (req.body.author || '') : existedVideo?.author,
-    minAgeRestriction: req.body.hasOwnProperty(VideoInputFields.minAgeRestriction) ? req.body.minAgeRestriction : (existedVideo?.minAgeRestriction  || null),
-    canBeDownloaded: req.body.hasOwnProperty(VideoInputFields.canBeDownloaded) ? req.body.canBeDownloaded : existedVideo?.canBeDownloaded,
-    availableResolutions: req.body.hasOwnProperty(VideoInputFields.availableResolutions) ? req.body.availableResolutions : existedVideo?.availableResolutions,
-    publicationDate: req.body.hasOwnProperty(VideoInputFields.publicationDate) ? req.body.publicationDate : existedVideo?.publicationDate,
+    [VideoInputFields.title]: req.body.hasOwnProperty(VideoInputFields.title) ?
+      (req.body.title || '') :
+      existedVideo?.title,
+    [VideoInputFields.author]: req.body.hasOwnProperty(VideoInputFields.author) ?
+    (req.body.author || '') :
+      existedVideo?.author,
+    [VideoInputFields.minAgeRestriction]: req.body.hasOwnProperty(VideoInputFields.minAgeRestriction) ?
+      req.body.minAgeRestriction :
+      (existedVideo?.minAgeRestriction  || null),
+    [VideoInputFields.canBeDownloaded]: req.body.hasOwnProperty(VideoInputFields.canBeDownloaded) ?
+      req.body.canBeDownloaded :
+      existedVideo?.canBeDownloaded,
+    [VideoInputFields.availableResolutions]: req.body.hasOwnProperty(VideoInputFields.availableResolutions) ?
+      req.body.availableResolutions :
+      existedVideo?.availableResolutions,
+    [VideoInputFields.publicationDate]: req.body.hasOwnProperty(VideoInputFields.publicationDate) ?
+      req.body.publicationDate :
+      existedVideo?.publicationDate,
   }
 
   const errors = inputValidation(updatedVideo)
@@ -97,7 +109,7 @@ videosRouter.put('/:id', async (req: RequestWithParamsAndBody<{ id: string }, Up
     )
   }
 
-  const video = await VideoService.updateVideo(Number(req.params.id), updatedVideo)
+  const video = await VideosService.updateVideo(Number(id), updatedVideo)
 
   if (!video) {
     return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -113,7 +125,7 @@ videosRouter.delete('/:id', async (req: RequestWithParams<{ id: string }>, res: 
     return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
   }
 
-  const response = await VideoService.deleteVideo(Number(req.params.id))
+  const response = await VideosService.deleteVideo(Number(id))
 
   if (!response) {
     return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)

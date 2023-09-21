@@ -1,4 +1,4 @@
-import { VideoAvailableResolutions } from "../constants/videos"
+import { VideoAvailableResolutions } from "../../constants/videos"
 
 export interface UpdateVideoDto {
   readonly title?: string
