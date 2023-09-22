@@ -2,16 +2,16 @@ import { Router, Request, Response } from 'express'
 
 import { VideosService } from '../services/videos'
 import { HTTP_STATUSES } from '../constants/global'
+import { VideoInputFields } from '../constants/videos'
 import { inputValidation } from './utils'
 import {
   RequestWithBody,
   RequestWithParams,
   RequestWithParamsAndBody
 } from '../types/global'
-import { CreateVideoDto } from '../dtos/videos/create-video.dto'
 import { IVideo } from '../types/videos'
+import { CreateVideoDto } from '../dtos/videos/create-video.dto'
 import { UpdateVideoDto } from '../dtos/videos/update-video.dto'
-import { VideoInputFields } from '../constants/videos'
 
 export const videosRouter = Router({})
 
@@ -47,12 +47,13 @@ videosRouter.get(
 videosRouter.post(
   '/',
   async (req: RequestWithBody<CreateVideoDto>, res: Response) => {
+    const { title, author, minAgeRestriction, canBeDownloaded, availableResolutions } = req.body
     const creatingData = {
-      [VideoInputFields.title]: req.body.title,
-      [VideoInputFields.author]: req.body.author,
-      [VideoInputFields.minAgeRestriction]: req.body.minAgeRestriction,
-      [VideoInputFields.canBeDownloaded]: req.body.canBeDownloaded,
-      [VideoInputFields.availableResolutions]: req.body.availableResolutions
+      [VideoInputFields.title]: title,
+      [VideoInputFields.author]: author,
+      [VideoInputFields.minAgeRestriction]: minAgeRestriction,
+      [VideoInputFields.canBeDownloaded]: canBeDownloaded,
+      [VideoInputFields.availableResolutions]: availableResolutions
     }
 
     const errors = inputValidation(creatingData)
@@ -80,6 +81,14 @@ videosRouter.put(
     res: Response
   ) => {
     const id = req.params.id
+    const {
+      title,
+      author,
+      minAgeRestriction,
+      canBeDownloaded,
+      availableResolutions,
+      publicationDate
+    } = req.body
 
     if (!id) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -96,38 +105,38 @@ videosRouter.put(
         req.body,
         VideoInputFields.title
       )
-        ? req.body.title || ''
+        ? title || ''
         : existedVideo?.title,
       [VideoInputFields.author]: Object.prototype.hasOwnProperty.call(
         req.body,
         VideoInputFields.author
       )
-        ? req.body.author || ''
+        ? author || ''
         : existedVideo?.author,
       [VideoInputFields.minAgeRestriction]:
         Object.prototype.hasOwnProperty.call(
           req.body,
           VideoInputFields.minAgeRestriction
         )
-          ? req.body.minAgeRestriction
+          ? minAgeRestriction
           : existedVideo?.minAgeRestriction || null,
       [VideoInputFields.canBeDownloaded]: Object.prototype.hasOwnProperty.call(
         req.body,
         VideoInputFields.canBeDownloaded
       )
-        ? req.body.canBeDownloaded
+        ? canBeDownloaded
         : existedVideo?.canBeDownloaded,
       [VideoInputFields.availableResolutions]: Object.prototype.hasOwnProperty.call(
         req.body,
         VideoInputFields.availableResolutions
       )
-        ? req.body.availableResolutions
+        ? availableResolutions
         : existedVideo?.availableResolutions,
       [VideoInputFields.publicationDate]: Object.prototype.hasOwnProperty.call(
         req.body,
         VideoInputFields.publicationDate
       )
-        ? req.body.publicationDate
+        ? publicationDate
         : existedVideo?.publicationDate
     }
 

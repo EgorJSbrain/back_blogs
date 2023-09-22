@@ -16,6 +16,7 @@ export const blogsErrorMessage = {
   // eslint-disable-next-line max-len
   descriptionLength: `Length of description shouldn't be less than ${DESCRIPTION_MIN_LENGTH} and more than ${DESCRIPTION_MAX_LENGTH} symbols`,
   websiteUrl: 'WebsiteUrl is not valid',
+  blogNotExist: 'Blog does not exist',
   // eslint-disable-next-line max-len
   websiteUrlLength: `Length of website URL shouldn't be less than ${URL_MIN_LENGTH} and more than ${URL_MAX_LENGTH} symbols`
 }

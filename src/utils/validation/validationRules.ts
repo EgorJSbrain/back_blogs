@@ -10,6 +10,7 @@ import {
   blogsErrorMessage
 } from '../../constants/blogs'
 import {
+  BLOG_ID_MIN_LENGTH,
   CONTENT_MAX_LENGTH,
   CONTENT_MIN_LENGTH,
   PostInputFields,
@@ -19,6 +20,7 @@ import {
   TITLE_MIN_LENGTH,
   postsErrorMessage
 } from '../../constants/posts'
+import { BlogsService } from '../../services'
 
 // blogs
 
@@ -58,4 +60,18 @@ export const postDescriptionValidation = body([PostInputFields.shortDescription]
 export const postContentValidation = body([PostInputFields.content])
   .trim()
   .isLength({ min: CONTENT_MIN_LENGTH, max: CONTENT_MAX_LENGTH })
+  .withMessage(postsErrorMessage.contentLength)
+
+export const postBlogIdValidation = body([PostInputFields.blogId])
+  .trim()
+  .isLength({ min: BLOG_ID_MIN_LENGTH })
+  .customSanitizer(async (value) => {
+    const existedBlog = await BlogsService.getBlogById(value)
+
+    if (!existedBlog) {
+      throw new Error(blogsErrorMessage.blogNotExist)
+    } else {
+      return value
+    }
+  })
   .withMessage(postsErrorMessage.contentLength)
