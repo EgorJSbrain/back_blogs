@@ -13,7 +13,9 @@ export enum BlogInputFields {
 
 export const blogsErrorMessage = {
   nameLength: `Length of name shouldn't be less than ${NAME_MIN_LENGTH} and more than ${NAME_MAX_LENGTH} symbols`,
+  // eslint-disable-next-line max-len
   descriptionLength: `Length of description shouldn't be less than ${DESCRIPTION_MIN_LENGTH} and more than ${DESCRIPTION_MAX_LENGTH} symbols`,
   websiteUrl: 'WebsiteUrl is not valid',
+  // eslint-disable-next-line max-len
   websiteUrlLength: `Length of website URL shouldn't be less than ${URL_MIN_LENGTH} and more than ${URL_MAX_LENGTH} symbols`
 }

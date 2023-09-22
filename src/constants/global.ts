@@ -11,10 +11,6 @@ export enum HTTP_STATUSES {
 export const RouterPaths = {
   videos: '/videos',
   blogs: '/blogs',
+  posts: '/posts',
   testing: '/testing'
-}
-
-export type Error = {
-  message: string
-  field: string
 }
