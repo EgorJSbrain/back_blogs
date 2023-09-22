@@ -1,9 +1,9 @@
 import { DBfields } from '../db/constants'
 import { db } from '../db/db'
+import { generateNewPost } from './utils'
+import { IPost } from '../types/posts'
 import { CreatePostDto } from '../dtos/posts/create-post.dto'
 import { UpdatePostDto } from '../dtos/posts/update-post.dto'
-import { IPost } from '../types/posts'
-import { generateNewPost } from './utils'
 
 export const PostsService = {
   async getPosts() {

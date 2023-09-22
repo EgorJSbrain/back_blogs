@@ -1,9 +1,9 @@
 import { DBfields } from '../db/constants'
 import { db } from '../db/db'
+import { generateNewBlog } from './utils'
+import { IBlog } from '../types/blogs'
 import { CreateBlogDto } from '../dtos/blogs/create-blog.dto'
 import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
-import { IBlog } from '../types/blogs'
-import { generateNewBlog } from './utils'
 
 export const BlogsService = {
   async getBlogs() {

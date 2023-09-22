@@ -1,25 +1,24 @@
 import { Router, Request, Response } from 'express'
-
-import { PostsService } from '../services'
-import { HTTP_STATUSES } from '../constants/global'
-import {
-  RequestWithBody,
-  RequestWithParams,
-  RequestWithParamsAndBody
-} from '../types/global'
-import { CreatePostDto } from '../dtos/posts/create-post.dto'
-import { UpdatePostDto } from '../dtos/posts/update-post.dto'
-import { PostInputFields } from '../constants/posts'
-
 import {
   FieldValidationError,
   Result,
   ValidationError,
   validationResult
 } from 'express-validator'
-import { BlogsCreateUpdateValidation, transformErrors } from '../utils/validation/inputValidations'
+
+import { BlogsService, PostsService } from '../services'
+import { PostsCreateUpdateValidation, transformErrors } from '../utils/validation/inputValidations'
 import { authMiddleware } from '../middlewares'
+import { PostInputFields } from '../constants/posts'
+import { HTTP_STATUSES } from '../constants/global'
+import {
+  RequestWithBody,
+  RequestWithParams,
+  RequestWithParamsAndBody
+} from '../types/global'
 import { IPost } from '../types/posts'
+import { CreatePostDto } from '../dtos/posts/create-post.dto'
+import { UpdatePostDto } from '../dtos/posts/update-post.dto'
 
 export const postsRouter = Router({})
 
@@ -54,14 +53,27 @@ postsRouter.get(
 
 postsRouter.post(
   '/',
-  authMiddleware,
-  BlogsCreateUpdateValidation(),
+  // authMiddleware,
+  PostsCreateUpdateValidation(),
   async (req: RequestWithBody<CreatePostDto>, res: Response) => {
+    const { title, shortDescription, content, blogId } = req.body
+
+    if (!blogId) {
+      return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+    }
+
+    const existedBlog = await BlogsService.getBlogById(blogId)
+
+    if (!existedBlog) {
+      return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+    }
+
     const creatingData = {
-      [PostInputFields.title]: req.body.title,
-      [PostInputFields.shortDescription]: req.body.shortDescription,
-      [PostInputFields.content]: req.body.content,
-      [PostInputFields.blogId]: req.body.blogId
+      [PostInputFields.title]: title,
+      [PostInputFields.shortDescription]: shortDescription,
+      [PostInputFields.content]: content,
+      [PostInputFields.blogId]: blogId,
+      [PostInputFields.blogName]: existedBlog.name
     }
 
     const resultValidation: Result<ValidationError> = validationResult(req)
@@ -85,12 +97,13 @@ postsRouter.post(
 postsRouter.put(
   '/:id',
   authMiddleware,
-  BlogsCreateUpdateValidation(),
+  PostsCreateUpdateValidation(),
   async (
     req: RequestWithParamsAndBody<{ id: string }, UpdatePostDto>,
     res: Response
   ) => {
     const id = req.params.id
+    const { title, content, blogId, shortDescription } = req.body
 
     if (!id) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -104,16 +117,16 @@ postsRouter.put(
 
     const updatedPost = {
       [PostInputFields.title]: PostInputFields.title in req.body
-        ? req.body.title ?? ''
+        ? title ?? ''
         : existedBlog?.title,
       [PostInputFields.content]: PostInputFields.content in req.body
-        ? req.body.content ?? ''
+        ? content ?? ''
         : existedBlog?.content,
       [PostInputFields.shortDescription]: PostInputFields.shortDescription in req.body
-        ? req.body.shortDescription
+        ? shortDescription
         : existedBlog?.shortDescription ?? '',
       [PostInputFields.blogId]: PostInputFields.blogId in req.body
-        ? req.body.blogId
+        ? blogId
         : existedBlog?.blogId ?? ''
     }
 

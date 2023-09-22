@@ -2,6 +2,8 @@ import { Router, Request, Response } from 'express'
 
 import { BlogsService } from '../services'
 import { HTTP_STATUSES } from '../constants/global'
+import { BlogInputFields } from '../constants/blogs'
+
 import {
   RequestWithBody,
   RequestWithParams,
@@ -10,7 +12,6 @@ import {
 import { IBlog } from '../types/blogs'
 import { CreateBlogDto } from '../dtos/blogs/create-blog.dto'
 import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
-import { BlogInputFields } from '../constants/blogs'
 
 import {
   FieldValidationError,
@@ -57,10 +58,12 @@ blogsRouter.post(
   authMiddleware,
   BlogsCreateUpdateValidation(),
   async (req: RequestWithBody<CreateBlogDto>, res: Response) => {
+    const { name, description, websiteUrl } = req.body
+
     const creatingData = {
-      [BlogInputFields.name]: req.body.name,
-      [BlogInputFields.description]: req.body.description,
-      [BlogInputFields.websiteUrl]: req.body.websiteUrl
+      [BlogInputFields.name]: name,
+      [BlogInputFields.description]: description,
+      [BlogInputFields.websiteUrl]: websiteUrl
     }
 
     const resultValidation: Result<ValidationError> = validationResult(req)
@@ -90,6 +93,7 @@ blogsRouter.put(
     res: Response
   ) => {
     const id = req.params.id
+    const { name, description, websiteUrl } = req.body
 
     if (!id) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -103,13 +107,13 @@ blogsRouter.put(
 
     const updatedBlog = {
       [BlogInputFields.name]: Object.prototype.hasOwnProperty.call(req.body, BlogInputFields.name)
-        ? req.body.name ?? ''
+        ? name ?? ''
         : existedBlog?.name,
       [BlogInputFields.description]: Object.prototype.hasOwnProperty.call(req.body, BlogInputFields.description)
-        ? req.body.description ?? ''
+        ? description ?? ''
         : existedBlog?.description,
       [BlogInputFields.websiteUrl]: Object.prototype.hasOwnProperty.call(req.body, BlogInputFields.websiteUrl)
-        ? req.body.websiteUrl
+        ? websiteUrl
         : existedBlog?.websiteUrl ?? ''
     }
 
