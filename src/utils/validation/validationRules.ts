@@ -69,7 +69,7 @@ export const postBlogIdValidation = body([PostInputFields.blogId])
     const existedBlog = await BlogsService.getBlogById(value)
 
     if (!existedBlog) {
-      throw new Error(blogsErrorMessage.blogNotExist)
+      return null
     } else {
       return value
     }

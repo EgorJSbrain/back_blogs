@@ -10,7 +10,7 @@
                 "node": true
             },
             "files": [
-                ".eslintrc.{js,cjs,ts}"
+                ".eslintrc.{js,cjs}"
             ],
             "parserOptions": {
                 "sourceType": "script"
@@ -33,5 +33,7 @@
         "@typescript-eslint/space-before-function-paren": "off",
         "@typescript-eslint/ban-types": "off",
         "max-len": ["error", { "code": 120 }]
-    }
+    },
+    "ignorePatterns": ["**/__tests__/*"]
+    // "ignorePatterns": ["**.e2e.test.ts"]
 }
