@@ -37,7 +37,7 @@ blogsRouter.get('/', async (_: Request, res: Response<IBlog[]>) => {
 blogsRouter.get(
   '/:id',
   async (req: RequestWithParams<{ id: string }>, res: Response<IBlog>) => {
-    const id = req.params.id
+    const { id } = req.params
 
     if (!id) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -92,7 +92,7 @@ blogsRouter.put(
     req: RequestWithParamsAndBody<{ id: string }, UpdateBlogDto>,
     res: Response
   ) => {
-    const id = req.params.id
+    const { id } = req.params
     const { name, description, websiteUrl } = req.body
 
     if (!id) {
@@ -139,7 +139,7 @@ blogsRouter.delete(
   '/:id',
   authMiddleware,
   async (req: RequestWithParams<{ id: string }>, res: Response) => {
-    const id = req.params.id
+    const { id } = req.params
 
     if (!id) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)

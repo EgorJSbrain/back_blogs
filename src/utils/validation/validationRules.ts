@@ -74,4 +74,5 @@ export const postBlogIdValidation = body([PostInputFields.blogId])
       return value
     }
   })
-  .withMessage(postsErrorMessage.contentLength)
+  .exists({ checkNull: true })
+  .withMessage(postsErrorMessage.blogIdRequired)
