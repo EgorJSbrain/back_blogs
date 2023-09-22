@@ -35,7 +35,7 @@ postsRouter.get('/', async (_: Request, res: Response<IPost[]>) => {
 postsRouter.get(
   '/:id',
   async (req: RequestWithParams<{ id: string }>, res: Response<IPost>) => {
-    const id = req.params.id
+    const { id } = req.params
 
     if (!id) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -58,30 +58,22 @@ postsRouter.post(
   async (req: RequestWithBody<CreatePostDto>, res: Response) => {
     const { title, shortDescription, content, blogId } = req.body
 
-    if (!blogId) {
-      return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
-    }
-
-    const existedBlog = await BlogsService.getBlogById(blogId)
-
-    if (!existedBlog) {
-      return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
-    }
-
-    const creatingData = {
-      [PostInputFields.title]: title,
-      [PostInputFields.shortDescription]: shortDescription,
-      [PostInputFields.content]: content,
-      [PostInputFields.blogId]: blogId,
-      [PostInputFields.blogName]: existedBlog.name
-    }
-
     const resultValidation: Result<ValidationError> = validationResult(req)
 
     if (!resultValidation.isEmpty()) {
       return res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
         errorsMessages: transformErrors(resultValidation.array({ onlyFirstError: true }) as FieldValidationError[])
       })
+    }
+
+    const existedBlog = await BlogsService.getBlogById(blogId)
+
+    const creatingData = {
+      [PostInputFields.title]: title,
+      [PostInputFields.shortDescription]: shortDescription,
+      [PostInputFields.content]: content,
+      [PostInputFields.blogId]: blogId,
+      [PostInputFields.blogName]: existedBlog?.name ?? ''
     }
 
     const blog = await PostsService.createPost(creatingData)
@@ -102,32 +94,17 @@ postsRouter.put(
     req: RequestWithParamsAndBody<{ id: string }, UpdatePostDto>,
     res: Response
   ) => {
-    const id = req.params.id
+    const { id } = req.params
     const { title, content, blogId, shortDescription } = req.body
 
     if (!id) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
-    const existedBlog = await PostsService.getPostById(id)
+    const existedPost = await PostsService.getPostById(id)
 
-    if (!existedBlog) {
+    if (!existedPost) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-    }
-
-    const updatedPost = {
-      [PostInputFields.title]: PostInputFields.title in req.body
-        ? title ?? ''
-        : existedBlog?.title,
-      [PostInputFields.content]: PostInputFields.content in req.body
-        ? content ?? ''
-        : existedBlog?.content,
-      [PostInputFields.shortDescription]: PostInputFields.shortDescription in req.body
-        ? shortDescription
-        : existedBlog?.shortDescription ?? '',
-      [PostInputFields.blogId]: PostInputFields.blogId in req.body
-        ? blogId
-        : existedBlog?.blogId ?? ''
     }
 
     const resultValidation: Result<ValidationError> = validationResult(req)
@@ -136,6 +113,21 @@ postsRouter.put(
       return res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
         errorsMessages: transformErrors(resultValidation.array({ onlyFirstError: true }) as FieldValidationError[])
       })
+    }
+
+    const updatedPost = {
+      [PostInputFields.title]: PostInputFields.title in req.body
+        ? title ?? ''
+        : existedPost?.title,
+      [PostInputFields.content]: PostInputFields.content in req.body
+        ? content ?? ''
+        : existedPost?.content,
+      [PostInputFields.shortDescription]: PostInputFields.shortDescription in req.body
+        ? shortDescription
+        : existedPost?.shortDescription ?? '',
+      [PostInputFields.blogId]: PostInputFields.blogId in req.body
+        ? blogId
+        : existedPost?.blogId ?? ''
     }
 
     const blog = await PostsService.updatePost(id, updatedPost)
@@ -152,7 +144,7 @@ postsRouter.delete(
   '/:id',
   authMiddleware,
   async (req: RequestWithParams<{ id: string }>, res: Response) => {
-    const id = req.params.id
+    const { id } = req.params
 
     if (!id) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
