@@ -53,7 +53,7 @@ postsRouter.get(
 
 postsRouter.post(
   '/',
-  // authMiddleware,
+  authMiddleware,
   PostsCreateUpdateValidation(),
   async (req: RequestWithBody<CreatePostDto>, res: Response) => {
     const { title, shortDescription, content, blogId } = req.body

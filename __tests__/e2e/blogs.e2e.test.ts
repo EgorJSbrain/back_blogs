@@ -2,6 +2,7 @@ import request from 'supertest'
 import { app } from '../../src/app'
 import { HTTP_STATUSES, RouterPaths } from '../../src/constants/global'
 import { blogsTestManager } from '../utils/blogsTestManager'
+import { authUser } from '../../src/db/db'
 
 const getRequest = () => request(app)
 
@@ -49,6 +50,7 @@ describe('BLOGS tests', () => {
 
     await getRequest()
       .put(`${RouterPaths.blogs}/${createdBlog.id}`)
+      .set({ Authorization: `Basic ${authUser.password}` })
       .send(data)
       .expect(HTTP_STATUSES.NO_CONTENT_204)
 
@@ -69,6 +71,7 @@ describe('BLOGS tests', () => {
 
     await getRequest()
       .put(`${RouterPaths.blogs}/1`)
+      .set({ Authorization: `Basic ${authUser.password}` })
       .send(updatingData)
       .expect(HTTP_STATUSES.NOT_FOUND_404)
   })
@@ -80,6 +83,7 @@ describe('BLOGS tests', () => {
 
     await getRequest()
       .delete(`${RouterPaths.blogs}/${entity.id}`)
+      .set({ Authorization: `Basic ${authUser.password}` })
       .expect(HTTP_STATUSES.NO_CONTENT_204)
   })
 
@@ -90,6 +94,7 @@ describe('BLOGS tests', () => {
 
     await getRequest()
       .delete(`${RouterPaths.blogs}/1`)
+      .set({ Authorization: `Basic ${authUser.password}` })
       .expect(HTTP_STATUSES.NOT_FOUND_404)
   })
 })
