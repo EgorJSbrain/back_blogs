@@ -1,9 +1,9 @@
-import { CreateBlogDto } from '../dtos/blogs/create-blog.dto'
-import { CreatePostDto } from '../dtos/posts/create-post.dto'
-import { CreateVideoDto } from '../dtos/videos/create-video.dto'
 import { IBlog } from '../types/blogs'
 import { IPost } from '../types/posts'
 import { IVideo } from '../types/videos'
+import { CreateBlogDto } from '../dtos/blogs/create-blog.dto'
+import { CreatePostDto } from '../dtos/posts/create-post.dto'
+import { CreateVideoDto } from '../dtos/videos/create-video.dto'
 
 export const generateNewVideo = (data: CreateVideoDto): IVideo => {
   const createdDate = Number(new Date()) - 1000 * 60 * 60 * 24
@@ -32,5 +32,6 @@ export const generateNewPost = (data: CreatePostDto): IPost => ({
   blogId: data.blogId,
   title: data.title,
   content: data.content,
-  shortDescription: data.shortDescription
+  shortDescription: data.shortDescription,
+  blogName: data.blogName
 })

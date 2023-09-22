@@ -3,4 +3,5 @@ export interface CreatePostDto {
   readonly blogId: string
   readonly content: string
   readonly shortDescription: string
+  readonly blogName: string
 }
