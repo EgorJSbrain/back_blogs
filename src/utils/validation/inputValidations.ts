@@ -5,7 +5,7 @@ import {
   websiteUrlLengthValidation,
   websiteUrlValidation
 } from './validationRules'
-import { Error } from '../../constants/global'
+import { Error } from '../../types/global'
 
 export const transformErrors = (errors: FieldValidationError[]): Error[] => errors.map(error => ({
   field: error.path,

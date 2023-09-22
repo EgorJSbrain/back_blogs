@@ -9,6 +9,18 @@ import {
   URL_MIN_LENGTH,
   blogsErrorMessage
 } from '../../constants/blogs'
+import {
+  CONTENT_MAX_LENGTH,
+  CONTENT_MIN_LENGTH,
+  PostInputFields,
+  SHORT_DESCRIPTION_MAX_LENGTH,
+  SHORT_DESCRIPTION_MIN_LENGTH,
+  TITLE_MAX_LENGTH,
+  TITLE_MIN_LENGTH,
+  postsErrorMessage
+} from '../../constants/posts'
+
+// blogs
 
 export const blogNameValidation = body([BlogInputFields.name])
   .trim()
@@ -30,3 +42,20 @@ export const websiteUrlValidation = body([BlogInputFields.websiteUrl])
   .isLength({ min: DESCRIPTION_MIN_LENGTH, max: URL_MAX_LENGTH })
   .isURL()
   .withMessage(blogsErrorMessage.websiteUrl)
+
+// posts
+
+export const postTitleValidation = body([PostInputFields.title])
+  .trim()
+  .isLength({ min: TITLE_MIN_LENGTH, max: TITLE_MAX_LENGTH })
+  .withMessage(postsErrorMessage.titleLength)
+
+export const postDescriptionValidation = body([PostInputFields.shortDescription])
+  .trim()
+  .isLength({ min: SHORT_DESCRIPTION_MIN_LENGTH, max: SHORT_DESCRIPTION_MAX_LENGTH })
+  .withMessage(postsErrorMessage.descriptionLength)
+
+export const postContentValidation = body([PostInputFields.content])
+  .trim()
+  .isLength({ min: CONTENT_MIN_LENGTH, max: CONTENT_MAX_LENGTH })
+  .withMessage(postsErrorMessage.contentLength)

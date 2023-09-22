@@ -1,6 +1,8 @@
 import { CreateBlogDto } from '../dtos/blogs/create-blog.dto'
+import { CreatePostDto } from '../dtos/posts/create-post.dto'
 import { CreateVideoDto } from '../dtos/videos/create-video.dto'
 import { IBlog } from '../types/blogs'
+import { IPost } from '../types/posts'
 import { IVideo } from '../types/videos'
 
 export const generateNewVideo = (data: CreateVideoDto): IVideo => {
@@ -23,4 +25,12 @@ export const generateNewBlog = (data: CreateBlogDto): IBlog => ({
   name: data.name,
   description: data.description,
   websiteUrl: data.websiteUrl
+})
+
+export const generateNewPost = (data: CreatePostDto): IPost => ({
+  id: Number(new Date()).toString(),
+  blogId: data.blogId,
+  title: data.title,
+  content: data.content,
+  shortDescription: data.shortDescription
 })
