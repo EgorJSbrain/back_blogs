@@ -3,7 +3,6 @@ import { Router, Request, Response } from 'express'
 import { VideosService } from '../services/videos'
 import { HTTP_STATUSES } from '../constants/global'
 import { VideoInputFields } from '../constants/videos'
-import { inputValidation } from './utils'
 import {
   RequestWithBody,
   RequestWithParams,
@@ -12,6 +11,8 @@ import {
 import { IVideo } from '../types/videos'
 import { CreateVideoDto } from '../dtos/videos/create-video.dto'
 import { UpdateVideoDto } from '../dtos/videos/update-video.dto'
+import { FieldValidationError, Result, ValidationError, validationResult } from 'express-validator'
+import { VideoCreateValidation, VideoUpdateValidation, transformErrors } from '../utils/validation/inputValidations'
 
 export const videosRouter = Router({})
 
@@ -46,22 +47,24 @@ videosRouter.get(
 
 videosRouter.post(
   '/',
+  VideoCreateValidation(),
   async (req: RequestWithBody<CreateVideoDto>, res: Response) => {
     const { title, author, minAgeRestriction, canBeDownloaded, availableResolutions } = req.body
+
+    const resultValidation: Result<ValidationError> = validationResult(req)
+
+    if (!resultValidation.isEmpty()) {
+      return res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
+        errorsMessages: transformErrors(resultValidation.array({ onlyFirstError: true }) as FieldValidationError[])
+      })
+    }
+
     const creatingData = {
       [VideoInputFields.title]: title,
       [VideoInputFields.author]: author,
       [VideoInputFields.minAgeRestriction]: minAgeRestriction,
       [VideoInputFields.canBeDownloaded]: canBeDownloaded,
       [VideoInputFields.availableResolutions]: availableResolutions
-    }
-
-    const errors = inputValidation(creatingData)
-
-    if (errors?.length) {
-      return res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
-        errorsMessages: errors
-      })
     }
 
     const video = await VideosService.createVideo(creatingData)
@@ -76,6 +79,7 @@ videosRouter.post(
 
 videosRouter.put(
   '/:id',
+  VideoUpdateValidation(),
   async (
     req: RequestWithParamsAndBody<{ id: string }, UpdateVideoDto>,
     res: Response
@@ -100,52 +104,39 @@ videosRouter.put(
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
-    const updatedVideo = {
-      [VideoInputFields.title]: Object.prototype.hasOwnProperty.call(
-        req.body,
-        VideoInputFields.title
-      )
-        ? title || ''
-        : existedVideo?.title,
-      [VideoInputFields.author]: Object.prototype.hasOwnProperty.call(
-        req.body,
-        VideoInputFields.author
-      )
-        ? author || ''
-        : existedVideo?.author,
-      [VideoInputFields.minAgeRestriction]:
-        Object.prototype.hasOwnProperty.call(
-          req.body,
-          VideoInputFields.minAgeRestriction
-        )
-          ? minAgeRestriction
-          : existedVideo?.minAgeRestriction || null,
-      [VideoInputFields.canBeDownloaded]: Object.prototype.hasOwnProperty.call(
-        req.body,
-        VideoInputFields.canBeDownloaded
-      )
-        ? canBeDownloaded
-        : existedVideo?.canBeDownloaded,
-      [VideoInputFields.availableResolutions]: Object.prototype.hasOwnProperty.call(
-        req.body,
-        VideoInputFields.availableResolutions
-      )
-        ? availableResolutions
-        : existedVideo?.availableResolutions,
-      [VideoInputFields.publicationDate]: Object.prototype.hasOwnProperty.call(
-        req.body,
-        VideoInputFields.publicationDate
-      )
-        ? publicationDate
-        : existedVideo?.publicationDate
+    const resultValidation: Result<ValidationError> = validationResult(req)
+
+    if (!resultValidation.isEmpty()) {
+      return res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
+        errorsMessages: transformErrors(resultValidation.array({ onlyFirstError: true }) as FieldValidationError[])
+      })
     }
 
-    const errors = inputValidation(updatedVideo)
-
-    if (errors?.length) {
-      return res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
-        errorsMessages: errors
-      })
+    const updatedVideo = {
+      [VideoInputFields.title]: req.body[VideoInputFields.title]
+        ? title
+        : existedVideo?.title,
+      [VideoInputFields.author]: req.body[VideoInputFields.author]
+        ? author
+        : existedVideo?.author,
+      [VideoInputFields.minAgeRestriction]: req.body[
+        VideoInputFields.minAgeRestriction
+      ]
+        ? minAgeRestriction
+        : existedVideo?.minAgeRestriction || null,
+      [VideoInputFields.canBeDownloaded]: req.body[
+        VideoInputFields.canBeDownloaded
+      ]
+        ? canBeDownloaded
+        : existedVideo?.canBeDownloaded,
+      [VideoInputFields.availableResolutions]: req.body[
+        VideoInputFields.availableResolutions
+      ]
+        ? availableResolutions
+        : existedVideo?.availableResolutions,
+      [VideoInputFields.publicationDate]: req.body[VideoInputFields.publicationDate]
+        ? publicationDate
+        : existedVideo?.publicationDate
     }
 
     const video = await VideosService.updateVideo(Number(id), updatedVideo)

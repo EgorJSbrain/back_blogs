@@ -117,17 +117,17 @@ postsRouter.put(
 
     const updatedPost = {
       [PostInputFields.title]: PostInputFields.title in req.body
-        ? title ?? ''
+        ? title
         : existedPost?.title,
       [PostInputFields.content]: PostInputFields.content in req.body
-        ? content ?? ''
+        ? content
         : existedPost?.content,
       [PostInputFields.shortDescription]: PostInputFields.shortDescription in req.body
         ? shortDescription
-        : existedPost?.shortDescription ?? '',
+        : existedPost?.shortDescription,
       [PostInputFields.blogId]: PostInputFields.blogId in req.body
         ? blogId
-        : existedPost?.blogId ?? ''
+        : existedPost?.blogId
     }
 
     const blog = await PostsService.updatePost(id, updatedPost)

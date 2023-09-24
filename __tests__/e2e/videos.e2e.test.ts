@@ -38,8 +38,12 @@ describe('VIDEOS tests', () => {
   })
 
   it ('PUT - success updating video with correct data', async () => {
-    const creatingData = { title: 'some title', author: 'author name', availableResolutions: [VideoAvailableResolutions.P1440] }
-    const updatingData = { title: 'new title' }
+    const creatingData = {
+      title: 'some title',
+      author: 'author name',
+      availableResolutions: [VideoAvailableResolutions.P1440],
+    }
+    const updatingData = { title: 'new title', minAgeRestriction: 10 }
 
     const { entity: createdVideo } = await videosTestManager.createVideo(creatingData, HTTP_STATUSES.CREATED_201)
 
