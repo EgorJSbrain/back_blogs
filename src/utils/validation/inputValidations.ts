@@ -6,6 +6,12 @@ import {
   postContentValidation,
   postDescriptionValidation,
   postTitleValidation,
+  videoAgeRestrictionValidation,
+  videoAuthorValidation,
+  videoAvailableResolutionsValidation,
+  videoCanBeDownloadedValidation,
+  videoPublicationDateValidation,
+  videoTitleValidation,
   websiteUrlLengthValidation,
   websiteUrlValidation
 } from './validationRules'
@@ -28,4 +34,19 @@ export const PostsCreateUpdateValidation = (): ValidationChain[] => [
   postDescriptionValidation,
   postContentValidation,
   postBlogIdValidation
+]
+
+export const VideoCreateValidation = (): ValidationChain[] => [
+  videoTitleValidation,
+  videoAuthorValidation,
+  videoAvailableResolutionsValidation
+]
+
+export const VideoUpdateValidation = (): ValidationChain[] => [
+  videoTitleValidation,
+  videoAuthorValidation,
+  videoAgeRestrictionValidation,
+  videoAvailableResolutionsValidation,
+  videoCanBeDownloadedValidation,
+  videoPublicationDateValidation
 ]

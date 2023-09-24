@@ -20,6 +20,18 @@ import {
   TITLE_MIN_LENGTH,
   postsErrorMessage
 } from '../../constants/posts'
+import {
+  TITLE_MAX_LENGTH as VIDEO_TITLE_MAX_LENGTH,
+  TITLE_MIN_LENGTH as VIDEO_TITLE_MIN_LENGTH,
+  AUTHOR_MAX_LENGTH,
+  AUTHOR_MIN_LENGTH,
+  AGE_RESTRICTION_MAX,
+  AGE_RESTRICTION_MIN,
+  videoErrorMessage,
+  VideoInputFields,
+  videoAvailableResolutions,
+  VideoAvailableResolutions
+} from '../../constants/videos'
 import { BlogsService } from '../../services'
 
 // blogs
@@ -70,9 +82,70 @@ export const postBlogIdValidation = body([PostInputFields.blogId])
 
     if (!existedBlog) {
       return null
-    } else {
-      return value
     }
+
+    return value
   })
   .exists({ checkNull: true })
   .withMessage(postsErrorMessage.blogIdRequired)
+
+// videos
+
+export const videoTitleValidation = body([VideoInputFields.title])
+  .trim()
+  .isLength({ min: VIDEO_TITLE_MIN_LENGTH, max: VIDEO_TITLE_MAX_LENGTH })
+  .withMessage(videoErrorMessage.titleLength)
+
+export const videoAuthorValidation = body([
+  VideoInputFields.author
+])
+  .trim()
+  .isLength({
+    min: AUTHOR_MIN_LENGTH,
+    max: AUTHOR_MAX_LENGTH
+  })
+  .withMessage(videoErrorMessage.authorLength)
+
+export const videoAgeRestrictionValidation = body([VideoInputFields.minAgeRestriction])
+  .isFloat({ min: AGE_RESTRICTION_MIN, max: AGE_RESTRICTION_MAX })
+  .withMessage(videoErrorMessage.ageRestriction)
+
+export const videoAvailableResolutionsValidation = body([VideoInputFields.availableResolutions])
+  .customSanitizer(async (value: VideoAvailableResolutions[]) => {
+    const includeUnavailableResolution = value?.every((availableResolution) =>
+      videoAvailableResolutions.includes(availableResolution)
+    )
+
+    if (!includeUnavailableResolution) {
+      return null
+    }
+
+    return value
+  })
+  .exists({ checkNull: true })
+  .withMessage(videoErrorMessage.availableResolutions)
+
+export const videoCanBeDownloadedValidation = body([VideoInputFields.canBeDownloaded])
+  .customSanitizer(async (value) => {
+    if (value && typeof value !== 'boolean') {
+      return null
+    }
+
+    return value
+  })
+  .exists({ checkNull: true })
+  .withMessage(videoErrorMessage.canBeDownloaded)
+
+export const videoPublicationDateValidation = body([
+  VideoInputFields.publicationDate
+])
+  .trim()
+  .customSanitizer(async (value) => {
+    if (value && typeof value !== 'string') {
+      return null
+    }
+
+    return value
+  })
+  .exists({ checkNull: true })
+  .withMessage(videoErrorMessage.publicationDate)
