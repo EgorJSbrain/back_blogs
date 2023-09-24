@@ -139,7 +139,6 @@ export const videoCanBeDownloadedValidation = body([VideoInputFields.canBeDownlo
 export const videoPublicationDateValidation = body([
   VideoInputFields.publicationDate
 ])
-  .trim()
   .customSanitizer(async (value) => {
     if (value && typeof value !== 'string') {
       return null
