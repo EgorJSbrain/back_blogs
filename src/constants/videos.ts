@@ -1,7 +1,9 @@
-const TITLE_MAX_LENGTH = 40
-const AUTHOR_MAX_LENGTH = 20
-const AGE_RESTRICTION_MIN = 1
-const AGE_RESTRICTION_MAX = 18
+export const TITLE_MAX_LENGTH = 40
+export const TITLE_MIN_LENGTH = 3
+export const AUTHOR_MAX_LENGTH = 20
+export const AUTHOR_MIN_LENGTH = 3
+export const AGE_RESTRICTION_MAX = 18
+export const AGE_RESTRICTION_MIN = 1
 
 export enum VideoAvailableResolutions {
   P144 = 'P144',
@@ -34,11 +36,11 @@ export const videoAvailableResolutions = [
   VideoAvailableResolutions.P2160
 ]
 
-export const errorMessage = {
+export const videoErrorMessage = {
   title: 'Title is required field',
-  maxTitleLength: `Length of title shouldn't be more than ${TITLE_MAX_LENGTH} symbols`,
+  titleLength: `Length of title shouldn't be less than ${TITLE_MIN_LENGTH} more than ${TITLE_MAX_LENGTH} symbols`,
   author: 'Author is required field',
-  maxAuthorLength: `Length of author shouldn't be more than ${AUTHOR_MAX_LENGTH} symbols`,
+  authorLength: `Length of author shouldn't be more than ${AUTHOR_MAX_LENGTH} symbols`,
   availableResolutions: 'Available resolution include not supported format',
   availableResolutionsRequired: 'Available resolution is required field',
   ageRestriction: `Age should be more than ${AGE_RESTRICTION_MIN} and not more than ${AGE_RESTRICTION_MAX}`,
