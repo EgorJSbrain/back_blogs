@@ -1,14 +1,8 @@
 import { Router, Request, Response } from 'express'
-import {
-  FieldValidationError,
-  Result,
-  ValidationError,
-  validationResult
-} from 'express-validator'
 
 import { BlogsService, PostsService } from '../services'
-import { PostsCreateUpdateValidation, transformErrors } from '../utils/validation/inputValidations'
-import { authMiddleware } from '../middlewares'
+import { PostsCreateUpdateValidation } from '../utils/validation/inputValidations'
+import { authMiddleware, validationMiddleware } from '../middlewares'
 import { PostInputFields } from '../constants/posts'
 import { HTTP_STATUSES } from '../constants/global'
 import {
@@ -55,16 +49,9 @@ postsRouter.post(
   '/',
   authMiddleware,
   PostsCreateUpdateValidation(),
+  validationMiddleware,
   async (req: RequestWithBody<CreatePostDto>, res: Response) => {
     const { title, shortDescription, content, blogId } = req.body
-
-    const resultValidation: Result<ValidationError> = validationResult(req)
-
-    if (!resultValidation.isEmpty()) {
-      return res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
-        errorsMessages: transformErrors(resultValidation.array({ onlyFirstError: true }) as FieldValidationError[])
-      })
-    }
 
     const existedBlog = await BlogsService.getBlogById(blogId)
 
@@ -90,6 +77,7 @@ postsRouter.put(
   '/:id',
   authMiddleware,
   PostsCreateUpdateValidation(),
+  validationMiddleware,
   async (
     req: RequestWithParamsAndBody<{ id: string }, UpdatePostDto>,
     res: Response
@@ -105,14 +93,6 @@ postsRouter.put(
 
     if (!existedPost) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-    }
-
-    const resultValidation: Result<ValidationError> = validationResult(req)
-
-    if (!resultValidation.isEmpty()) {
-      return res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
-        errorsMessages: transformErrors(resultValidation.array({ onlyFirstError: true }) as FieldValidationError[])
-      })
     }
 
     const updatedPost = {

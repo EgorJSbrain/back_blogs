@@ -7,7 +7,7 @@ export const authMiddleware = (
   res: Response,
   next: NextFunction
 ): Response | undefined => {
-  if (checkAuthorziation(req.headers.authorization)) {
+  if (req.headers.authorization && checkAuthorziation(req.headers.authorization)) {
     next()
   } else {
     return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)

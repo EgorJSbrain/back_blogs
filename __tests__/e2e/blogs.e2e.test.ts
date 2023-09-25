@@ -65,9 +65,13 @@ describe('BLOGS tests', () => {
 
   it ('PUT - fail updating blog with incorrect id', async () => {
     const creatingData = { name: 'some name', description: 'author name', websiteUrl: 'https://www.google.pl/?hl=pl' }
-    const updatingData = { title: 'new title' }
 
-    await blogsTestManager.createBlog(creatingData, HTTP_STATUSES.CREATED_201)
+    const { entity: createdBlog} = await blogsTestManager.createBlog(creatingData, HTTP_STATUSES.CREATED_201)
+
+    const updatingData = {
+      ...createdBlog,
+      name: 'NEW NAME',
+    }
 
     await getRequest()
       .put(`${RouterPaths.blogs}/1`)
