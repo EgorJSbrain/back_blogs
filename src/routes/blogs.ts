@@ -3,6 +3,7 @@ import { Router, Request, Response } from 'express'
 import { BlogsService } from '../services'
 import { HTTP_STATUSES } from '../constants/global'
 import { BlogInputFields } from '../constants/blogs'
+import { validationMiddleware, authMiddleware } from '../middlewares'
 
 import {
   RequestWithBody,
@@ -13,14 +14,7 @@ import { IBlog } from '../types/blogs'
 import { CreateBlogDto } from '../dtos/blogs/create-blog.dto'
 import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
 
-import {
-  FieldValidationError,
-  Result,
-  ValidationError,
-  validationResult
-} from 'express-validator'
-import { BlogsCreateUpdateValidation, transformErrors } from '../utils/validation/inputValidations'
-import { authMiddleware } from '../middlewares'
+import { BlogsCreateUpdateValidation } from '../utils/validation/inputValidations'
 
 export const blogsRouter = Router({})
 
@@ -57,6 +51,7 @@ blogsRouter.post(
   '/',
   authMiddleware,
   BlogsCreateUpdateValidation(),
+  validationMiddleware,
   async (req: RequestWithBody<CreateBlogDto>, res: Response) => {
     const { name, description, websiteUrl } = req.body
 
@@ -66,18 +61,10 @@ blogsRouter.post(
       [BlogInputFields.websiteUrl]: websiteUrl
     }
 
-    const resultValidation: Result<ValidationError> = validationResult(req)
-
-    if (!resultValidation.isEmpty()) {
-      return res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
-        errorsMessages: transformErrors(resultValidation.array({ onlyFirstError: true }) as FieldValidationError[])
-      })
-    }
-
     const blog = await BlogsService.createBlog(creatingData)
 
     if (!blog) {
-      return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
     res.status(HTTP_STATUSES.CREATED_201).send(blog)
@@ -88,6 +75,7 @@ blogsRouter.put(
   '/:id',
   authMiddleware,
   BlogsCreateUpdateValidation(),
+  validationMiddleware,
   async (
     req: RequestWithParamsAndBody<{ id: string }, UpdateBlogDto>,
     res: Response
@@ -115,14 +103,6 @@ blogsRouter.put(
       [BlogInputFields.websiteUrl]: Object.prototype.hasOwnProperty.call(req.body, BlogInputFields.websiteUrl)
         ? websiteUrl
         : existedBlog?.websiteUrl ?? ''
-    }
-
-    const resultValidation: Result<ValidationError> = validationResult(req)
-
-    if (!resultValidation.isEmpty()) {
-      return res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
-        errorsMessages: transformErrors(resultValidation.array({ onlyFirstError: true }) as FieldValidationError[])
-      })
     }
 
     const blog = await BlogsService.updateBlog(id, updatedBlog)

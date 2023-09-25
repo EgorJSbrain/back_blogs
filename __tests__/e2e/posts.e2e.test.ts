@@ -90,11 +90,12 @@ describe('POSTS tests', () => {
       shortDescription: 'test description',
     }
 
+    const { entity: createdPost } = await postsTestManager.createPost(creatingData, HTTP_STATUSES.CREATED_201)
+
     const updatingData = {
+      ...createdPost,
       title: 'NEW TITLE',
     }
-
-    await postsTestManager.createPost(creatingData, HTTP_STATUSES.CREATED_201)
 
     await getRequest()
       .put(`${RouterPaths.posts}/1`)
