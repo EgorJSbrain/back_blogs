@@ -68,9 +68,13 @@ describe('VIDEOS tests', () => {
 
   it ('PUT - fail updating video with incorrect id', async () => {
     const creatingData = { title: 'some title', author: 'author name', availableResolutions: [VideoAvailableResolutions.P1440] }
-    const updatingData = { title: 'new title' }
 
-    await videosTestManager.createVideo(creatingData, HTTP_STATUSES.CREATED_201)
+    const { entity: createdVideo } = await videosTestManager.createVideo(creatingData, HTTP_STATUSES.CREATED_201)
+
+    const updatingData = {
+      ...createdVideo,
+      title: 'NEW TITLE',
+    }
 
     await getRequest()
       .put(`${RouterPaths.videos}/1`)
