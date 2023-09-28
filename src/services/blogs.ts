@@ -1,18 +1,17 @@
 import { DBfields } from '../db/constants'
-import { db } from '../db/db'
+import { getCollection } from '../db/mongo-db'
 import { generateNewBlog } from './utils'
+
 import { IBlog } from '../types/blogs'
 import { CreateBlogDto } from '../dtos/blogs/create-blog.dto'
 import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
 
+const blogsDB = getCollection<IBlog>(DBfields.blogs)
+
 export const BlogsService = {
   async getBlogs() {
     try {
-      if (!db<IBlog>().blogs) {
-        return []
-      }
-
-      const blogs = db<IBlog>().blogs
+      const blogs = await blogsDB.find({}).toArray()
 
       return blogs || []
     } catch {
@@ -22,11 +21,7 @@ export const BlogsService = {
 
   async getBlogById(id: string) {
     try {
-      if (!db<IBlog>().blogs) {
-        return null
-      }
-
-      const blog = db<IBlog>().blogs.find((item) => item.id === id)
+      const blog = await blogsDB.findOne({ id })
 
       return blog
     } catch {
@@ -38,13 +33,7 @@ export const BlogsService = {
     try {
       const createdBlog = generateNewBlog(data)
 
-      const existedBlogs = db<IBlog>().blogs
-
-      if (!existedBlogs) {
-        db(DBfields.blogs)
-      }
-
-      db<IBlog>().blogs.push(createdBlog)
+      await blogsDB.insertOne(createdBlog)
 
       return createdBlog
     } catch {
@@ -54,32 +43,9 @@ export const BlogsService = {
 
   async updateBlog(id: string, data: UpdateBlogDto) {
     try {
-      if (!db<IBlog>().blogs) {
-        return null
-      }
+      const response = await blogsDB.updateOne({ id }, { $set: data })
 
-      const blog = db<IBlog>().blogs.find((item) => item.id === id)
-
-      if (!blog) {
-        return null
-      }
-
-      const updatedBlog = {
-        ...blog,
-        ...data
-      }
-
-      const updatedBlogs = db<IBlog>().blogs.map((blog) => {
-        if (blog.id === id) {
-          return updatedBlog
-        } else {
-          return blog
-        }
-      })
-
-      db<IBlog>().blogs = updatedBlogs
-
-      return updatedBlog
+      return !!response.modifiedCount
     } catch {
       return null
     }
@@ -87,21 +53,9 @@ export const BlogsService = {
 
   async deleteBlog(id: string) {
     try {
-      if (!db<IBlog>().blogs) {
-        return null
-      }
+      const response = await blogsDB.deleteOne({ id })
 
-      const existedBlog = db<IBlog>().blogs.find((item) => item.id === id)
-
-      if (!existedBlog) {
-        return null
-      }
-
-      const blogs = db<IBlog>().blogs.filter((item) => item.id !== id)
-
-      db<IBlog>().blogs = blogs
-
-      return true
+      return !!response.deletedCount
     } catch {
       return null
     }
