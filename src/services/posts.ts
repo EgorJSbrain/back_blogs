@@ -1,18 +1,17 @@
 import { DBfields } from '../db/constants'
-import { db } from '../db/db'
+import { getCollection } from '../db/mongo-db'
 import { generateNewPost } from './utils'
+
 import { IPost } from '../types/posts'
 import { CreatePostDto } from '../dtos/posts/create-post.dto'
 import { UpdatePostDto } from '../dtos/posts/update-post.dto'
 
+const postsDB = getCollection<IPost>(DBfields.posts)
+
 export const PostsService = {
   async getPosts() {
     try {
-      if (!db<IPost>().posts) {
-        return []
-      }
-
-      const posts = db<IPost>().posts
+      const posts = await postsDB.find({}).toArray()
 
       return posts || []
     } catch {
@@ -22,11 +21,7 @@ export const PostsService = {
 
   async getPostById(id: string) {
     try {
-      if (!db<IPost>().posts) {
-        return null
-      }
-
-      const post = db<IPost>().posts.find((item) => item.id === id)
+      const post = await postsDB.findOne({ id })
 
       return post
     } catch {
@@ -38,13 +33,7 @@ export const PostsService = {
     try {
       const createdPost = generateNewPost(data)
 
-      const existedposts = db<IPost>().posts
-
-      if (!existedposts) {
-        db(DBfields.posts)
-      }
-
-      db<IPost>().posts.push(createdPost)
+      await postsDB.insertOne(createdPost)
 
       return createdPost
     } catch {
@@ -54,32 +43,9 @@ export const PostsService = {
 
   async updatePost(id: string, data: UpdatePostDto) {
     try {
-      if (!db<IPost>().posts) {
-        return null
-      }
+      const response = await postsDB.updateOne({ id }, { $set: data })
 
-      const post = db<IPost>().posts.find((item) => item.id === id)
-
-      if (!post) {
-        return null
-      }
-
-      const updatedPost = {
-        ...post,
-        ...data
-      }
-
-      const updatedPosts = db<IPost>().posts.map((post) => {
-        if (post.id === id) {
-          return updatedPost
-        } else {
-          return post
-        }
-      })
-
-      db<IPost>().posts = updatedPosts
-
-      return updatedPost
+      return !!response.modifiedCount
     } catch {
       return null
     }
@@ -87,21 +53,9 @@ export const PostsService = {
 
   async deletePost(id: string) {
     try {
-      if (!db<IPost>().posts) {
-        return null
-      }
+      const response = await postsDB.deleteOne({ id })
 
-      const existedPost = db<IPost>().posts.find((item) => item.id === id)
-
-      if (!existedPost) {
-        return null
-      }
-
-      const posts = db<IPost>().posts.filter((item) => item.id !== id)
-
-      db<IPost>().posts = posts
-
-      return true
+      return !!response.deletedCount
     } catch {
       return null
     }
