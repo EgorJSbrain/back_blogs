@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express'
 
-import { VideosService } from '../services/videos'
+import { VideosService } from '../services/videos-db'
 import { HTTP_STATUSES } from '../constants/global'
 import { VideoInputFields } from '../constants/videos'
 import { validationMiddleware } from '../middlewares/validationMiddleware'
@@ -125,13 +125,9 @@ videosRouter.put(
         : existedVideo?.publicationDate
     }
 
-    const video = await VideosService.updateVideo(Number(id), updatedVideo)
+    await VideosService.updateVideo(Number(id), updatedVideo)
 
-    if (!video) {
-      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-    }
-
-    res.status(HTTP_STATUSES.NO_CONTENT_204).send(video)
+    res.status(HTTP_STATUSES.NO_CONTENT_204)
   }
 )
 
@@ -141,6 +137,12 @@ videosRouter.delete(
     const { id } = req.params
 
     if (!id) {
+      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    }
+
+    const existedVideo = await VideosService.getVideoById(Number(id))
+
+    if (!existedVideo) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
