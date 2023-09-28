@@ -4,7 +4,7 @@ import { UpdateVideoDto } from '../dtos/videos/update-video.dto'
 import { IVideo } from '../types/videos'
 import { generateNewVideo } from './utils'
 
-const videosDB = client.db('studying-dev').collection<IVideo>('videos')
+const videosDB = client.db().collection<IVideo>('videos')
 
 export const VideosService = {
   async getVideos(): Promise<IVideo[]> {
