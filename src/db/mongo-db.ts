@@ -3,10 +3,11 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-export const client = new MongoClient(
-  process.env.MONGO_URL ??
-    `mongodb+srv://user:${process.env.DB_PASSWORD}@cluster0.gshiwjb.mongodb.net/studying-dev`
-)
+if (!process.env.MONGO_URL) {
+  throw new Error('DB does not exist')
+}
+
+export const client = new MongoClient(process.env.MONGO_URL)
 
 export const dbConnection = async (): Promise<undefined> => {
   try {
