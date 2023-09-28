@@ -1,18 +1,17 @@
 import { DBfields } from '../db/constants'
-import { db } from '../db/db'
+import { getCollection } from '../db/mongo-db'
+import { generateNewVideo } from './utils'
+
 import { CreateVideoDto } from '../dtos/videos/create-video.dto'
 import { UpdateVideoDto } from '../dtos/videos/update-video.dto'
 import { IVideo } from '../types/videos'
-import { generateNewVideo } from './utils'
+
+const videosDB = getCollection<IVideo>(DBfields.videos)
 
 export const VideosService = {
   async getVideos(): Promise<IVideo[]> {
     try {
-      if (!db<IVideo>().videos) {
-        return []
-      }
-
-      const videos = db<IVideo>().videos
+      const videos = await videosDB.find({}).toArray()
 
       return videos || []
     } catch {
@@ -22,11 +21,7 @@ export const VideosService = {
 
   async getVideoById(id: number): Promise<IVideo | undefined | null> {
     try {
-      if (!db<IVideo>().videos) {
-        return null
-      }
-
-      const video = db<IVideo>().videos.find((item) => item.id === id)
+      const video = await videosDB.findOne({ id })
 
       return video
     } catch {
@@ -38,13 +33,7 @@ export const VideosService = {
     try {
       const createdVideo = generateNewVideo(data)
 
-      const existedVideos = db<IVideo>().videos
-
-      if (!existedVideos) {
-        db(DBfields.videos)
-      }
-
-      db<IVideo>().videos.push(createdVideo)
+      await videosDB.insertOne(createdVideo)
 
       return createdVideo
     } catch {
@@ -54,32 +43,9 @@ export const VideosService = {
 
   async updateVideo(id: number, data: UpdateVideoDto) {
     try {
-      if (!db<IVideo>().videos) {
-        return null
-      }
+      const response = await videosDB.updateOne({ id }, { $set: data })
 
-      const video = db<IVideo>().videos.find((item) => item.id === id)
-
-      if (!video) {
-        return null
-      }
-
-      const updatedVideo = {
-        ...video,
-        ...data
-      }
-
-      const updatedVideos = db<IVideo>().videos.map((video) => {
-        if (video.id === id) {
-          return updatedVideo
-        } else {
-          return video
-        }
-      })
-
-      db<IVideo>().videos = updatedVideos
-
-      return updatedVideo
+      return !!response.modifiedCount
     } catch {
       return null
     }
@@ -87,21 +53,9 @@ export const VideosService = {
 
   async deleteVideo(id: number) {
     try {
-      if (!db<IVideo>().videos) {
-        return null
-      }
+      const response = await videosDB.deleteOne({ id })
 
-      const existedVideo = db<IVideo>().videos.find((item) => item.id === id)
-
-      if (!existedVideo) {
-        return null
-      }
-
-      const videos = db<IVideo>().videos.filter((item) => item.id !== id)
-
-      db<IVideo>().videos = videos
-
-      return true
+      return !!response.deletedCount
     } catch {
       return null
     }

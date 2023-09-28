@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express'
 
-import { VideosService } from '../services/videos-db'
+import { VideosService } from '../services/videos'
 import { HTTP_STATUSES } from '../constants/global'
 import { VideoInputFields } from '../constants/videos'
 import { validationMiddleware } from '../middlewares/validationMiddleware'
