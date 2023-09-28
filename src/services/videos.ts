@@ -6,7 +6,7 @@ import { IVideo } from '../types/videos'
 import { generateNewVideo } from './utils'
 
 export const VideosService = {
-  async getVideos() {
+  async getVideos(): Promise<IVideo[]> {
     try {
       if (!db<IVideo>().videos) {
         return []
@@ -20,7 +20,7 @@ export const VideosService = {
     }
   },
 
-  async getVideoById(id: number) {
+  async getVideoById(id: number): Promise<IVideo | undefined | null> {
     try {
       if (!db<IVideo>().videos) {
         return null
