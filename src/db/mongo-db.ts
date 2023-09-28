@@ -4,7 +4,7 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 if (!process.env.MONGO_URL) {
-  throw new Error('DB does not exist')
+  throw new Error('DB does not exist!')
 }
 
 export const client = new MongoClient(process.env.MONGO_URL)
