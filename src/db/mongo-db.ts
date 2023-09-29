@@ -23,3 +23,19 @@ export const dbConnection = async (): Promise<undefined> => {
     await client.close()
   }
 }
+
+export const dbDisconnect = async (): Promise<undefined> => {
+  await client.close()
+}
+
+export const dbClear = async (): Promise<undefined> => {
+  try {
+    const collections = await client.db().listCollections().toArray()
+
+    collections.forEach(async (collection) => {
+      await client.db(process.env.MONGO_DB_NAME).dropCollection(collection.name)
+    })
+  } catch {
+    await client.close()
+  }
+}
