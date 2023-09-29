@@ -62,6 +62,7 @@ blogsRouter.post(
     }
 
     const blog = await BlogsService.createBlog(creatingData)
+    console.log("----router ------blog:", blog)
 
     if (!blog) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
