@@ -37,7 +37,7 @@ export const PostsService = {
       const response = await postsDB.insertOne(generateNewPost(data))
 
       if (response.insertedId) {
-        post = await postsDB.findOne({ id: createdPost.id }, { projection: { _id: 0 } })
+        post = await postsDB.findOne({ id: createdPost.id })
       }
 
       return post
@@ -52,7 +52,7 @@ export const PostsService = {
       const response = await postsDB.updateOne({ id }, { $set: data })
 
       if (response.modifiedCount) {
-        post = await postsDB.findOne({ id }, { projection: { _id: 0 } })
+        post = await postsDB.findOne({ id })
       }
 
       return post

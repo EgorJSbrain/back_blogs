@@ -37,7 +37,7 @@ export const BlogsService = {
       const response = await blogsDB.insertOne(createdBlog)
 
       if (response.insertedId) {
-        blog = await blogsDB.findOne({ id: createdBlog.id }, { projection: { _id: 0 } })
+        blog = await blogsDB.findOne({ id: createdBlog.id })
       }
 
       return blog
@@ -53,7 +53,7 @@ export const BlogsService = {
       const response = await blogsDB.updateOne({ id }, { $set: data })
 
       if (response.modifiedCount) {
-        blog = await blogsDB.findOne({ id }, { projection: { _id: 0 } })
+        blog = await blogsDB.findOne({ id })
       }
 
       return blog
