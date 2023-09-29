@@ -6,5 +6,4 @@ export interface IPost {
   shortDescription: string
   blogName: string
   createdAt: string
-  isMembership: boolean
 }

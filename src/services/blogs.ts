@@ -11,7 +11,7 @@ const blogsDB = getCollection<IBlog>(DBfields.blogs)
 export const BlogsService = {
   async getBlogs() {
     try {
-      const blogs = await blogsDB.find({}).toArray()
+      const blogs = await blogsDB.find({}, { projection: { _id: 0 } }).toArray()
 
       return blogs || []
     } catch {
@@ -21,7 +21,7 @@ export const BlogsService = {
 
   async getBlogById(id: string) {
     try {
-      const blog = await blogsDB.findOne({ id })
+      const blog = await blogsDB.findOne({ id }, { projection: { _id: 0 } })
 
       return blog
     } catch {
