@@ -37,7 +37,7 @@ export const BlogsService = {
       const response = await blogsDB.insertOne(createdBlog)
 
       if (response.insertedId) {
-        blog = await blogsDB.findOne({ id: createdBlog.id })
+        blog = await blogsDB.findOne({ id: createdBlog.id }, { projection: { _id: 0 } })
       }
 
       return blog
