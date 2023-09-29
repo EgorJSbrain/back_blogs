@@ -31,14 +31,15 @@ export const BlogsService = {
 
   async createBlog(data: CreateBlogDto) {
     try {
-      let blog
+      let blog = null
       const createdBlog = generateNewBlog(data)
 
       const response = await blogsDB.insertOne(createdBlog)
 
-      if (response.insertedId) {
+      if (response.insertedId && createdBlog.id) {
         blog = await blogsDB.findOne({ id: createdBlog.id }, { projection: { _id: 0 } })
       }
+      console.log("----!------service", blog)
 
       return blog
     } catch {
