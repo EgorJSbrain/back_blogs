@@ -11,7 +11,7 @@ const blogsDB = getCollection<IBlog>(DBfields.blogs)
 export const BlogsService = {
   async getBlogs() {
     try {
-      const blogs = await blogsDB.find({}, { projection: { _id: 0 } }).toArray()
+      const blogs = await blogsDB.find({}, { projection: { _id: false } }).toArray()
 
       return blogs || []
     } catch {
@@ -21,7 +21,7 @@ export const BlogsService = {
 
   async getBlogById(id: string) {
     try {
-      const blog = await blogsDB.findOne({ id }, { projection: { _id: 0 } })
+      const blog = await blogsDB.findOne({ id }, { projection: { _id: false } })
 
       return blog
     } catch {
@@ -33,12 +33,15 @@ export const BlogsService = {
     try {
       let blog
       const createdBlog = generateNewBlog(data)
+      console.log("createdBlog:", createdBlog)
 
       const response = await blogsDB.insertOne(createdBlog)
 
       if (response.insertedId) {
-        blog = await blogsDB.findOne({ id: createdBlog.id })
+        blog = await blogsDB.findOne({ id: createdBlog.id }, { projection: { _id: 0 } })
       }
+
+      console.log("-----!_------blog:", blog)
 
       return blog
     } catch {
@@ -53,7 +56,7 @@ export const BlogsService = {
       const response = await blogsDB.updateOne({ id }, { $set: data })
 
       if (response.modifiedCount) {
-        blog = await blogsDB.findOne({ id })
+        blog = await blogsDB.findOne({ id }, { projection: { _id: 0 } })
       }
 
       return blog
