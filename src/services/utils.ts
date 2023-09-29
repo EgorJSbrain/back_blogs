@@ -24,7 +24,9 @@ export const generateNewBlog = (data: CreateBlogDto): IBlog => ({
   id: Number(new Date()).toString(),
   name: data.name,
   description: data.description,
-  websiteUrl: data.websiteUrl
+  websiteUrl: data.websiteUrl,
+  createdAt: new Date().toISOString(),
+  isMembership: false
 })
 
 export const generateNewPost = (data: CreatePostDto): IPost => ({
@@ -33,5 +35,7 @@ export const generateNewPost = (data: CreatePostDto): IPost => ({
   title: data.title,
   content: data.content,
   shortDescription: data.shortDescription,
-  blogName: data.blogName
+  blogName: data.blogName,
+  createdAt: new Date().toISOString(),
+  isMembership: false
 })
