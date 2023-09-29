@@ -39,7 +39,6 @@ export const BlogsService = {
       if (response.insertedId && createdBlog.id) {
         blog = await blogsDB.findOne({ id: createdBlog.id }, { projection: { _id: 0 } })
       }
-      console.log("----!------service", blog)
 
       return blog
     } catch {
