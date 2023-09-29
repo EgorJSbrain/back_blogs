@@ -24,7 +24,7 @@ export const generateNewBlog = (data: CreateBlogDto): IBlog => ({
   id: Number(new Date()).toString(),
   name: data.name,
   description: data.description,
-  // websiteUrl: data.websiteUrl,
+  websiteUrl: data.websiteUrl,
   createdAt: new Date().toISOString(),
   isMembership: false
 })
