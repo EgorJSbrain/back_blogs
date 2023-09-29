@@ -1,9 +1,9 @@
-import { db } from '../db/db'
+import { dbClear } from '../db/mongo-db'
 
 export const GlobalService = {
   async deleteAll() {
     try {
-      db(undefined, true)
+      await dbClear()
 
       return true
     } catch {

@@ -36,6 +36,5 @@ export const generateNewPost = (data: CreatePostDto): IPost => ({
   content: data.content,
   shortDescription: data.shortDescription,
   blogName: data.blogName,
-  createdAt: new Date().toISOString(),
-  isMembership: false
+  createdAt: new Date().toISOString()
 })

@@ -11,7 +11,7 @@ const postsDB = getCollection<IPost>(DBfields.posts)
 export const PostsService = {
   async getPosts() {
     try {
-      const posts = await postsDB.find({}).toArray()
+      const posts = await postsDB.find({}, { projection: { _id: 0 } }).toArray()
 
       return posts || []
     } catch {
@@ -21,7 +21,7 @@ export const PostsService = {
 
   async getPostById(id: string) {
     try {
-      const post = await postsDB.findOne({ id })
+      const post = await postsDB.findOne({ id }, { projection: { _id: 0 } })
 
       return post
     } catch {
