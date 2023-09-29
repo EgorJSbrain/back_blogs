@@ -11,7 +11,7 @@ const postsDB = getCollection<IPost>(DBfields.posts)
 export const PostsService = {
   async getPosts() {
     try {
-      const posts = await postsDB.find({}).toArray()
+      const posts = await postsDB.find({}, { projection: { _id: 0 } }).toArray()
 
       return posts || []
     } catch {
@@ -21,7 +21,7 @@ export const PostsService = {
 
   async getPostById(id: string) {
     try {
-      const post = await postsDB.findOne({ id })
+      const post = await postsDB.findOne({ id }, { projection: { _id: 0 } })
 
       return post
     } catch {
@@ -37,7 +37,7 @@ export const PostsService = {
       const response = await postsDB.insertOne(generateNewPost(data))
 
       if (response.insertedId) {
-        post = await postsDB.findOne({ id: createdPost.id }, { projection: { _id: 0 } })
+        post = await postsDB.findOne({ id: createdPost.id })
       }
 
       return post
@@ -52,7 +52,7 @@ export const PostsService = {
       const response = await postsDB.updateOne({ id }, { $set: data })
 
       if (response.modifiedCount) {
-        post = await postsDB.findOne({ id }, { projection: { _id: 0 } })
+        post = await postsDB.findOne({ id })
       }
 
       return post
