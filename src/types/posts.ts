@@ -5,4 +5,6 @@ export interface IPost {
   content: string
   shortDescription: string
   blogName: string
+  createdAt: string
+  isMembership: boolean
 }
