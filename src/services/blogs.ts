@@ -31,11 +31,16 @@ export const BlogsService = {
 
   async createBlog(data: CreateBlogDto) {
     try {
+      let blog
       const createdBlog = generateNewBlog(data)
 
-      await blogsDB.insertOne(createdBlog)
+      const response = await blogsDB.insertOne(createdBlog)
 
-      return createdBlog
+      if (response.insertedId) {
+        blog = await blogsDB.findOne({ id: createdBlog.id })
+      }
+
+      return blog
     } catch {
       return null
     }
@@ -43,9 +48,15 @@ export const BlogsService = {
 
   async updateBlog(id: string, data: UpdateBlogDto) {
     try {
+      let blog
+
       const response = await blogsDB.updateOne({ id }, { $set: data })
 
-      return !!response.modifiedCount
+      if (response.modifiedCount) {
+        blog = await blogsDB.findOne({ id })
+      }
+
+      return blog
     } catch {
       return null
     }
