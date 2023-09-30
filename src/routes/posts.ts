@@ -110,13 +110,13 @@ postsRouter.put(
         : existedPost?.blogId
     }
 
-    const blog = await PostsService.updatePost(id, updatedPost)
+    const post = await PostsService.updatePost(id, updatedPost)
 
-    if (!blog) {
+    if (!post) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
-    res.status(HTTP_STATUSES.NO_CONTENT_204).send(blog)
+    res.status(HTTP_STATUSES.OK_200).send(post)
   }
 )
 
