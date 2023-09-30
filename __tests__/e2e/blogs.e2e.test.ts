@@ -53,7 +53,7 @@ describe('BLOGS tests', () => {
       .put(`${RouterPaths.blogs}/${createdBlog.id}`)
       .set({ Authorization: `Basic ${authUser.password}` })
       .send(data)
-      .expect(HTTP_STATUSES.OK_200)
+      .expect(HTTP_STATUSES.NO_CONTENT_204)
 
     const existedBlog = await getRequest().get(`${RouterPaths.blogs}/${createdBlog.id}`).expect(HTTP_STATUSES.OK_200)
     const updatedBlog = {
