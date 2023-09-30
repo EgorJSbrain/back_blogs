@@ -22,7 +22,7 @@ blogsRouter.get('/', async (_: Request, res: Response<IBlog[]>) => {
   const blogs = await BlogsService.getBlogs()
 
   if (!blogs) {
-    return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+    return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
   }
 
   res.status(HTTP_STATUSES.OK_200).send(blogs)
@@ -111,7 +111,7 @@ blogsRouter.put(
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
-    res.status(HTTP_STATUSES.NO_CONTENT_204).send(blog)
+    res.status(HTTP_STATUSES.OK_200).send(blog)
   }
 )
 

@@ -125,9 +125,13 @@ videosRouter.put(
         : existedVideo?.publicationDate
     }
 
-    await VideosService.updateVideo(Number(id), updatedVideo)
+    const video = await VideosService.updateVideo(Number(id), updatedVideo)
 
-    res.status(HTTP_STATUSES.NO_CONTENT_204)
+    if (!video) {
+      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    }
+
+    res.status(HTTP_STATUSES.OK_200).send(video)
   }
 )
 
