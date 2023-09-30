@@ -3,12 +3,13 @@ import { app } from '../../src/app'
 import { HTTP_STATUSES, RouterPaths } from '../../src/constants/global'
 import { videosTestManager } from '../utils/videosTestManager'
 import { VideoAvailableResolutions } from '../../src/constants/videos'
+import { dbConnection, dbClear, dbDisconnect } from '../../src/db/mongo-db'
 
 const getRequest = () => request(app)
 
 describe('VIDEOS tests', () => {
   beforeAll(async () => {
-    await getRequest().delete(`${RouterPaths.testing}/data`)
+    await dbConnection()
   })
 
   it('GET - success - get empty array of videos', async () => {
@@ -32,9 +33,9 @@ describe('VIDEOS tests', () => {
 
     const { entity } = await videosTestManager.createVideo(data, HTTP_STATUSES.CREATED_201)
 
-    const response = await getRequest().get(RouterPaths.videos).expect(HTTP_STATUSES.OK_200)
+    const response = await getRequest().get(`${RouterPaths.videos}/${entity.id}`).expect(HTTP_STATUSES.OK_200)
 
-    expect([entity]).toEqual(response.body)
+    expect(entity).toEqual(response.body)
   })
 
   it ('PUT - success updating video with correct data', async () => {
@@ -43,7 +44,7 @@ describe('VIDEOS tests', () => {
       author: 'author name',
       availableResolutions: [VideoAvailableResolutions.P1440],
     }
-    const updatingData = { title: 'new title', minAgeRestriction: 10 }
+    const updatingData = { title: 'NEW TITLE', minAgeRestriction: 10 }
 
     const { entity: createdVideo } = await videosTestManager.createVideo(creatingData, HTTP_STATUSES.CREATED_201)
 
@@ -55,7 +56,7 @@ describe('VIDEOS tests', () => {
     await getRequest()
       .put(`${RouterPaths.videos}/${createdVideo.id}`)
       .send(data)
-      .expect(HTTP_STATUSES.NO_CONTENT_204)
+      .expect(HTTP_STATUSES.OK_200)
 
     const existedVideo = await getRequest().get(`${RouterPaths.videos}/${createdVideo.id}`).expect(HTTP_STATUSES.OK_200)
     const updatedVideo = {
@@ -74,6 +75,7 @@ describe('VIDEOS tests', () => {
     const updatingData = {
       ...createdVideo,
       title: 'NEW TITLE',
+      minAgeRestriction: 11,
     }
 
     await getRequest()
@@ -100,5 +102,14 @@ describe('VIDEOS tests', () => {
     await getRequest()
       .delete(`${RouterPaths.videos}/1`)
       .expect(HTTP_STATUSES.NOT_FOUND_404)
+  })
+
+  afterEach(async () => {
+    await dbClear()
+  })
+
+  afterAll(async () => {
+    await dbClear()
+    await dbDisconnect()
   })
 })

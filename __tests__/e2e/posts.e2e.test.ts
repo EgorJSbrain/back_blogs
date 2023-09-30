@@ -4,12 +4,13 @@ import { HTTP_STATUSES, RouterPaths } from '../../src/constants/global'
 import { postsTestManager } from '../utils/postsTestManager'
 import { blogsTestManager } from '../utils/blogsTestManager'
 import { authUser } from '../../src/db/db'
+import { dbClear, dbConnection, dbDisconnect } from '../../src/db/mongo-db'
 
 const getRequest = () => request(app)
 
 describe('POSTS tests', () => {
   beforeAll(async () => {
-    await getRequest().delete(`${RouterPaths.testing}/data`)
+    await dbConnection()
   })
 
   it('GET - success - get empty array of posts', async () => {
@@ -45,9 +46,9 @@ describe('POSTS tests', () => {
 
     const { entity } = await postsTestManager.createPost(data, HTTP_STATUSES.CREATED_201)
 
-    const response = await getRequest().get(RouterPaths.posts).expect(HTTP_STATUSES.OK_200)
+    const response = await getRequest().get(`${RouterPaths.posts}/${entity.id}`).expect(HTTP_STATUSES.OK_200)
 
-    expect([entity]).toEqual(response.body)
+    expect(entity).toEqual(response.body)
   })
 
   it ('PUT - success updating post with correct data', async () => {
@@ -72,7 +73,7 @@ describe('POSTS tests', () => {
       .put(`${RouterPaths.posts}/${createdPost.id}`)
       .set({ Authorization: `Basic ${authUser.password}` })
       .send(data)
-      .expect(HTTP_STATUSES.NO_CONTENT_204)
+      .expect(HTTP_STATUSES.OK_200)
 
     const existedPost = await getRequest().get(`${RouterPaths.posts}/${createdPost.id}`).expect(HTTP_STATUSES.OK_200)
     const updatedPost = {
@@ -132,5 +133,14 @@ describe('POSTS tests', () => {
       .delete(`${RouterPaths.posts}/1`)
       .set({ Authorization: `Basic ${authUser.password}` })
       .expect(HTTP_STATUSES.NOT_FOUND_404)
+  })
+
+  afterEach(async () => {
+    await dbClear()
+  })
+
+  afterAll(async () => {
+    await dbClear()
+    await dbDisconnect()
   })
 })

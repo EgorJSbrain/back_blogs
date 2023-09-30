@@ -3,12 +3,13 @@ import { app } from '../../src/app'
 import { HTTP_STATUSES, RouterPaths } from '../../src/constants/global'
 import { blogsTestManager } from '../utils/blogsTestManager'
 import { authUser } from '../../src/db/db'
+import { dbConnection, dbClear, dbDisconnect } from '../../src/db/mongo-db'
 
 const getRequest = () => request(app)
 
 describe('BLOGS tests', () => {
   beforeAll(async () => {
-    await getRequest().delete(`${RouterPaths.testing}/data`)
+    await dbConnection()
   })
 
   it('GET - success - get empty array of blogs', async () => {
@@ -20,7 +21,7 @@ describe('BLOGS tests', () => {
   })
 
   it ('POST - fail - creating blog with incorrect data', async () => {
-    const data = { name: '', description: 'author name', websiteUrl: 'https://www.google.pl/?hl=pl' }
+    const data = { name: '', description: 'author name', websiteUrl: 'https://www.google.pl' }
 
     await blogsTestManager.createBlog(data, HTTP_STATUSES.BAD_REQUEST_400)
 
@@ -28,17 +29,17 @@ describe('BLOGS tests', () => {
   })
 
   it ('POST - success - creating blog with correct data', async () => {
-    const data = { name: 'some name', description: 'author name', websiteUrl: 'https://www.google.pl/?hl=pl' }
+    const data = { name: 'some name', description: 'author name', websiteUrl: 'https://www.google.pl' }
 
     const { entity } = await blogsTestManager.createBlog(data, HTTP_STATUSES.CREATED_201)
 
-    const response = await getRequest().get(RouterPaths.blogs).expect(HTTP_STATUSES.OK_200)
+    const response = await getRequest().get(`${RouterPaths.blogs}/${entity.id}`).expect(HTTP_STATUSES.OK_200)
 
-    expect([entity]).toEqual(response.body)
+    expect(entity).toEqual(response.body)
   })
 
   it ('PUT - success updating blog with correct data', async () => {
-    const creatingData = { name: 'some name', description: 'author name', websiteUrl: 'https://www.google.pl/?hl=pl' }
+    const creatingData = { name: 'some name', description: 'author name', websiteUrl: 'https://www.google.pl' }
     const updatingData = { name: 'new NAME' }
 
     const { entity: createdBlog } = await blogsTestManager.createBlog(creatingData, HTTP_STATUSES.CREATED_201)
@@ -52,7 +53,7 @@ describe('BLOGS tests', () => {
       .put(`${RouterPaths.blogs}/${createdBlog.id}`)
       .set({ Authorization: `Basic ${authUser.password}` })
       .send(data)
-      .expect(HTTP_STATUSES.NO_CONTENT_204)
+      .expect(HTTP_STATUSES.OK_200)
 
     const existedBlog = await getRequest().get(`${RouterPaths.blogs}/${createdBlog.id}`).expect(HTTP_STATUSES.OK_200)
     const updatedBlog = {
@@ -64,7 +65,7 @@ describe('BLOGS tests', () => {
   })
 
   it ('PUT - fail updating blog with incorrect id', async () => {
-    const creatingData = { name: 'some name', description: 'author name', websiteUrl: 'https://www.google.pl/?hl=pl' }
+    const creatingData = { name: 'some name', description: 'author name', websiteUrl: 'https://www.google.pl' }
 
     const { entity: createdBlog} = await blogsTestManager.createBlog(creatingData, HTTP_STATUSES.CREATED_201)
 
@@ -81,7 +82,7 @@ describe('BLOGS tests', () => {
   })
 
   it ('DELETE - success delete blog with correct id', async () => {
-    const creatingData = { name: 'some name', description: 'author name', websiteUrl: 'https://www.google.pl/?hl=pl' }
+    const creatingData = { name: 'some name', description: 'author name', websiteUrl: 'https://www.google.pl' }
 
     const { entity } = await blogsTestManager.createBlog(creatingData, HTTP_STATUSES.CREATED_201)
 
@@ -92,7 +93,7 @@ describe('BLOGS tests', () => {
   })
 
   it ('DELETE - fail delete blog with incorrect id', async () => {
-    const creatingData = { name: 'some name', description: 'author name', websiteUrl: 'https://www.google.pl/?hl=pl' }
+    const creatingData = { name: 'some name', description: 'author name', websiteUrl: 'https://www.google.pl' }
 
     await blogsTestManager.createBlog(creatingData, HTTP_STATUSES.CREATED_201)
 
@@ -100,5 +101,14 @@ describe('BLOGS tests', () => {
       .delete(`${RouterPaths.blogs}/1`)
       .set({ Authorization: `Basic ${authUser.password}` })
       .expect(HTTP_STATUSES.NOT_FOUND_404)
+  })
+
+  afterEach(async () => {
+    await dbClear()
+  })
+
+  afterAll(async () => {
+    await dbClear()
+    await dbDisconnect()
   })
 })

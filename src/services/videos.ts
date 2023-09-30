@@ -11,7 +11,7 @@ const videosDB = getCollection<IVideo>(DBfields.videos)
 export const VideosService = {
   async getVideos(): Promise<IVideo[]> {
     try {
-      const videos = await videosDB.find({}).toArray()
+      const videos = await videosDB.find({}, { projection: { _id: 0 } }).toArray()
 
       return videos || []
     } catch {
@@ -21,7 +21,7 @@ export const VideosService = {
 
   async getVideoById(id: number): Promise<IVideo | undefined | null> {
     try {
-      const video = await videosDB.findOne({ id })
+      const video = await videosDB.findOne({ id }, { projection: { _id: 0 } })
 
       return video
     } catch {
@@ -31,11 +31,16 @@ export const VideosService = {
 
   async createVideo(data: CreateVideoDto) {
     try {
+      let video = null
       const createdVideo = generateNewVideo(data)
 
-      await videosDB.insertOne(createdVideo)
+      const response = await videosDB.insertOne(createdVideo)
 
-      return createdVideo
+      if (response.insertedId && createdVideo.id) {
+        video = await videosDB.findOne({ id: createdVideo.id }, { projection: { _id: 0 } })
+      }
+
+      return video
     } catch {
       return null
     }
@@ -43,9 +48,15 @@ export const VideosService = {
 
   async updateVideo(id: number, data: UpdateVideoDto) {
     try {
+      let video
+
       const response = await videosDB.updateOne({ id }, { $set: data })
 
-      return !!response.modifiedCount
+      if (response.modifiedCount) {
+        video = await videosDB.findOne({ id }, { projection: { _id: 0 } })
+      }
+
+      return video
     } catch {
       return null
     }
