@@ -56,7 +56,7 @@ describe('VIDEOS tests', () => {
     await getRequest()
       .put(`${RouterPaths.videos}/${createdVideo.id}`)
       .send(data)
-      .expect(HTTP_STATUSES.OK_200)
+      .expect(HTTP_STATUSES.NO_CONTENT_204)
 
     const existedVideo = await getRequest().get(`${RouterPaths.videos}/${createdVideo.id}`).expect(HTTP_STATUSES.OK_200)
     const updatedVideo = {
