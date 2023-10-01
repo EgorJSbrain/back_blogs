@@ -36,10 +36,10 @@ export const PostsRepository = {
         .toArray()
 
       return {
+        pagesCount,
         page: pageNumber,
         pageSize,
         totalCount: count,
-        pagesCount,
         items: posts
       }
     } catch {
