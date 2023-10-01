@@ -35,7 +35,7 @@ videosRouter.get(
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
-    const video = await VideosService.getVideoById(Number(id))
+    const video = await VideosService.getVideoById(id)
 
     if (!video) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -92,7 +92,7 @@ videosRouter.put(
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
-    const existedVideo = await VideosService.getVideoById(Number(id))
+    const existedVideo = await VideosService.getVideoById(id)
 
     if (!existedVideo) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -125,7 +125,7 @@ videosRouter.put(
         : existedVideo?.publicationDate
     }
 
-    const video = await VideosService.updateVideo(Number(id), updatedVideo)
+    const video = await VideosService.updateVideo(id, updatedVideo)
 
     if (!video) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -144,13 +144,13 @@ videosRouter.delete(
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
-    const existedVideo = await VideosService.getVideoById(Number(id))
+    const existedVideo = await VideosService.getVideoById(id)
 
     if (!existedVideo) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
-    const response = await VideosService.deleteVideo(Number(id))
+    const response = await VideosService.deleteVideo(id)
 
     if (!response) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)

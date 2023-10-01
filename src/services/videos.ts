@@ -1,74 +1,30 @@
-import { DBfields } from '../db/constants'
-import { getCollection } from '../db/mongo-db'
 import { generateNewVideo } from './utils'
+import { VideosRepository } from '../repositories/videos'
 
 import { CreateVideoDto } from '../dtos/videos/create-video.dto'
 import { UpdateVideoDto } from '../dtos/videos/update-video.dto'
 import { IVideo } from '../types/videos'
 
-const videosDB = getCollection<IVideo>(DBfields.videos)
-
 export const VideosService = {
   async getVideos(): Promise<IVideo[]> {
-    try {
-      const videos = await videosDB.find({}, { projection: { _id: 0 } }).toArray()
-
-      return videos || []
-    } catch {
-      return []
-    }
+    return await VideosRepository.getVideos()
   },
 
-  async getVideoById(id: number): Promise<IVideo | undefined | null> {
-    try {
-      const video = await videosDB.findOne({ id }, { projection: { _id: 0 } })
-
-      return video
-    } catch {
-      return null
-    }
+  async getVideoById(id: string): Promise<IVideo | undefined | null> {
+    return await VideosRepository.getVideoById(id)
   },
 
   async createVideo(data: CreateVideoDto) {
-    try {
-      let video = null
-      const createdVideo = generateNewVideo(data)
+    const createdVideo = generateNewVideo(data)
 
-      const response = await videosDB.insertOne(createdVideo)
-
-      if (response.insertedId && createdVideo.id) {
-        video = await videosDB.findOne({ id: createdVideo.id }, { projection: { _id: 0 } })
-      }
-
-      return video
-    } catch {
-      return null
-    }
+    return await VideosRepository.createVideo(createdVideo)
   },
 
-  async updateVideo(id: number, data: UpdateVideoDto) {
-    try {
-      let video
-
-      const response = await videosDB.updateOne({ id }, { $set: data })
-
-      if (response.modifiedCount) {
-        video = await videosDB.findOne({ id }, { projection: { _id: 0 } })
-      }
-
-      return video
-    } catch {
-      return null
-    }
+  async updateVideo(id: string, data: UpdateVideoDto) {
+    return await VideosRepository.updateVideo(id, data)
   },
 
-  async deleteVideo(id: number) {
-    try {
-      const response = await videosDB.deleteOne({ id })
-
-      return !!response.deletedCount
-    } catch {
-      return null
-    }
+  async deleteVideo(id: string) {
+    return await VideosRepository.deleteVideo(id)
   }
 }
