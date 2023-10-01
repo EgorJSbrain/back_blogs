@@ -3,17 +3,53 @@ import { getCollection } from '../db/mongo-db'
 
 import { IPost } from '../types/posts'
 import { UpdatePostDto } from '../dtos/posts/update-post.dto'
+import { RequestParams, ResponseBody } from '../types/global'
+import { SortDirections } from '../constants/global'
 
 const postsDB = getCollection<IPost>(DBfields.posts)
 
 export const PostsRepository = {
-  async getPosts() {
+  async getPosts(params: RequestParams): Promise<ResponseBody<IPost>> {
     try {
-      const posts = await postsDB.find({}, { projection: { _id: 0 } }).toArray()
+      const {
+        sortBy = 'createdAt',
+        sortDirection = SortDirections.asc,
+        pageNumber = 1,
+        pageSize = 10
+      } = params
 
-      return posts || []
+      const sort: any = {}
+
+      if (sortBy && sortDirection) {
+        sort[sortBy] = sortDirection === SortDirections.asc ? 1 : -1
+      }
+
+      const skip = (pageNumber - 1) * pageSize
+      const count = await postsDB.estimatedDocumentCount()
+      const pagesCount = Math.ceil(count / pageSize)
+
+      const posts = await postsDB
+        .find({}, { projection: { _id: false } })
+        .sort(sort)
+        .skip(skip)
+        .limit(Number(pageSize))
+        .toArray()
+
+      return {
+        page: pageNumber,
+        pageSize,
+        count,
+        pagesCount,
+        items: posts
+      }
     } catch {
-      return []
+      return {
+        page: 1,
+        pageSize: 10,
+        count: 0,
+        pagesCount: 0,
+        items: []
+      }
     }
   },
 

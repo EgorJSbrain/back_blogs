@@ -3,10 +3,11 @@ import { generateNewPost } from './utils'
 import { CreatePostDto } from '../dtos/posts/create-post.dto'
 import { UpdatePostDto } from '../dtos/posts/update-post.dto'
 import { PostsRepository } from '../repositories'
+import { RequestParams } from '../types/global'
 
 export const PostsService = {
-  async getPosts() {
-    return await PostsRepository.getPosts()
+  async getPosts(params: RequestParams) {
+    return await PostsRepository.getPosts(params)
   },
 
   async getPostById(id: string) {

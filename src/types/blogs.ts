@@ -1,3 +1,5 @@
+import { RequestParams } from './global'
+
 export interface IBlog {
   id: string
   name: string
@@ -5,4 +7,8 @@ export interface IBlog {
   websiteUrl: string
   createdAt: string
   isMembership: boolean
+}
+
+export type BlogsRequestParams = RequestParams & {
+  searchNameTerm?: string
 }
