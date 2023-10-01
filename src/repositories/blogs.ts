@@ -1,19 +1,60 @@
 import { DBfields } from '../db/constants'
 import { getCollection } from '../db/mongo-db'
 
-import { IBlog } from '../types/blogs'
+import { BlogsRequestParams, IBlog } from '../types/blogs'
 import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
+import { SortDirections } from '../constants/global'
+import { ResponseBody } from '../types/global'
 
 const blogsDB = getCollection<IBlog>(DBfields.blogs)
 
 export const BlogsRepository = {
-  async getBlogs() {
+  async getBlogs(params: BlogsRequestParams): Promise<ResponseBody<IBlog>> {
     try {
-      const blogs = await blogsDB.find({}, { projection: { _id: false } }).toArray()
+      const {
+        searchNameTerm,
+        sortBy = 'createdAt',
+        sortDirection = SortDirections.asc,
+        pageNumber = 1,
+        pageSize = 10
+      } = params
+      const filter: any = {}
+      const sort: any = {}
 
-      return blogs || []
+      if (searchNameTerm) {
+        filter.name = { $regex: searchNameTerm, $options: 'i' }
+      }
+
+      if (sortBy && sortDirection) {
+        sort[sortBy] = sortDirection === SortDirections.asc ? 1 : -1
+      }
+
+      const skip = (pageNumber - 1) * pageSize
+      const count = await blogsDB.estimatedDocumentCount()
+      const pagesCount = Math.ceil(count / pageSize)
+
+      const blogs = await blogsDB
+        .find(filter, { projection: { _id: false } })
+        .sort(sort)
+        .skip(skip)
+        .limit(Number(pageSize))
+        .toArray()
+
+      return {
+        page: pageNumber,
+        pageSize,
+        count,
+        pagesCount,
+        items: blogs
+      }
     } catch {
-      return []
+      return {
+        page: 1,
+        pageSize: 10,
+        count: 0,
+        pagesCount: 0,
+        items: []
+      }
     }
   },
 

@@ -3,10 +3,11 @@ import { BlogsRepository } from '../repositories'
 
 import { CreateBlogDto } from '../dtos/blogs/create-blog.dto'
 import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
+import { BlogsRequestParams } from '../types/blogs'
 
 export const BlogsService = {
-  async getBlogs() {
-    return await BlogsRepository.getBlogs()
+  async getBlogs(params: BlogsRequestParams) {
+    return await BlogsRepository.getBlogs(params)
   },
 
   async getBlogById(id: string) {

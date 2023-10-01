@@ -14,3 +14,8 @@ export const RouterPaths = {
   posts: '/posts',
   testing: '/testing'
 }
+
+export enum SortDirections {
+  asc = 'asc',
+  desc = 'desc'
+}

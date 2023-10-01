@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express'
+import { Router, Response } from 'express'
 
 import { BlogsService } from '../services'
 import { HTTP_STATUSES } from '../constants/global'
@@ -8,9 +8,10 @@ import { validationMiddleware, authMiddleware } from '../middlewares'
 import {
   RequestWithBody,
   RequestWithParams,
-  RequestWithParamsAndBody
+  RequestWithParamsAndBody,
+  ResponseBody
 } from '../types/global'
-import { IBlog } from '../types/blogs'
+import { BlogsRequestParams, IBlog } from '../types/blogs'
 import { CreateBlogDto } from '../dtos/blogs/create-blog.dto'
 import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
 
@@ -18,15 +19,18 @@ import { BlogsCreateUpdateValidation } from '../utils/validation/inputValidation
 
 export const blogsRouter = Router({})
 
-blogsRouter.get('/', async (_: Request, res: Response<IBlog[]>) => {
-  const blogs = await BlogsService.getBlogs()
+blogsRouter.get(
+  '/',
+  async (req: RequestWithParams<BlogsRequestParams>, res: Response<ResponseBody<IBlog>>) => {
+    const blogs = await BlogsService.getBlogs(req.query)
 
-  if (!blogs) {
-    return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+    if (!blogs) {
+      return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+    }
+
+    res.status(HTTP_STATUSES.OK_200).send(blogs)
   }
-
-  res.status(HTTP_STATUSES.OK_200).send(blogs)
-})
+)
 
 blogsRouter.get(
   '/:id',

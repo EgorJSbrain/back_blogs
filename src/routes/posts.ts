@@ -1,4 +1,4 @@
-import { Router, Request, Response } from 'express'
+import { Router, Response } from 'express'
 
 import { BlogsService, PostsService } from '../services'
 import { PostsCreateUpdateValidation } from '../utils/validation/inputValidations'
@@ -6,9 +6,11 @@ import { authMiddleware, validationMiddleware } from '../middlewares'
 import { PostInputFields } from '../constants/posts'
 import { HTTP_STATUSES } from '../constants/global'
 import {
+  RequestParams,
   RequestWithBody,
   RequestWithParams,
-  RequestWithParamsAndBody
+  RequestWithParamsAndBody,
+  ResponseBody
 } from '../types/global'
 import { IPost } from '../types/posts'
 import { CreatePostDto } from '../dtos/posts/create-post.dto'
@@ -16,15 +18,18 @@ import { UpdatePostDto } from '../dtos/posts/update-post.dto'
 
 export const postsRouter = Router({})
 
-postsRouter.get('/', async (_: Request, res: Response<IPost[]>) => {
-  const posts = await PostsService.getPosts()
+postsRouter.get(
+  '/',
+  async (req: RequestWithParams<RequestParams>, res: Response<ResponseBody<IPost>>) => {
+    const posts = await PostsService.getPosts(req.query)
 
-  if (!posts) {
-    return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+    if (!posts) {
+      return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+    }
+
+    res.status(HTTP_STATUSES.OK_200).send(posts)
   }
-
-  res.status(HTTP_STATUSES.OK_200).send(posts)
-})
+)
 
 postsRouter.get(
   '/:id',
