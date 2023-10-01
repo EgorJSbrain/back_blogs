@@ -22,6 +22,6 @@ export type ResponseBody<T> = {
   pagesCount: number
   page: number
   pageSize: number
-  count: number
+  totalCount: number
   items: T[]
 }
