@@ -43,7 +43,7 @@ export const BlogsRepository = {
       return {
         page: pageNumber,
         pageSize,
-        count,
+        totalCount: count,
         pagesCount,
         items: blogs
       }
@@ -51,7 +51,7 @@ export const BlogsRepository = {
       return {
         page: 1,
         pageSize: 10,
-        count: 0,
+        totalCount: 0,
         pagesCount: 0,
         items: []
       }
