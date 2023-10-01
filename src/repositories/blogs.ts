@@ -41,18 +41,18 @@ export const BlogsRepository = {
         .toArray()
 
       return {
-        totalCount: count,
+        pagesCount,
         page: pageNumber,
         pageSize,
-        pagesCount,
+        totalCount: count,
         items: blogs
       }
     } catch {
       return {
-        totalCount: 0,
+        pagesCount: 0,
         page: 1,
         pageSize: 10,
-        pagesCount: 0,
+        totalCount: 0,
         items: []
       }
     }

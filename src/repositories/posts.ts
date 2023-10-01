@@ -44,10 +44,10 @@ export const PostsRepository = {
       }
     } catch {
       return {
+        pagesCount: 0,
         page: 1,
         pageSize: 10,
         totalCount: 0,
-        pagesCount: 0,
         items: []
       }
     }
