@@ -1,7 +1,7 @@
 import { VideoAvailableResolutions } from '../constants/videos'
 
 export interface IVideo {
-  id: number
+  id: string
   title: string
   author: string
   availableResolutions: VideoAvailableResolutions[]
