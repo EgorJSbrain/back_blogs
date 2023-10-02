@@ -2,8 +2,8 @@ import { Request } from 'express'
 import { SortDirections } from '../constants/global'
 
 export type RequestWithBody<T> = Request<{}, {}, T>
-export type RequestWithQuery<T> = Request<{}, {}, {}, T>
-export type RequestWithParams<T> = Request<{ id: string }, {}, {}, T>
+export type RequestWithQuery<T> = Request<T, {}, {}, {}>
+export type RequestWithParams<T> = Request<{}, {}, {}, T>
 export type RequestWithParamsAndBody<T, B> = Request<T, {}, B>
 
 export type Error = {

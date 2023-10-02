@@ -12,3 +12,7 @@ export interface IBlog {
 export type BlogsRequestParams = RequestParams & {
   searchNameTerm?: string
 }
+
+export type BlogPostsRequestParams = RequestParams & {
+  blogId: string
+}

@@ -29,7 +29,7 @@ videosRouter.get('/', async (_: Request, res: Response<IVideo[]>) => {
 videosRouter.get(
   '/:id',
   async (req: RequestWithParams<{ id: string }>, res: Response<IVideo>) => {
-    const { id } = req.params
+    const { id } = req.query
 
     if (!id) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -138,7 +138,7 @@ videosRouter.put(
 videosRouter.delete(
   '/:id',
   async (req: RequestWithParams<{ id: string }>, res: Response) => {
-    const { id } = req.params
+    const { id } = req.query
 
     if (!id) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
