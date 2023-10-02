@@ -56,19 +56,13 @@ postsRouter.post(
   PostsCreateUpdateValidation(),
   validationMiddleware,
   async (req: RequestWithBody<CreatePostDto>, res: Response) => {
-    const { title, shortDescription, content, blogId } = req.body
+    const existedBlog = await BlogsService.getBlogById(req.body.blogId)
 
-    const existedBlog = await BlogsService.getBlogById(blogId)
-
-    const creatingData = {
-      [PostInputFields.title]: title,
-      [PostInputFields.shortDescription]: shortDescription,
-      [PostInputFields.content]: content,
-      [PostInputFields.blogId]: blogId,
-      [PostInputFields.blogName]: existedBlog?.name ?? ''
+    if (!existedBlog) {
+      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
-    const blog = await PostsService.createPost(creatingData)
+    const blog = await PostsService.createPost(req.body, existedBlog)
 
     if (!blog) {
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)

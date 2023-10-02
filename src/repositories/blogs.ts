@@ -49,7 +49,6 @@ export const BlogsRepository = {
       }
     } catch {
       return null
-      }
     }
   },
 

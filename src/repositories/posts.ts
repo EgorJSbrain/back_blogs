@@ -141,5 +141,24 @@ export const PostsRepository = {
     } catch {
       return null
     }
+  },
+
+  async createPostByBlogId(data: IPost) {
+    try {
+      let post
+
+      const response = await postsDB.insertOne(data)
+
+      if (response.insertedId) {
+        post = await postsDB.findOne(
+          { id: data.id },
+          { projection: { _id: 0 } }
+        )
+      }
+
+      return post
+    } catch {
+      return null
+    }
   }
 }
