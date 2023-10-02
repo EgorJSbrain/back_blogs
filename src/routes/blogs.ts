@@ -38,7 +38,7 @@ blogsRouter.get(
 blogsRouter.get(
   '/:id',
   async (req: RequestWithParams<{ id: string }>, res: Response<IBlog>) => {
-    const { id } = req.query
+    const { id } = req.params
 
     if (!id) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -118,7 +118,7 @@ blogsRouter.delete(
   '/:id',
   authMiddleware,
   async (req: RequestWithParams<{ id: string }>, res: Response) => {
-    const { id } = req.query
+    const { id } = req.params
 
     if (!id) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -134,18 +134,16 @@ blogsRouter.delete(
   }
 )
 
-// ---------------
-
 blogsRouter.get(
   '/:blogId/posts',
   async (req: RequestWithQuery<BlogPostsRequestParams>, res: Response<ResponseBody<IPost>>) => {
-    const { blogId } = req.params
+    const { blogId } = req.query
 
     if (!blogId) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
-    const posts = await BlogsService.getPostsByBlogId(req.params)
+    const posts = await BlogsService.getPostsByBlogId(req.query)
 
     if (!posts) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
