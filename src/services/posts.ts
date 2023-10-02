@@ -4,6 +4,8 @@ import { CreatePostDto } from '../dtos/posts/create-post.dto'
 import { UpdatePostDto } from '../dtos/posts/update-post.dto'
 import { PostsRepository } from '../repositories'
 import { RequestParams } from '../types/global'
+import { PostInputFields } from '../constants/posts'
+import { IBlog } from '../types/blogs'
 
 export const PostsService = {
   async getPosts(params: RequestParams) {
@@ -14,8 +16,18 @@ export const PostsService = {
     return await PostsRepository.getPostById(id)
   },
 
-  async createPost(data: CreatePostDto) {
-    const createdPost = generateNewPost(data)
+  async createPost(data: CreatePostDto, blog: IBlog) {
+    const { title, shortDescription, content, blogId } = data
+
+    const creatingData = {
+      [PostInputFields.title]: title,
+      [PostInputFields.shortDescription]: shortDescription,
+      [PostInputFields.content]: content,
+      [PostInputFields.blogId]: blogId,
+      [PostInputFields.blogName]: blog?.name ?? ''
+    }
+
+    const createdPost = generateNewPost(creatingData)
 
     return await PostsRepository.createPost(createdPost)
   },

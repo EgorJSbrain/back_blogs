@@ -18,6 +18,7 @@ import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
 
 import { BlogsCreateUpdateValidation } from '../utils/validation/inputValidations'
 import { IPost } from '../types/posts'
+import { CreatePostDto } from '../dtos/posts/create-post.dto'
 
 export const blogsRouter = Router({})
 
@@ -59,15 +60,7 @@ blogsRouter.post(
   BlogsCreateUpdateValidation(),
   validationMiddleware,
   async (req: RequestWithBody<CreateBlogDto>, res: Response) => {
-    const { name, description, websiteUrl } = req.body
-
-    const creatingData = {
-      [BlogInputFields.name]: name,
-      [BlogInputFields.description]: description,
-      [BlogInputFields.websiteUrl]: websiteUrl
-    }
-
-    const blog = await BlogsService.createBlog(creatingData)
+    const blog = await BlogsService.createBlog(req.body)
 
     if (!blog) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -159,5 +152,33 @@ blogsRouter.get(
     }
 
     res.status(HTTP_STATUSES.OK_200).send(posts)
+  }
+)
+
+blogsRouter.post(
+  '/:blogId/posts',
+  async (
+    req: RequestWithParamsAndBody<{ blogId: string }, CreatePostDto>,
+    res: Response<IPost>
+  ) => {
+    const { blogId } = req.params
+
+    if (!blogId) {
+      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    }
+
+    const existedBlog = await BlogsService.getBlogById(blogId)
+
+    if (!existedBlog) {
+      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    }
+
+    const post = await BlogsService.createPostByBlogId(req.body, existedBlog)
+
+    if (!post) {
+      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    }
+
+    res.status(HTTP_STATUSES.CREATED_201).send(post)
   }
 )
