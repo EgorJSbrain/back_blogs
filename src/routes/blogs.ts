@@ -155,6 +155,7 @@ blogsRouter.get(
 
 blogsRouter.post(
   '/:blogId/posts',
+  validationMiddleware,
   async (
     req: RequestWithParamsAndBody<{ blogId: string }, CreatePostDto>,
     res: Response<IPost>
