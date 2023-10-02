@@ -41,14 +41,15 @@ export const BlogsRepository = {
         .toArray()
 
       return {
-        totalCount: count,
+        pagesCount,
         page: pageNumber,
         pageSize,
-        pagesCount,
+        totalCount: count,
         items: blogs
       }
     } catch {
       return null
+      }
     }
   },
 
