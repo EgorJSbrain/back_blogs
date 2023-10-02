@@ -9,7 +9,7 @@ import { ResponseBody } from '../types/global'
 const blogsDB = getCollection<IBlog>(DBfields.blogs)
 
 export const BlogsRepository = {
-  async getBlogs(params: BlogsRequestParams): Promise<ResponseBody<IBlog>> {
+  async getBlogs(params: BlogsRequestParams): Promise<ResponseBody<IBlog> | null> {
     try {
       const {
         searchNameTerm,
@@ -48,12 +48,7 @@ export const BlogsRepository = {
         items: blogs
       }
     } catch {
-      return {
-        pagesCount: 0,
-        page: 1,
-        pageSize: 10,
-        totalCount: 0,
-        items: []
+      return null
       }
     }
   },
