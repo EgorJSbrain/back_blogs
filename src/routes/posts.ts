@@ -34,7 +34,7 @@ postsRouter.get(
 postsRouter.get(
   '/:id',
   async (req: RequestWithParams<{ id: string }>, res: Response<IPost>) => {
-    const { id } = req.params
+    const { id } = req.query
 
     if (!id) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -129,7 +129,7 @@ postsRouter.delete(
   '/:id',
   authMiddleware,
   async (req: RequestWithParams<{ id: string }>, res: Response) => {
-    const { id } = req.params
+    const { id } = req.query
 
     if (!id) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)

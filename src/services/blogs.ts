@@ -1,9 +1,9 @@
 import { generateNewBlog } from './utils'
-import { BlogsRepository } from '../repositories'
+import { BlogsRepository, PostsRepository } from '../repositories'
 
 import { CreateBlogDto } from '../dtos/blogs/create-blog.dto'
 import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
-import { BlogsRequestParams } from '../types/blogs'
+import { BlogPostsRequestParams, BlogsRequestParams } from '../types/blogs'
 
 export const BlogsService = {
   async getBlogs(params: BlogsRequestParams) {
@@ -26,5 +26,9 @@ export const BlogsService = {
 
   async deleteBlog(id: string) {
     return await BlogsRepository.deleteBlog(id)
+  },
+
+  async getPostsByBlogId(params: BlogPostsRequestParams) {
+    return await PostsRepository.getPostsByBlogId(params)
   }
 }

@@ -5,11 +5,12 @@ import { IPost } from '../types/posts'
 import { UpdatePostDto } from '../dtos/posts/update-post.dto'
 import { RequestParams, ResponseBody } from '../types/global'
 import { SortDirections } from '../constants/global'
+import { BlogPostsRequestParams } from '../types/blogs'
 
 const postsDB = getCollection<IPost>(DBfields.posts)
 
 export const PostsRepository = {
-  async getPosts(params: RequestParams): Promise<ResponseBody<IPost>> {
+  async getPosts(params: RequestParams): Promise<ResponseBody<IPost> | null> {
     try {
       const {
         sortBy = 'createdAt',
@@ -43,13 +44,7 @@ export const PostsRepository = {
         items: posts
       }
     } catch {
-      return {
-        page: 1,
-        pageSize: 10,
-        totalCount: 0,
-        pagesCount: 0,
-        items: []
-      }
+      return null
     }
   },
 
@@ -70,7 +65,10 @@ export const PostsRepository = {
       const response = await postsDB.insertOne(data)
 
       if (response.insertedId) {
-        post = await postsDB.findOne({ id: data.id }, { projection: { _id: 0 } })
+        post = await postsDB.findOne(
+          { id: data.id },
+          { projection: { _id: 0 } }
+        )
       }
 
       return post
@@ -99,6 +97,47 @@ export const PostsRepository = {
       const response = await postsDB.deleteOne({ id })
 
       return !!response.deletedCount
+    } catch {
+      return null
+    }
+  },
+
+  async getPostsByBlogId(
+    params: BlogPostsRequestParams
+  ): Promise<ResponseBody<IPost> | null> {
+    try {
+      const {
+        blogId,
+        sortBy = 'createdAt',
+        sortDirection = SortDirections.asc,
+        pageNumber = 1,
+        pageSize = 10
+      } = params
+
+      const skip = (pageNumber - 1) * pageSize
+      const count = await postsDB.countDocuments({ blogId })
+      const pagesCount = Math.ceil(count / pageSize)
+
+      const sort: any = {}
+
+      if (sortBy && sortDirection) {
+        sort[sortBy] = sortDirection === SortDirections.asc ? 1 : -1
+      }
+
+      const posts = await postsDB
+        .find({ blogId }, { projection: { _id: false } })
+        .sort(sort)
+        .skip(skip)
+        .limit(Number(pageSize))
+        .toArray()
+
+      return {
+        pagesCount,
+        page: pageNumber,
+        pageSize,
+        totalCount: count,
+        items: posts
+      }
     } catch {
       return null
     }

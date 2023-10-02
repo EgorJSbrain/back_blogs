@@ -9,13 +9,15 @@ import {
   RequestWithBody,
   RequestWithParams,
   RequestWithParamsAndBody,
+  RequestWithQuery,
   ResponseBody
 } from '../types/global'
-import { BlogsRequestParams, IBlog } from '../types/blogs'
+import { BlogPostsRequestParams, BlogsRequestParams, IBlog } from '../types/blogs'
 import { CreateBlogDto } from '../dtos/blogs/create-blog.dto'
 import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
 
 import { BlogsCreateUpdateValidation } from '../utils/validation/inputValidations'
+import { IPost } from '../types/posts'
 
 export const blogsRouter = Router({})
 
@@ -35,7 +37,7 @@ blogsRouter.get(
 blogsRouter.get(
   '/:id',
   async (req: RequestWithParams<{ id: string }>, res: Response<IBlog>) => {
-    const { id } = req.params
+    const { id } = req.query
 
     if (!id) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -123,7 +125,7 @@ blogsRouter.delete(
   '/:id',
   authMiddleware,
   async (req: RequestWithParams<{ id: string }>, res: Response) => {
-    const { id } = req.params
+    const { id } = req.query
 
     if (!id) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -136,5 +138,26 @@ blogsRouter.delete(
     }
 
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+  }
+)
+
+// ---------------
+
+blogsRouter.get(
+  '/:blogId/posts',
+  async (req: RequestWithQuery<BlogPostsRequestParams>, res: Response<ResponseBody<IPost>>) => {
+    const { blogId } = req.params
+
+    if (!blogId) {
+      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    }
+
+    const posts = await BlogsService.getPostsByBlogId(req.params)
+
+    if (!posts) {
+      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    }
+
+    res.status(HTTP_STATUSES.OK_200).send(posts)
   }
 )
