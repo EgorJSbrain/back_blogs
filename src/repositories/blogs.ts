@@ -14,7 +14,7 @@ export const BlogsRepository = {
       const {
         searchNameTerm,
         sortBy = 'createdAt',
-        sortDirection = SortDirections.desc,
+        sortDirection = SortDirections.asc,
         pageNumber = 1,
         pageSize = 10
       } = params
@@ -26,7 +26,7 @@ export const BlogsRepository = {
       }
 
       if (sortBy && sortDirection) {
-        sort[sortBy] = sortDirection === SortDirections.asc ? 1 : -1
+        sort[sortBy] = sortDirection === SortDirections.asc ? -1 : 1
       }
 
       const skip = (pageNumber - 1) * pageSize
