@@ -142,6 +142,12 @@ blogsRouter.get(
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
     }
 
+    const existedBlog = await BlogsService.getBlogById(blogId)
+
+    if (!existedBlog) {
+      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    }
+
     const posts = await BlogsService.getPostsByBlogId(req.params)
 
     if (!posts) {
