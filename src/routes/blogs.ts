@@ -169,8 +169,10 @@ blogsRouter.post(
     }
 
     const existedBlog = await BlogsService.getBlogById(blogId)
+    console.log("----1--------existedBlog:", existedBlog)
 
     if (!existedBlog) {
+      console.log("----2--------:")
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
