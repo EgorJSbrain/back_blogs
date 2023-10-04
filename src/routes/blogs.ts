@@ -16,7 +16,7 @@ import { BlogPostsRequestParams, BlogsRequestParams, IBlog } from '../types/blog
 import { CreateBlogDto } from '../dtos/blogs/create-blog.dto'
 import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
 
-import { BlogsCreateUpdateValidation, PostsCreateUpdateValidation } from '../utils/validation/inputValidations'
+import { BlogsCreateUpdateValidation, PostCreateByBlogIdValidation } from '../utils/validation/inputValidations'
 import { IPost } from '../types/posts'
 import { CreatePostDto } from '../dtos/posts/create-post.dto'
 
@@ -156,7 +156,7 @@ blogsRouter.get(
 blogsRouter.post(
   '/:blogId/posts',
   authMiddleware,
-  PostsCreateUpdateValidation(),
+  PostCreateByBlogIdValidation(),
   validationMiddleware,
   async (
     req: RequestWithParamsAndBody<{ blogId: string }, CreatePostDto>,
