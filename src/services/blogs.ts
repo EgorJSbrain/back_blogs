@@ -3,10 +3,11 @@ import { BlogsRepository, PostsRepository } from '../repositories'
 
 import { CreateBlogDto } from '../dtos/blogs/create-blog.dto'
 import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
-import { BlogPostsRequestParams, BlogsRequestParams, IBlog } from '../types/blogs'
+import { BlogsRequestParams, IBlog } from '../types/blogs'
 import { BlogInputFields } from '../constants/blogs'
 import { PostInputFields } from '../constants/posts'
 import { CreatePostDto } from '../dtos/posts/create-post.dto'
+import { RequestParams } from '../types/global'
 
 export const BlogsService = {
   async getBlogs(params: BlogsRequestParams) {
@@ -38,8 +39,8 @@ export const BlogsService = {
     return await BlogsRepository.deleteBlog(id)
   },
 
-  async getPostsByBlogId(params: BlogPostsRequestParams) {
-    return await PostsRepository.getPostsByBlogId(params)
+  async getPostsByBlogId(blogId: string, params: RequestParams) {
+    return await PostsRepository.getPostsByBlogId(blogId, params)
   },
 
   async createPostByBlogId(data: CreatePostDto, blog: IBlog) {

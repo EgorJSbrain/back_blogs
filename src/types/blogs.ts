@@ -13,6 +13,6 @@ export type BlogsRequestParams = RequestParams & {
   searchNameTerm?: string
 }
 
-export type BlogPostsRequestParams = RequestParams & {
+export type BlogPostsRequestParams = {
   blogId: string
 }

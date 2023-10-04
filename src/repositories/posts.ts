@@ -1,11 +1,10 @@
 import { DBfields } from '../db/constants'
 import { getCollection } from '../db/mongo-db'
+import { SortDirections } from '../constants/global'
 
 import { IPost } from '../types/posts'
-import { UpdatePostDto } from '../dtos/posts/update-post.dto'
 import { RequestParams, ResponseBody } from '../types/global'
-import { SortDirections } from '../constants/global'
-import { BlogPostsRequestParams } from '../types/blogs'
+import { UpdatePostDto } from '../dtos/posts/update-post.dto'
 
 const postsDB = getCollection<IPost>(DBfields.posts)
 
@@ -25,21 +24,23 @@ export const PostsRepository = {
         sort[sortBy] = sortDirection === SortDirections.asc ? 1 : -1
       }
 
-      const skip = (pageNumber - 1) * pageSize
+      const pageSizeNumber = Number(pageSize)
+      const pageNumberNum = Number(pageNumber)
+      const skip = (pageNumberNum - 1) * pageSizeNumber
       const count = await postsDB.estimatedDocumentCount()
-      const pagesCount = Math.ceil(count / pageSize)
+      const pagesCount = Math.ceil(count / pageSizeNumber)
 
       const posts = await postsDB
         .find({}, { projection: { _id: false } })
         .sort(sort)
         .skip(skip)
-        .limit(Number(pageSize))
+        .limit(pageSizeNumber)
         .toArray()
 
       return {
         pagesCount,
-        page: Number(pageNumber),
-        pageSize: Number(pageSize),
+        page: pageNumberNum,
+        pageSize: pageSizeNumber,
         totalCount: count,
         items: posts
       }
@@ -103,20 +104,22 @@ export const PostsRepository = {
   },
 
   async getPostsByBlogId(
-    params: BlogPostsRequestParams
+    blogId: string,
+    params: RequestParams
   ): Promise<ResponseBody<IPost> | null> {
     try {
       const {
-        blogId,
         sortBy = 'createdAt',
         sortDirection = SortDirections.desc,
         pageNumber = 1,
         pageSize = 10
       } = params
 
-      const skip = (pageNumber - 1) * pageSize
+      const pageSizeNumber = Number(pageSize)
+      const pageNumberNum = Number(pageNumber)
+      const skip = (pageNumberNum - 1) * pageSizeNumber
       const count = await postsDB.countDocuments({ blogId })
-      const pagesCount = Math.ceil(count / pageSize)
+      const pagesCount = Math.ceil(count / pageSizeNumber)
 
       const sort: any = {}
 
@@ -128,13 +131,13 @@ export const PostsRepository = {
         .find({ blogId }, { projection: { _id: false } })
         .sort(sort)
         .skip(skip)
-        .limit(Number(pageSize))
+        .limit(pageSizeNumber)
         .toArray()
 
       return {
         pagesCount,
-        page: pageNumber,
-        pageSize,
+        page: pageNumberNum,
+        pageSize: pageSizeNumber,
         totalCount: count,
         items: posts
       }

@@ -4,6 +4,7 @@ import { SortDirections } from '../constants/global'
 export type RequestWithBody<T> = Request<{}, {}, T>
 export type RequestWithQuery<T> = Request<{}, {}, {}, T>
 export type RequestWithParams<T> = Request<T, {}, {}, {}>
+export type RequestWithParamsAndQuery<T, Q> = Request<T, {}, {}, Q>
 export type RequestWithParamsAndBody<T, B> = Request<T, {}, B>
 
 export type Error = {
@@ -14,8 +15,8 @@ export type Error = {
 export type RequestParams = {
   sortBy?: string
   sortDirection?: SortDirections
-  pageNumber?: number
-  pageSize?: number
+  pageNumber?: string
+  pageSize?: string
 }
 
 export type ResponseBody<T> = {
