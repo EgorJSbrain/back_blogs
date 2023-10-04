@@ -18,6 +18,7 @@ export const BlogsRepository = {
         pageNumber = 1,
         pageSize = 10
       } = params
+
       const filter: any = {}
       const sort: any = {}
 
@@ -29,21 +30,23 @@ export const BlogsRepository = {
         sort[sortBy] = sortDirection === SortDirections.asc ? 1 : -1
       }
 
-      const skip = (pageNumber - 1) * pageSize
+      const pageSizeNumber = Number(pageSize)
+      const pageNumberNum = Number(pageNumber)
+      const skip = (pageNumberNum - 1) * pageSizeNumber
       const count = await blogsDB.estimatedDocumentCount()
-      const pagesCount = Math.ceil(count / pageSize)
+      const pagesCount = Math.ceil(count / pageSizeNumber)
 
       const blogs = await blogsDB
         .find(filter, { projection: { _id: false } })
         .sort(sort)
         .skip(skip)
-        .limit(Number(pageSize))
+        .limit(pageSizeNumber)
         .toArray()
 
       return {
         pagesCount,
-        page: Number(pageNumber),
-        pageSize: Number(pageSize),
+        page: pageNumberNum,
+        pageSize: pageSizeNumber,
         totalCount: count,
         items: blogs
       }
