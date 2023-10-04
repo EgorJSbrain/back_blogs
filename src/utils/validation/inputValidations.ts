@@ -50,3 +50,9 @@ export const VideoUpdateValidation = (): ValidationChain[] => [
   videoCanBeDownloadedValidation,
   videoPublicationDateValidation
 ]
+
+export const PostCreateByBlogIdValidation = (): ValidationChain[] => [
+  postTitleValidation,
+  postDescriptionValidation,
+  postContentValidation
+]
