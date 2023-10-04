@@ -165,7 +165,7 @@ blogsRouter.post(
     const { blogId } = req.params
 
     if (!blogId) {
-      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+      return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
     }
 
     const existedBlog = await BlogsService.getBlogById(blogId)
@@ -177,7 +177,7 @@ blogsRouter.post(
     const post = await BlogsService.createPostByBlogId(req.body, existedBlog)
 
     if (!post) {
-      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+      return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
     }
 
     res.status(HTTP_STATUSES.CREATED_201).send(post)
