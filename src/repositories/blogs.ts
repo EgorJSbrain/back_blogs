@@ -33,7 +33,8 @@ export const BlogsRepository = {
       const pageSizeNumber = Number(pageSize)
       const pageNumberNum = Number(pageNumber)
       const skip = (pageNumberNum - 1) * pageSizeNumber
-      const count = await blogsDB.estimatedDocumentCount()
+      // const count = await blogsDB.estimatedDocumentCount()
+      const count = await blogsDB.countDocuments(filter)
       const pagesCount = Math.ceil(count / pageSizeNumber)
 
       const blogs = await blogsDB
