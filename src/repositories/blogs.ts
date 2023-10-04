@@ -14,7 +14,7 @@ export const BlogsRepository = {
       const {
         searchNameTerm,
         sortBy = 'createdAt',
-        sortDirection = SortDirections.asc,
+        sortDirection = SortDirections.desc,
         pageNumber = 1,
         pageSize = 10
       } = params
