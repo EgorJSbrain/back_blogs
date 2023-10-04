@@ -6,9 +6,11 @@ import { BlogInputFields } from '../constants/blogs'
 import { validationMiddleware, authMiddleware } from '../middlewares'
 
 import {
+  RequestParams,
   RequestWithBody,
   RequestWithParams,
   RequestWithParamsAndBody,
+  RequestWithParamsAndQuery,
   ResponseBody
 } from '../types/global'
 import { BlogPostsRequestParams, BlogsRequestParams, IBlog } from '../types/blogs'
@@ -135,7 +137,7 @@ blogsRouter.delete(
 
 blogsRouter.get(
   '/:blogId/posts',
-  async (req: RequestWithParams<BlogPostsRequestParams>, res: Response<ResponseBody<IPost>>) => {
+  async (req: RequestWithParamsAndQuery<BlogPostsRequestParams, RequestParams>, res: Response<ResponseBody<IPost>>) => {
     const { blogId } = req.params
 
     if (!blogId) {
@@ -148,7 +150,7 @@ blogsRouter.get(
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
-    const posts = await BlogsService.getPostsByBlogId(req.params)
+    const posts = await BlogsService.getPostsByBlogId(blogId, req.query)
 
     if (!posts) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
