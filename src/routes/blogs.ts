@@ -9,7 +9,6 @@ import {
   RequestWithBody,
   RequestWithParams,
   RequestWithParamsAndBody,
-  RequestWithQuery,
   ResponseBody
 } from '../types/global'
 import { BlogPostsRequestParams, BlogsRequestParams, IBlog } from '../types/blogs'
@@ -136,14 +135,14 @@ blogsRouter.delete(
 
 blogsRouter.get(
   '/:blogId/posts',
-  async (req: RequestWithQuery<BlogPostsRequestParams>, res: Response<ResponseBody<IPost>>) => {
-    const { blogId } = req.query
+  async (req: RequestWithParams<BlogPostsRequestParams>, res: Response<ResponseBody<IPost>>) => {
+    const { blogId } = req.params
 
     if (!blogId) {
-      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+      return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
     }
 
-    const posts = await BlogsService.getPostsByBlogId(req.query)
+    const posts = await BlogsService.getPostsByBlogId(req.params)
 
     if (!posts) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -169,10 +168,8 @@ blogsRouter.post(
     }
 
     const existedBlog = await BlogsService.getBlogById(blogId)
-    console.log("----1--------existedBlog:", existedBlog)
 
     if (!existedBlog) {
-      console.log("----2--------:")
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
