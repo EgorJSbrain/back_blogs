@@ -14,7 +14,7 @@ export const PostsRepository = {
     try {
       const {
         sortBy = 'createdAt',
-        sortDirection = SortDirections.asc,
+        sortDirection = SortDirections.desc,
         pageNumber = 1,
         pageSize = 10
       } = params
@@ -109,7 +109,7 @@ export const PostsRepository = {
       const {
         blogId,
         sortBy = 'createdAt',
-        sortDirection = SortDirections.asc,
+        sortDirection = SortDirections.desc,
         pageNumber = 1,
         pageSize = 10
       } = params
