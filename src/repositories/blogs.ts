@@ -15,9 +15,9 @@ export const BlogsRepository = {
       const {
         searchNameTerm,
         sortBy = 'createdAt',
-        sortDirection,
-        pageNumber,
-        pageSize
+        sortDirection = SortDirections.desc,
+        pageNumber = 1,
+        pageSize = 10
       } = params
 
       const filter: Filter<IBlog> = {}
@@ -32,7 +32,7 @@ export const BlogsRepository = {
       }
 
       const pageSizeNumber = Number(pageSize)
-      const pageNumberNum = Number(pageNumber) === 0 ? 1 : Number(pageNumber)
+      const pageNumberNum = Number(pageNumber)
       const skip = (pageNumberNum - 1) * pageSizeNumber
       const count = await blogsDB.countDocuments(filter)
       const pagesCount = Math.ceil(count / pageSizeNumber)
