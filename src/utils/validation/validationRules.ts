@@ -71,7 +71,7 @@ export const sortDirectionValidation = query([RequestParamName.sortDirection])
       return null
     }
 
-    return value || SortDirections.desc
+    return value || SortDirections.asc
   })
   .exists({ checkNull: true })
   .withMessage(requestParamErrorMessage.sortDirection)
