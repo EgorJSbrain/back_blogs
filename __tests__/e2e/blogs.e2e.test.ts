@@ -7,13 +7,95 @@ import { dbConnection, dbClear, dbDisconnect } from '../../src/db/mongo-db'
 
 const getRequest = () => request(app)
 
+const responseData = {
+  pagesCount: 0,
+  page: 1,
+  pageSize: 10,
+  totalCount: 0,
+  items: []
+}
+
 describe('BLOGS tests', () => {
   beforeAll(async () => {
     await dbConnection()
   })
 
   it('GET - success - get empty array of blogs', async () => {
-    await getRequest().get(RouterPaths.blogs).expect(HTTP_STATUSES.OK_200, [])
+    await getRequest().get(RouterPaths.blogs).expect(HTTP_STATUSES.OK_200, responseData)
+  })
+
+  it('GET - success - get array with created blog', async () => {
+    const data = { name: 'some name', description: 'author name', websiteUrl: 'https://www.google.pl' }
+    const { entity } = await blogsTestManager.createBlog(data, HTTP_STATUSES.CREATED_201)
+  
+    await getRequest().get(RouterPaths.blogs).expect(HTTP_STATUSES.OK_200, {
+      pagesCount: 1,
+      page: 1,
+      pageSize: 10,
+      totalCount: 1,
+      items: [entity]
+    })
+  })
+
+  it('GET - success - request with search param: searchNameTerm. Get array with searched blog', async () => {
+    const data1 = { name: 'some name', description: 'author name', websiteUrl: 'https://www.google.pl' }
+    const { entity: blog1 } = await blogsTestManager.createBlog(data1, HTTP_STATUSES.CREATED_201)
+
+    const data2 = { name: 'user', description: 'author name', websiteUrl: 'https://www.google.pl' }
+    await blogsTestManager.createBlog(data2, HTTP_STATUSES.CREATED_201)
+
+    await getRequest().get(`${RouterPaths.blogs}?searchNameTerm=name`).expect(HTTP_STATUSES.OK_200, {
+      pagesCount: 1,
+      page: 1,
+      pageSize: 10,
+      totalCount: 1,
+      items: [blog1]
+    })
+  })
+
+  it('GET - success - request with search param: searchNameTerm. Get array with searched blog', async () => {
+    const data1 = { name: 'some name', description: 'author name', websiteUrl: 'https://www.google.pl' }
+    const { entity: blog1 } = await blogsTestManager.createBlog(data1, HTTP_STATUSES.CREATED_201)
+
+    const data2 = { name: 'user NA', description: 'author name', websiteUrl: 'https://www.google.pl' }
+    const { entity: blog2 } = await blogsTestManager.createBlog(data2, HTTP_STATUSES.CREATED_201)
+
+    await getRequest().get(`${RouterPaths.blogs}?searchNameTerm=na`).expect(HTTP_STATUSES.OK_200, {
+      pagesCount: 1,
+      page: 1,
+      pageSize: 10,
+      totalCount: 2,
+      items: [blog2, blog1]
+    })
+  })
+
+  it('GET - seccess - request with search params: searchNameTerm, sortDirection. Get array with searched blog in corect order', async () => {
+    const data1 = { name: 'some name', description: 'author name', websiteUrl: 'https://www.google.pl' }
+    const { entity: blog1 } = await blogsTestManager.createBlog(data1, HTTP_STATUSES.CREATED_201)
+
+    const data2 = { name: 'user NA', description: 'author name', websiteUrl: 'https://www.google.pl' }
+    const { entity: blog2 } = await blogsTestManager.createBlog(data2, HTTP_STATUSES.CREATED_201)
+
+    await getRequest().get(`${RouterPaths.blogs}?searchNameTerm=na&sortDirection=asc`).expect(HTTP_STATUSES.OK_200, {
+      pagesCount: 1,
+      page: 1,
+      pageSize: 10,
+      totalCount: 2,
+      items: [blog1, blog2]
+    })
+  })
+
+  it('GET - success - request with search params: searchNameTerm, sortDirection. Get empty array ', async () => {
+    const data1 = { name: 'some name', description: 'author name', websiteUrl: 'https://www.google.pl' }
+    await blogsTestManager.createBlog(data1, HTTP_STATUSES.CREATED_201)
+  
+    await getRequest().get(`${RouterPaths.blogs}?searchNameTerm=user`).expect(HTTP_STATUSES.OK_200, {
+      pagesCount: 0,
+      page: 1,
+      pageSize: 10,
+      totalCount: 0,
+      items: []
+    })
   })
 
   it('GET - fail - get not existing blog', async () => {
@@ -25,7 +107,7 @@ describe('BLOGS tests', () => {
 
     await blogsTestManager.createBlog(data, HTTP_STATUSES.BAD_REQUEST_400)
 
-    await getRequest().get(RouterPaths.blogs).expect(HTTP_STATUSES.OK_200, [])
+    await getRequest().get(RouterPaths.blogs).expect(HTTP_STATUSES.OK_200, responseData)
   })
 
   it ('POST - success - creating blog with correct data', async () => {
@@ -92,6 +174,27 @@ describe('BLOGS tests', () => {
       .expect(HTTP_STATUSES.NO_CONTENT_204)
   })
 
+  it ('DELETE - success delete blog with correct id', async () => {
+    const data1 = { name: 'some name', description: 'author name', websiteUrl: 'https://www.google.pl' }
+    const { entity: blog1 } = await blogsTestManager.createBlog(data1, HTTP_STATUSES.CREATED_201)
+
+    const data2 = { name: 'user', description: 'author name', websiteUrl: 'https://www.google.pl' }
+    const { entity: blog2 } = await blogsTestManager.createBlog(data2, HTTP_STATUSES.CREATED_201)
+
+    await getRequest()
+      .delete(`${RouterPaths.blogs}/${blog1.id}`)
+      .set({ Authorization: `Basic ${authUser.password}` })
+      .expect(HTTP_STATUSES.NO_CONTENT_204)
+    
+      await getRequest().get(RouterPaths.blogs).expect(HTTP_STATUSES.OK_200, {
+        pagesCount: 1,
+        page: 1,
+        pageSize: 10,
+        totalCount: 1,
+        items: [blog2]
+      })
+  })
+
   it ('DELETE - fail delete blog with incorrect id', async () => {
     const creatingData = { name: 'some name', description: 'author name', websiteUrl: 'https://www.google.pl' }
 
@@ -101,6 +204,27 @@ describe('BLOGS tests', () => {
       .delete(`${RouterPaths.blogs}/1`)
       .set({ Authorization: `Basic ${authUser.password}` })
       .expect(HTTP_STATUSES.NOT_FOUND_404)
+  })
+
+  it ('DELETE - fail delete blog with incorrect id', async () => {
+    const data1 = { name: 'some name', description: 'author name', websiteUrl: 'https://www.google.pl' }
+    const { entity: blog1 } = await blogsTestManager.createBlog(data1, HTTP_STATUSES.CREATED_201)
+
+    const data2 = { name: 'user', description: 'author name', websiteUrl: 'https://www.google.pl' }
+    const { entity: blog2 } = await blogsTestManager.createBlog(data2, HTTP_STATUSES.CREATED_201)
+
+    await getRequest()
+      .delete(`${RouterPaths.blogs}/1`)
+      .set({ Authorization: `Basic ${authUser.password}` })
+      .expect(HTTP_STATUSES.NOT_FOUND_404)
+    
+    await getRequest().get(RouterPaths.blogs).expect(HTTP_STATUSES.OK_200, {
+      pagesCount: 1,
+      page: 1,
+      pageSize: 10,
+      totalCount: 2,
+      items: [blog2, blog1]
+    })
   })
 
   afterEach(async () => {
