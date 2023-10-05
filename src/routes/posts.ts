@@ -1,7 +1,7 @@
 import { Router, Response } from 'express'
 
 import { BlogsService, PostsService } from '../services'
-import { PostsCreateUpdateValidation, requestParamsValidation } from '../utils/validation/inputValidations'
+import { PostsCreateUpdateValidation } from '../utils/validation/inputValidations'
 import { authMiddleware, validationMiddleware } from '../middlewares'
 import { PostInputFields } from '../constants/posts'
 import { HTTP_STATUSES } from '../constants/global'
@@ -20,8 +20,6 @@ export const postsRouter = Router({})
 
 postsRouter.get(
   '/',
-  requestParamsValidation(),
-  validationMiddleware,
   async (req: RequestWithParams<RequestParams>, res: Response<ResponseBody<IPost>>) => {
     const posts = await PostsService.getPosts(req.query)
 
