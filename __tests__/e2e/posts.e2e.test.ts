@@ -8,13 +8,21 @@ import { dbClear, dbConnection, dbDisconnect } from '../../src/db/mongo-db'
 
 const getRequest = () => request(app)
 
+const responseData = {
+  pagesCount: 0,
+  page: 1,
+  pageSize: 10,
+  totalCount: 0,
+  items: []
+}
+
 describe('POSTS tests', () => {
   beforeAll(async () => {
     await dbConnection()
   })
 
   it('GET - success - get empty array of posts', async () => {
-    await getRequest().get(RouterPaths.posts).expect(HTTP_STATUSES.OK_200, [])
+    await getRequest().get(RouterPaths.posts).expect(HTTP_STATUSES.OK_200, responseData)
   })
 
   it('GET - fail - get not existing posts', async () => {
@@ -29,7 +37,7 @@ describe('POSTS tests', () => {
 
     await postsTestManager.createPost(creatingData, HTTP_STATUSES.BAD_REQUEST_400)
 
-    await getRequest().get(RouterPaths.posts).expect(HTTP_STATUSES.OK_200, [])
+    await getRequest().get(RouterPaths.posts).expect(HTTP_STATUSES.OK_200, responseData)
   })
 
   it ('POST - success - creating post with correct data', async () => {
