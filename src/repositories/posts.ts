@@ -5,6 +5,7 @@ import { SortDirections } from '../constants/global'
 import { IPost } from '../types/posts'
 import { RequestParams, ResponseBody } from '../types/global'
 import { UpdatePostDto } from '../dtos/posts/update-post.dto'
+import { Sort } from 'mongodb'
 
 const postsDB = getCollection<IPost>(DBfields.posts)
 
@@ -13,12 +14,12 @@ export const PostsRepository = {
     try {
       const {
         sortBy = 'createdAt',
-        sortDirection = SortDirections.desc,
-        pageNumber = 1,
-        pageSize = 10
+        sortDirection,
+        pageNumber,
+        pageSize
       } = params
 
-      const sort: any = {}
+      const sort: Sort = {}
 
       if (sortBy && sortDirection) {
         sort[sortBy] = sortDirection === SortDirections.asc ? 1 : -1
@@ -110,9 +111,9 @@ export const PostsRepository = {
     try {
       const {
         sortBy = 'createdAt',
-        sortDirection = SortDirections.desc,
-        pageNumber = 1,
-        pageSize = 10
+        sortDirection,
+        pageNumber,
+        pageSize
       } = params
 
       const pageSizeNumber = Number(pageSize)
@@ -121,7 +122,7 @@ export const PostsRepository = {
       const count = await postsDB.countDocuments({ blogId })
       const pagesCount = Math.ceil(count / pageSizeNumber)
 
-      const sort: any = {}
+      const sort: Sort = {}
 
       if (sortBy && sortDirection) {
         sort[sortBy] = sortDirection === SortDirections.asc ? 1 : -1

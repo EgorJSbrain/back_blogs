@@ -5,6 +5,7 @@ import { BlogsRequestParams, IBlog } from '../types/blogs'
 import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
 import { SortDirections } from '../constants/global'
 import { ResponseBody } from '../types/global'
+import { Filter, Sort } from 'mongodb'
 
 const blogsDB = getCollection<IBlog>(DBfields.blogs)
 
@@ -14,13 +15,13 @@ export const BlogsRepository = {
       const {
         searchNameTerm,
         sortBy = 'createdAt',
-        sortDirection = SortDirections.desc,
-        pageNumber = 1,
-        pageSize = 10
+        sortDirection,
+        pageNumber,
+        pageSize
       } = params
 
-      const filter: any = {}
-      const sort: any = {}
+      const filter: Filter<IBlog> = {}
+      const sort: Sort = {}
 
       if (searchNameTerm) {
         filter.name = { $regex: searchNameTerm, $options: 'i' }
@@ -31,7 +32,7 @@ export const BlogsRepository = {
       }
 
       const pageSizeNumber = Number(pageSize)
-      const pageNumberNum = Number(pageNumber)
+      const pageNumberNum = Number(pageNumber) === 0 ? 1 : Number(pageNumber)
       const skip = (pageNumberNum - 1) * pageSizeNumber
       const count = await blogsDB.countDocuments(filter)
       const pagesCount = Math.ceil(count / pageSizeNumber)

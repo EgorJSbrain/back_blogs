@@ -17,7 +17,11 @@ import { BlogPostsRequestParams, BlogsRequestParams, IBlog } from '../types/blog
 import { CreateBlogDto } from '../dtos/blogs/create-blog.dto'
 import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
 
-import { BlogsCreateUpdateValidation, PostCreateByBlogIdValidation } from '../utils/validation/inputValidations'
+import {
+  BlogsCreateUpdateValidation,
+  PostCreateByBlogIdValidation,
+  requestParamsValidation
+} from '../utils/validation/inputValidations'
 import { IPost } from '../types/posts'
 import { CreatePostDto } from '../dtos/posts/create-post.dto'
 
@@ -25,6 +29,8 @@ export const blogsRouter = Router({})
 
 blogsRouter.get(
   '/',
+  requestParamsValidation(),
+  validationMiddleware,
   async (req: RequestWithParams<BlogsRequestParams>, res: Response<ResponseBody<IBlog>>) => {
     const blogs = await BlogsService.getBlogs(req.query)
 
@@ -137,6 +143,8 @@ blogsRouter.delete(
 
 blogsRouter.get(
   '/:blogId/posts',
+  requestParamsValidation(),
+  validationMiddleware,
   async (req: RequestWithParamsAndQuery<BlogPostsRequestParams, RequestParams>, res: Response<ResponseBody<IPost>>) => {
     const { blogId } = req.params
 

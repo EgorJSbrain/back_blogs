@@ -2,10 +2,13 @@ import { ValidationChain, FieldValidationError } from 'express-validator'
 import {
   blogDescriptionValidation,
   blogNameValidation,
+  pageNumberValidation,
+  pageSizeNumberValidation,
   postBlogIdValidation,
   postContentValidation,
   postDescriptionValidation,
   postTitleValidation,
+  sortDirectionValidation,
   videoAgeRestrictionValidation,
   videoAuthorValidation,
   videoAvailableResolutionsValidation,
@@ -55,4 +58,10 @@ export const PostCreateByBlogIdValidation = (): ValidationChain[] => [
   postTitleValidation,
   postDescriptionValidation,
   postContentValidation
+]
+
+export const requestParamsValidation = (): ValidationChain[] => [
+  pageNumberValidation,
+  pageSizeNumberValidation,
+  sortDirectionValidation
 ]
