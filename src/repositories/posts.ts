@@ -14,9 +14,9 @@ export const PostsRepository = {
     try {
       const {
         sortBy = 'createdAt',
-        sortDirection,
-        pageNumber,
-        pageSize
+        sortDirection = SortDirections.desc,
+        pageNumber = 1,
+        pageSize = 10
       } = params
 
       const sort: Sort = {}
@@ -111,9 +111,9 @@ export const PostsRepository = {
     try {
       const {
         sortBy = 'createdAt',
-        sortDirection,
-        pageNumber,
-        pageSize
+        sortDirection = SortDirections.desc,
+        pageNumber = 1,
+        pageSize = 10
       } = params
 
       const pageSizeNumber = Number(pageSize)
