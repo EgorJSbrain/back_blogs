@@ -1,4 +1,4 @@
-import { body } from 'express-validator'
+import { body, query } from 'express-validator'
 import {
   BlogInputFields,
   NAME_MIN_LENGTH,
@@ -33,6 +33,48 @@ import {
   VideoAvailableResolutions
 } from '../../constants/videos'
 import { BlogsService } from '../../services'
+import {
+  DEFAULT_PAGE_NUMBER,
+  DEFAULT_PAGE_SIZE,
+  RequestParamName,
+  SortDirections,
+  requestParamErrorMessage
+} from '../../constants/global'
+
+// params
+
+export const pageNumberValidation = query([RequestParamName.pageNumber])
+  .customSanitizer(async (value: string) => {
+    if (value && Number(value) < DEFAULT_PAGE_NUMBER) {
+      return null
+    }
+
+    return value || DEFAULT_PAGE_NUMBER
+  })
+  .exists({ checkNull: true })
+  .withMessage(requestParamErrorMessage.page)
+
+export const pageSizeNumberValidation = query([RequestParamName.pageSize])
+  .customSanitizer(async (value: string) => {
+    if (value && Number(value) < DEFAULT_PAGE_SIZE) {
+      return null
+    }
+
+    return value || DEFAULT_PAGE_SIZE
+  })
+  .exists({ checkNull: true })
+  .withMessage(requestParamErrorMessage.pageSize)
+
+export const sortDirectionValidation = query([RequestParamName.sortDirection])
+  .customSanitizer(async (value: string) => {
+    if (value && value !== SortDirections.asc && value !== SortDirections.desc) {
+      return null
+    }
+
+    return value || SortDirections.desc
+  })
+  .exists({ checkNull: true })
+  .withMessage(requestParamErrorMessage.sortDirection)
 
 // blogs
 
