@@ -21,8 +21,98 @@ describe('POSTS tests', () => {
     await dbConnection()
   })
 
+  const creatingData: Record<string, string> = {
+    title: 'title',
+    content: 'test content',
+    shortDescription: 'test description',
+  }
+
   it('GET - success - get empty array of posts', async () => {
     await getRequest().get(RouterPaths.posts).expect(HTTP_STATUSES.OK_200, responseData)
+  })
+
+  it('GET - success - get array with created blog', async () => {
+    const { entity } = await postsTestManager.createPost(creatingData, HTTP_STATUSES.CREATED_201)
+  
+    await getRequest().get(RouterPaths.posts).expect(HTTP_STATUSES.OK_200, {
+      pagesCount: 1,
+      page: 1,
+      pageSize: 10,
+      totalCount: 1,
+      items: [entity]
+    })
+  })
+
+  it('GET - success - request with search param: sortDirection=desc. Get array with searched posts', async () => {
+    const { entity: post1 } = await postsTestManager.createPost(creatingData, HTTP_STATUSES.CREATED_201)
+    const { entity: post2 } = await postsTestManager.createPost(creatingData, HTTP_STATUSES.CREATED_201)
+
+    await getRequest().get(`${RouterPaths.posts}?sortDirection=desc`).expect(HTTP_STATUSES.OK_200, {
+      pagesCount: 1,
+      page: 1,
+      pageSize: 10,
+      totalCount: 2,
+      items: [post2, post1]
+    })
+  })
+
+  it('GET - success - request with search param: sortDirection=asc. Get array with searched posts', async () => {
+    const { entity: post1 } = await postsTestManager.createPost(creatingData, HTTP_STATUSES.CREATED_201)
+    const { entity: post2 } = await postsTestManager.createPost(creatingData, HTTP_STATUSES.CREATED_201)
+
+    await getRequest().get(`${RouterPaths.posts}?sortDirection=asc`).expect(HTTP_STATUSES.OK_200, {
+      pagesCount: 1,
+      page: 1,
+      pageSize: 10,
+      totalCount: 2,
+      items: [post1, post2]
+    })
+  })
+
+  it('GET - success - request with search param: sortDirection=asc, sortBy=title. Get array with searched posts', async () => {
+    const creatingData1: Record<string, string> = {
+      title: 'a title',
+      content: 'test content',
+      shortDescription: 'test description',
+    }
+    const creatingData2: Record<string, string> = {
+      title: 'b title',
+      content: 'test content',
+      shortDescription: 'test description',
+    }
+    const { entity: post1 } = await postsTestManager.createPost(creatingData1, HTTP_STATUSES.CREATED_201)
+    const { entity: post2 } = await postsTestManager.createPost(creatingData2, HTTP_STATUSES.CREATED_201)
+
+    await getRequest().get(`${RouterPaths.posts}?sortBy=title`).expect(HTTP_STATUSES.OK_200, {
+      pagesCount: 1,
+      page: 1,
+      pageSize: 10,
+      totalCount: 2,
+      items: [post2, post1]
+    })
+  })
+
+  it('GET - success - request with search param: sortDirection=asc, sortBy=title. Get array with searched posts', async () => {
+    const creatingData1: Record<string, string> = {
+      title: 'a title',
+      content: 'test content',
+      shortDescription: 'test description',
+    }
+    const creatingData2: Record<string, string> = {
+      title: 'b title',
+      content: 'test content',
+      shortDescription: 'test description',
+    }
+    const { entity: post1 } = await postsTestManager.createPost(creatingData1, HTTP_STATUSES.CREATED_201)
+    const { entity: post2 } = await postsTestManager.createPost(creatingData2, HTTP_STATUSES.CREATED_201)
+
+    await getRequest().get(`${RouterPaths.posts}?sortDirection=asc&sortBy=title`).expect(HTTP_STATUSES.OK_200, {
+      pagesCount: 1,
+      page: 1,
+      pageSize: 10,
+      totalCount: 2,
+      items: [post1, post2]
+    })
   })
 
   it('GET - fail - get not existing posts', async () => {
@@ -52,7 +142,7 @@ describe('POSTS tests', () => {
       blogName: createdBlog.name
     }
 
-    const { entity } = await postsTestManager.createPost(data, HTTP_STATUSES.CREATED_201)
+    const { entity } = await postsTestManager.createPost(creatingData, HTTP_STATUSES.CREATED_201)
 
     const response = await getRequest().get(`${RouterPaths.posts}/${entity.id}`).expect(HTTP_STATUSES.OK_200)
 
@@ -93,12 +183,6 @@ describe('POSTS tests', () => {
   })
 
   it ('PUT - fail updating post with incorrect id', async () => {
-    const creatingData: Record<string, string> = {
-      title: 'title',
-      content: 'test content',
-      shortDescription: 'test description',
-    }
-
     const { entity: createdPost } = await postsTestManager.createPost(creatingData, HTTP_STATUSES.CREATED_201)
 
     const updatingData = {
@@ -114,12 +198,6 @@ describe('POSTS tests', () => {
   })
 
   it ('DELETE - success delete post with correct id', async () => {
-    const creatingData: Record<string, string> = {
-      title: 'title',
-      content: 'test content',
-      shortDescription: 'test description',
-    }
-
     const { entity } = await postsTestManager.createPost(creatingData, HTTP_STATUSES.CREATED_201)
 
     await getRequest()
@@ -128,13 +206,25 @@ describe('POSTS tests', () => {
       .expect(HTTP_STATUSES.NO_CONTENT_204)
   })
 
-  it ('DELETE - fail delete post with incorrect id', async () => {
-    const creatingData: Record<string, string> = {
-      title: 'title',
-      content: 'test content',
-      shortDescription: 'test description',
-    }
+  it ('DELETE - success delete post with correct id', async () => {
+    const { entity: post1 } = await postsTestManager.createPost(creatingData, HTTP_STATUSES.CREATED_201)
+    const { entity: post2 } = await postsTestManager.createPost(creatingData, HTTP_STATUSES.CREATED_201)
 
+    await getRequest()
+      .delete(`${RouterPaths.posts}/${post1.id}`)
+      .set({ Authorization: `Basic ${authUser.password}` })
+      .expect(HTTP_STATUSES.NO_CONTENT_204)
+    
+    await getRequest().get(RouterPaths.posts).expect(HTTP_STATUSES.OK_200, {
+      pagesCount: 1,
+      page: 1,
+      pageSize: 10,
+      totalCount: 1,
+      items: [post2]
+    })
+  })
+
+  it ('DELETE - fail delete post with incorrect id', async () => {
     await postsTestManager.createPost(creatingData, HTTP_STATUSES.CREATED_201)
 
     await getRequest()

@@ -18,7 +18,6 @@ export const PostsRepository = {
         pageNumber = 1,
         pageSize = 10
       } = params
-      console.log("!!posts!!!params:", params)
 
       const sort: Sort = {}
 
