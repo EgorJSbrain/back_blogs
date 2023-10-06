@@ -15,11 +15,10 @@ export const BlogsRepository = {
       const {
         searchNameTerm,
         sortBy = 'createdAt',
-        sortDirection,
-        pageNumber,
-        pageSize
+        sortDirection = SortDirections.desc,
+        pageNumber = 1,
+        pageSize = 10
       } = params
-      console.log("--blogs---params:", params)
 
       const filter: Filter<IBlog> = {}
       const sort: Sort = {}
