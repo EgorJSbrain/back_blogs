@@ -48,7 +48,7 @@ export const pageNumberValidation = query([RequestParamName.pageNumber])
     if (value && Number(value) < DEFAULT_PAGE_NUMBER) {
       return null
     }
-
+    console.log('---pageNumber---', value)
     return value || DEFAULT_PAGE_NUMBER
   })
   .exists({ checkNull: true })
@@ -59,7 +59,7 @@ export const pageSizeNumberValidation = query([RequestParamName.pageSize])
     if (value && Number(value) < DEFAULT_PAGE_SIZE) {
       return null
     }
-
+    console.log('---pageSize---', value)
     return value || DEFAULT_PAGE_SIZE
   })
   .exists({ checkNull: true })
@@ -70,7 +70,7 @@ export const sortDirectionValidation = query([RequestParamName.sortDirection])
     if (value && value !== SortDirections.asc && value !== SortDirections.desc) {
       return null
     }
-
+    console.log('---sortDirection---', value)
     return value || SortDirections.desc
   })
   .exists({ checkNull: true })
