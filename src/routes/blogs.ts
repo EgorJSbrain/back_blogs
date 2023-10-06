@@ -19,8 +19,7 @@ import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
 
 import {
   BlogsCreateUpdateValidation,
-  PostCreateByBlogIdValidation,
-  requestParamsValidation
+  PostCreateByBlogIdValidation
 } from '../utils/validation/inputValidations'
 import { IPost } from '../types/posts'
 import { CreatePostDto } from '../dtos/posts/create-post.dto'
@@ -29,8 +28,6 @@ export const blogsRouter = Router({})
 
 blogsRouter.get(
   '/',
-  requestParamsValidation(),
-  validationMiddleware,
   async (req: RequestWithParams<BlogsRequestParams>, res: Response<ResponseBody<IBlog>>) => {
     const blogs = await BlogsService.getBlogs(req.query)
 
