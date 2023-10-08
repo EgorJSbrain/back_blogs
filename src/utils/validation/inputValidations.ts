@@ -9,6 +9,10 @@ import {
   postDescriptionValidation,
   postTitleValidation,
   sortDirectionValidation,
+  userEmailValidation,
+  userLoginFormatValidation,
+  userLoginValidation,
+  userPasswordValidation,
   videoAgeRestrictionValidation,
   videoAuthorValidation,
   videoAvailableResolutionsValidation,
@@ -58,6 +62,13 @@ export const PostCreateByBlogIdValidation = (): ValidationChain[] => [
   postTitleValidation,
   postDescriptionValidation,
   postContentValidation
+]
+
+export const UserCreateValidation = (): ValidationChain[] => [
+  userLoginValidation,
+  userLoginFormatValidation,
+  userPasswordValidation,
+  userEmailValidation
 ]
 
 export const requestParamsValidation = (): ValidationChain[] => [

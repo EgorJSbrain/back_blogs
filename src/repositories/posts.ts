@@ -7,7 +7,7 @@ import { RequestParams, ResponseBody } from '../types/global'
 import { UpdatePostDto } from '../dtos/posts/update-post.dto'
 import { Sort } from 'mongodb'
 
-const postsDB = getCollection<IPost>(DBfields.posts)
+const db = getCollection<IPost>(DBfields.posts)
 
 export const PostsRepository = {
   async getPosts(params: RequestParams): Promise<ResponseBody<IPost> | null> {
@@ -28,10 +28,10 @@ export const PostsRepository = {
       const pageSizeNumber = Number(pageSize)
       const pageNumberNum = Number(pageNumber)
       const skip = (pageNumberNum - 1) * pageSizeNumber
-      const count = await postsDB.estimatedDocumentCount()
+      const count = await db.estimatedDocumentCount()
       const pagesCount = Math.ceil(count / pageSizeNumber)
 
-      const posts = await postsDB
+      const posts = await db
         .find({}, { projection: { _id: false } })
         .sort(sort)
         .skip(skip)
@@ -52,7 +52,7 @@ export const PostsRepository = {
 
   async getPostById(id: string) {
     try {
-      const post = await postsDB.findOne({ id }, { projection: { _id: 0 } })
+      const post = await db.findOne({ id }, { projection: { _id: 0 } })
 
       return post
     } catch {
@@ -64,10 +64,10 @@ export const PostsRepository = {
     try {
       let post
 
-      const response = await postsDB.insertOne(data)
+      const response = await db.insertOne(data)
 
       if (response.insertedId) {
-        post = await postsDB.findOne(
+        post = await db.findOne(
           { id: data.id },
           { projection: { _id: 0 } }
         )
@@ -82,10 +82,10 @@ export const PostsRepository = {
   async updatePost(id: string, data: UpdatePostDto) {
     try {
       let post
-      const response = await postsDB.updateOne({ id }, { $set: data })
+      const response = await db.updateOne({ id }, { $set: data })
 
       if (response.modifiedCount) {
-        post = await postsDB.findOne({ id }, { projection: { _id: 0 } })
+        post = await db.findOne({ id }, { projection: { _id: 0 } })
       }
 
       return post
@@ -96,7 +96,7 @@ export const PostsRepository = {
 
   async deletePost(id: string) {
     try {
-      const response = await postsDB.deleteOne({ id })
+      const response = await db.deleteOne({ id })
 
       return !!response.deletedCount
     } catch {
@@ -119,7 +119,7 @@ export const PostsRepository = {
       const pageSizeNumber = Number(pageSize)
       const pageNumberNum = Number(pageNumber)
       const skip = (pageNumberNum - 1) * pageSizeNumber
-      const count = await postsDB.countDocuments({ blogId })
+      const count = await db.countDocuments({ blogId })
       const pagesCount = Math.ceil(count / pageSizeNumber)
 
       const sort: Sort = {}
@@ -128,7 +128,7 @@ export const PostsRepository = {
         sort[sortBy] = sortDirection === SortDirections.asc ? 1 : -1
       }
 
-      const posts = await postsDB
+      const posts = await db
         .find({ blogId }, { projection: { _id: false } })
         .sort(sort)
         .skip(skip)
@@ -151,10 +151,10 @@ export const PostsRepository = {
     try {
       let post
 
-      const response = await postsDB.insertOne(data)
+      const response = await db.insertOne(data)
 
       if (response.insertedId) {
-        post = await postsDB.findOne(
+        post = await db.findOne(
           { id: data.id },
           { projection: { _id: 0 } }
         )

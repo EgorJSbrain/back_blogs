@@ -15,7 +15,9 @@ export const RouterPaths = {
   videos: '/videos',
   blogs: '/blogs',
   posts: '/posts',
-  testing: '/testing'
+  testing: '/testing',
+  users: '/users',
+  auth: '/auth'
 }
 
 export enum SortDirections {
