@@ -49,19 +49,12 @@ export const UsersRepository = {
         .limit(pageSizeNumber)
         .toArray()
 
-      const updatedUsers = users.map(user => ({
-        id: user.id,
-        email: user.email,
-        login: user.login,
-        createdAt: user.createdAt
-      }))
-
       return {
         pagesCount,
         page: pageNumberNum,
         pageSize: pageSizeNumber,
         totalCount: count,
-        items: updatedUsers
+        items: users
       }
     } catch {
       return null
