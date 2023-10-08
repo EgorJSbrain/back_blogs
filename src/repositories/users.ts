@@ -48,6 +48,7 @@ export const UsersRepository = {
         .skip(skip)
         .limit(pageSizeNumber)
         .toArray()
+      console.log("----!_---", users)
 
       return {
         pagesCount,
@@ -83,7 +84,7 @@ export const UsersRepository = {
       if (response.insertedId) {
         user = await db.findOne(
           { id: data.id },
-          { projection: { _id: 0 } }
+          { projection: { _id: 0, passwordHash: 0, passwordSalt: 0 } }
         )
       }
 
