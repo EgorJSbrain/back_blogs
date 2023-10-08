@@ -40,6 +40,14 @@ import {
   SortDirections,
   requestParamErrorMessage
 } from '../../constants/global'
+import {
+  LOGIN_MAX_LENGTH,
+  LOGIN_MIN_LENGTH,
+  PASSWORD_MAX_LENGTH,
+  PASSWORD_MIN_LENGTH,
+  UserInputFields,
+  usersErrorMessage
+} from '../../constants/users'
 
 // params
 
@@ -190,3 +198,25 @@ export const videoPublicationDateValidation = body([
   })
   .exists({ checkNull: true })
   .withMessage(videoErrorMessage.publicationDate)
+
+// users
+
+export const userLoginValidation = body([UserInputFields.login])
+  .trim()
+  .isLength({ min: LOGIN_MIN_LENGTH, max: LOGIN_MAX_LENGTH })
+  .withMessage(usersErrorMessage.loginLength)
+
+export const userPasswordValidation = body([UserInputFields.password])
+  .trim()
+  .isLength({ min: PASSWORD_MIN_LENGTH, max: PASSWORD_MAX_LENGTH })
+  .withMessage(usersErrorMessage.passwordLength)
+
+export const userLoginFormatValidation = body([UserInputFields.login])
+  .trim()
+  .matches(/^[a-zA-Z0-9_-]*$/)
+  .withMessage(usersErrorMessage.loginFormat)
+
+export const userEmailValidation = body([UserInputFields.email])
+  .trim()
+  .matches(/^[\w-\\.]+@([\w-]+\.)+[\w-]{2,4}$/)
+  .withMessage(usersErrorMessage.emailFormat)
