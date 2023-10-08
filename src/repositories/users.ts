@@ -43,7 +43,7 @@ export const UsersRepository = {
       const pagesCount = Math.ceil(count / pageSizeNumber)
 
       const users = await db
-        .find(filter, { projection: { _id: false } })
+        .find(filter, { projection: { _id: 0, passwordHash: 0, passwordSalt: 0 } })
         .sort(sort)
         .skip(skip)
         .limit(pageSizeNumber)
@@ -63,7 +63,10 @@ export const UsersRepository = {
 
   async getuserByLoginOrEmail(login: string, email: string) {
     try {
-      const user = await db.findOne({ $or: [{ login }, { email }] }, { projection: { _id: 0 } })
+      const user = await db.findOne(
+        { $or: [{ login }, { email }] },
+        { projection: { _id: 0, passwordHash: 0, passwordSalt: 0 } }
+      )
 
       return user
     } catch {
