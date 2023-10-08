@@ -48,14 +48,20 @@ export const UsersRepository = {
         .skip(skip)
         .limit(pageSizeNumber)
         .toArray()
-      console.log("----!_---", users)
+
+      const updatedUsers = users.map(user => ({
+        id: user.id,
+        email: user.email,
+        login: user.login,
+        createdAt: user.createdAt
+      }))
 
       return {
         pagesCount,
         page: pageNumberNum,
         pageSize: pageSizeNumber,
         totalCount: count,
-        items: users
+        items: updatedUsers
       }
     } catch {
       return null
