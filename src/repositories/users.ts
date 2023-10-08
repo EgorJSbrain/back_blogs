@@ -1,30 +1,35 @@
+import { Filter, Sort } from 'mongodb'
 import { DBfields } from '../db/constants'
 import { getCollection } from '../db/mongo-db'
-
-import { BlogsRequestParams, IBlog } from '../types/blogs'
-import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
 import { SortDirections } from '../constants/global'
+
 import { ResponseBody } from '../types/global'
-import { Filter, Sort } from 'mongodb'
+import { ICreatingUser, IUser, UsersRequestParams } from '../types/users'
 
-const db = getCollection<IBlog>(DBfields.blogs)
+const db = getCollection<IUser>(DBfields.users)
 
-export const BlogsRepository = {
-  async getBlogs(params: BlogsRequestParams): Promise<ResponseBody<IBlog> | null> {
+export const UsersRepository = {
+  async getUsers(params: UsersRequestParams): Promise<ResponseBody<IUser> | null> {
     try {
       const {
-        searchNameTerm,
         sortBy = 'createdAt',
         sortDirection = SortDirections.desc,
         pageNumber = 1,
-        pageSize = 10
+        pageSize = 10,
+        searchLoginTerm,
+        searchEmailTerm
       } = params
 
-      const filter: Filter<IBlog> = {}
       const sort: Sort = {}
+      let filter: Filter<IUser> = {}
 
-      if (searchNameTerm) {
-        filter.name = { $regex: searchNameTerm, $options: 'i' }
+      if (searchLoginTerm || searchEmailTerm) {
+        filter = {
+          $or: [
+            { email: { $regex: searchLoginTerm, $options: 'i' } },
+            { login: { $regex: searchEmailTerm, $options: 'i' } }
+          ]
+        }
       }
 
       if (sortBy && sortDirection) {
@@ -37,7 +42,7 @@ export const BlogsRepository = {
       const count = await db.countDocuments(filter)
       const pagesCount = Math.ceil(count / pageSizeNumber)
 
-      const blogs = await db
+      const users = await db
         .find(filter, { projection: { _id: false } })
         .sort(sort)
         .skip(skip)
@@ -49,56 +54,43 @@ export const BlogsRepository = {
         page: pageNumberNum,
         pageSize: pageSizeNumber,
         totalCount: count,
-        items: blogs
+        items: users
       }
     } catch {
       return null
     }
   },
 
-  async getBlogById(id: string) {
+  async getuserByLoginOrEmail(login: string, email: string) {
     try {
-      const blog = await db.findOne({ id }, { projection: { _id: false } })
+      const user = await db.findOne({ $or: [{ login }, { email }] }, { projection: { _id: 0 } })
 
-      return blog
+      return user
     } catch {
       return null
     }
   },
 
-  async createBlog(data: IBlog) {
+  async createUser(data: ICreatingUser) {
     try {
-      let blog = null
+      let user
 
       const response = await db.insertOne(data)
 
-      if (response.insertedId && data.id) {
-        blog = await db.findOne({ id: data.id }, { projection: { _id: 0 } })
+      if (response.insertedId) {
+        user = await db.findOne(
+          { id: data.id },
+          { projection: { _id: 0 } }
+        )
       }
 
-      return blog
+      return user
     } catch {
       return null
     }
   },
 
-  async updateBlog(id: string, data: UpdateBlogDto) {
-    try {
-      let blog
-
-      const response = await db.updateOne({ id }, { $set: data })
-
-      if (response.modifiedCount) {
-        blog = await db.findOne({ id }, { projection: { _id: 0 } })
-      }
-
-      return blog
-    } catch {
-      return null
-    }
-  },
-
-  async deleteBlog(id: string) {
+  async deleteUser(id: string) {
     try {
       const response = await db.deleteOne({ id })
 
