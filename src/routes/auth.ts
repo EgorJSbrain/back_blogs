@@ -17,9 +17,9 @@ authRouter.post(
     const existedUser = await UsersService.loginUser(req.body.loginOrEmail, req.body.password)
 
     if (!existedUser) {
-      return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+      return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
-    res.sendStatus(HTTP_STATUSES.OK_200)
+    res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
   }
 )
