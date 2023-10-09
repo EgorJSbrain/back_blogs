@@ -11,6 +11,7 @@ import {
   sortDirectionValidation,
   userEmailValidation,
   userLoginFormatValidation,
+  userLoginOrEmailValidation,
   userLoginValidation,
   userPasswordValidation,
   videoAgeRestrictionValidation,
@@ -69,6 +70,11 @@ export const UserCreateValidation = (): ValidationChain[] => [
   userLoginFormatValidation,
   userPasswordValidation,
   userEmailValidation
+]
+
+export const UserLoginValidation = (): ValidationChain[] => [
+  userLoginOrEmailValidation,
+  userPasswordValidation
 ]
 
 export const requestParamsValidation = (): ValidationChain[] => [
