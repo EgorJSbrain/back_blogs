@@ -220,3 +220,8 @@ export const userEmailValidation = body([UserInputFields.email])
   .trim()
   .matches(/^[\w-\\.]+@([\w-]+\.)+[\w-]{2,4}$/)
   .withMessage(usersErrorMessage.emailFormat)
+
+export const userLoginOrEmailValidation = body([UserInputFields.loginOrEmail])
+  .trim()
+  .isLength({ min: LOGIN_MIN_LENGTH, max: LOGIN_MAX_LENGTH })
+  .withMessage(usersErrorMessage.loginOrEmailRequired)

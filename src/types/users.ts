@@ -5,6 +5,8 @@ export interface IUser {
   login: string
   email: string
   createdAt: string
+  passwordSalt?: string
+  passwordHash?: string
 }
 
 export interface ICreatingUser {
