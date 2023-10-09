@@ -1,3 +1,5 @@
+import bcrypt from 'bcrypt'
+
 import { generateNewUser } from './utils'
 import { UsersRepository } from '../repositories'
 import { RequestParams } from '../types/global'
@@ -12,13 +14,34 @@ export const UsersService = {
     return await UsersRepository.getuserByLoginOrEmail(login, email)
   },
 
+  async loginUser(loginOrEmail: string, password: string) {
+    const existedUser = await UsersRepository.getuserByLoginOrEmail(loginOrEmail, loginOrEmail)
+
+    if (existedUser && existedUser.passwordHash) {
+      return await bcrypt.compare(password, existedUser.passwordHash)
+    }
+
+    return false
+  },
+
   async createUser(data: CreateUserDto) {
-    const createdUser = await generateNewUser(data)
+    const { passwordSalt, passwordHash } = await this._generateHash(data.password)
+    const createdUser = await generateNewUser(data, passwordSalt, passwordHash)
 
     return await UsersRepository.createUser(createdUser)
   },
 
   async deleteUser(id: string) {
     return await UsersRepository.deleteUser(id)
+  },
+
+  async _generateHash(password: string) {
+    const passwordSalt = await bcrypt.genSalt(10)
+    const passwordHash = await bcrypt.hash(password, passwordSalt)
+
+    return {
+      passwordSalt,
+      passwordHash
+    }
   }
 }

@@ -1,4 +1,3 @@
-import bcrypt from 'bcrypt'
 import { IBlog } from '../types/blogs'
 import { IPost } from '../types/posts'
 import { IVideo } from '../types/videos'
@@ -42,9 +41,13 @@ export const generateNewPost = (data: CreatePostDto): IPost => ({
   createdAt: new Date().toISOString()
 })
 
-export const generateNewUser = async (data: CreateUserDto): Promise<ICreatingUser> => {
-  const passwordSalt = await bcrypt.genSalt(10)
-  const passwordHash = await bcrypt.hash(data.password, passwordSalt)
+export const generateNewUser = async (
+  data: CreateUserDto,
+  passwordSalt: string,
+  passwordHash: string
+): Promise<ICreatingUser> => {
+  // const passwordSalt = await bcrypt.genSalt(10)
+  // const passwordHash = await bcrypt.hash(data.password, passwordSalt)
 
   return {
     id: Number(new Date()).toString(),

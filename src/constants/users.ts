@@ -7,9 +7,11 @@ export enum UserInputFields {
   login = 'login',
   password = 'password',
   email = 'email',
+  loginOrEmail = 'loginOrEmail',
 }
 
 export const usersErrorMessage = {
+  loginOrEmailRequired: 'loginOrEmail is required',
   loginLength: `Length of login shouldn't be less than ${LOGIN_MIN_LENGTH} and more than ${LOGIN_MAX_LENGTH} symbols`,
   loginFormat: 'Login is not valid',
   // eslint-disable-next-line max-len
