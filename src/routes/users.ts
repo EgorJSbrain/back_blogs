@@ -30,7 +30,6 @@ usersRouter.get(
 
 usersRouter.post(
   '/',
-  authMiddleware,
   UserCreateValidation(),
   validationMiddleware,
   async (req: RequestWithBody<CreateUserDto>, res: Response) => {

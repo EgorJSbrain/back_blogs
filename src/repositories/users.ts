@@ -23,12 +23,17 @@ export const UsersRepository = {
       const sort: Sort = {}
       let filter: Filter<IUser> = {}
 
-      if (searchLoginTerm || searchEmailTerm) {
+      if (searchLoginTerm) {
         filter = {
           $or: [
-            { email: { $regex: searchEmailTerm, $options: 'i' } },
             { login: { $regex: searchLoginTerm, $options: 'i' } }
           ]
+        }
+      }
+
+      if (searchEmailTerm) {
+        filter = {
+          $or: [...(filter.$or || []), { email: { $regex: searchEmailTerm, $options: 'i' } }]
         }
       }
 
