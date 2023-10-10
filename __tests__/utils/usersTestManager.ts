@@ -3,6 +3,7 @@ import { app } from "../../src/app";
 import { HTTP_STATUSES, RouterPaths } from '../../src/constants/global'
 import { CreateUserDto } from '../../src/dtos/users/create-user.dto';
 import { IUser } from '../../src/types/users';
+import { authUser } from '../../src/db/db';
 
 export const usersTestManager = {
   async createUser(
@@ -11,6 +12,7 @@ export const usersTestManager = {
   ): Promise<{response: Response, entity: IUser}>   {
     const response = await request(app)
       .post(RouterPaths.users)
+      .set({ Authorization: `Basic ${authUser.password}` })
       .send(data)
       .expect(expectedStatusCode)
 
