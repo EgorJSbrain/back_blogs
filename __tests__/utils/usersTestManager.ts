@@ -1,0 +1,19 @@
+import request, { Response } from 'supertest'
+import { app } from "../../src/app";
+import { HTTP_STATUSES, RouterPaths } from '../../src/constants/global'
+import { CreateUserDto } from '../../src/dtos/users/create-user.dto';
+import { IUser } from '../../src/types/users';
+
+export const usersTestManager = {
+  async createUser(
+    data: CreateUserDto,
+    expectedStatusCode: HTTP_STATUSES = HTTP_STATUSES.CREATED_201
+  ): Promise<{response: Response, entity: IUser}>   {
+    const response = await request(app)
+      .post(RouterPaths.users)
+      .send(data)
+      .expect(expectedStatusCode)
+
+    return {response, entity: response.body}
+  }
+}
