@@ -223,5 +223,5 @@ export const userEmailValidation = body([UserInputFields.email])
 
 export const userLoginOrEmailValidation = body([UserInputFields.loginOrEmail])
   .trim()
-  .isLength({ min: LOGIN_MIN_LENGTH, max: LOGIN_MAX_LENGTH })
+  .isLength({ min: LOGIN_MIN_LENGTH })
   .withMessage(usersErrorMessage.loginOrEmailRequired)
