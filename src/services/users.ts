@@ -10,18 +10,22 @@ export const UsersService = {
     return await UsersRepository.getUsers(params)
   },
 
-  async getUserByLoginOrEmail(login: string, email: string) {
-    return await UsersRepository.getuserByLoginOrEmail(login, email)
+  async getUserById(id: string) {
+    return await UsersRepository.getUserById(id)
   },
 
-  async loginUser(loginOrEmail: string, password: string) {
-    const existedUser = await UsersRepository.getuserByLoginOrEmail(loginOrEmail, loginOrEmail)
+  async getUserByLoginOrEmail(login: string, email: string) {
+    return await UsersRepository.getUserByLoginOrEmail(login, email)
+  },
+
+  async checkCredentials(loginOrEmail: string, password: string) {
+    const existedUser = await UsersRepository.getUserByLoginOrEmail(loginOrEmail, loginOrEmail)
 
     if (existedUser && existedUser.passwordHash) {
-      return await bcrypt.compare(password, existedUser.passwordHash)
+      return existedUser
     }
 
-    return false
+    return null
   },
 
   async createUser(data: CreateUserDto) {

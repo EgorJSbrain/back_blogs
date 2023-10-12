@@ -36,10 +36,12 @@ import { BlogsService } from '../../services'
 import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_SIZE,
-  RequestParamName,
-  SortDirections,
-  requestParamErrorMessage
+  SortDirections
 } from '../../constants/global'
+import {
+  RequestParamName,
+  requestParamErrorMessage
+} from '../../constants/requests'
 import {
   LOGIN_MAX_LENGTH,
   LOGIN_MIN_LENGTH,

@@ -1,8 +1,6 @@
 import request from 'supertest'
 import { app } from '../../src/app'
 import { HTTP_STATUSES, RouterPaths } from '../../src/constants/global'
-import { videosTestManager } from '../utils/videosTestManager'
-import { VideoAvailableResolutions } from '../../src/constants/videos'
 import { dbConnection, dbClear, dbDisconnect } from '../../src/db/mongo-db'
 import { usersTestManager } from '../utils/usersTestManager'
 
