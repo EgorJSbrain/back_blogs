@@ -35,5 +35,4 @@
         "max-len": ["error", { "code": 120 }]
     },
     "ignorePatterns": ["**/__tests__/*"]
-    // "ignorePatterns": ["**.e2e.test.ts"]
 }
