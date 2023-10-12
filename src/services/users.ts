@@ -22,7 +22,13 @@ export const UsersService = {
     const existedUser = await UsersRepository.getUserByLoginOrEmail(loginOrEmail, loginOrEmail)
 
     if (existedUser && existedUser.passwordHash) {
-      return existedUser
+      const passwordChecked = await bcrypt.compare(password, existedUser.passwordHash)
+
+      if (passwordChecked) {
+        return existedUser
+      } else {
+        return null
+      }
     }
 
     return null
