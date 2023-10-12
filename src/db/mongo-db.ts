@@ -1,10 +1,11 @@
 import { Collection, MongoClient, Document } from 'mongodb'
 import dotenv from 'dotenv'
 import { DBfields } from './constants'
+import { GLOBALS } from '../global'
 
 dotenv.config()
 
-if (!process.env.MONGO_URL) {
+if (!GLOBALS.MONGO_URL) {
   throw new Error('DB does not exist!')
 }
 
@@ -12,11 +13,11 @@ const isTestDb = process.env.NODE_ENV === 'test'
 
 const dbUrl =
   (isTestDb
-    ? process.env.TEST_MONGO_URL
-    : process.env.MONGO_URL) ??
+    ? GLOBALS.TEST_MONGO_URL
+    : GLOBALS.MONGO_URL) ??
   'mongodb+srv://user:user1@cluster0.w3gbicr.mongodb.net/studying-test'
 
-const dbName = isTestDb ? process.env.TEST_MONGO_DB_NAME : process.env.MONGO_DB_NAME
+const dbName = isTestDb ? GLOBALS.TEST_MONGO_DB_NAME : GLOBALS.MONGO_DB_NAME
 export const client = new MongoClient(dbUrl)
 
 export const getCollection = <T extends Document>(

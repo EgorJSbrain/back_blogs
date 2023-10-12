@@ -1,13 +1,11 @@
-import dotenv from 'dotenv'
 import { app } from './app'
 import { dbConnection } from './db/mongo-db'
+import { GLOBALS } from './global'
 
-dotenv.config()
-
-const PORT = process.env.PORT || 3001
+const PORT = GLOBALS.PORT
 
 app.listen(PORT, async () => {
   await dbConnection()
 
-  console.log(`SERVER START PORT-${process.env.PORT}`)
+  console.log(`SERVER START PORT-${PORT}`)
 })
