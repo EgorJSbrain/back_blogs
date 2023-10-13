@@ -184,7 +184,14 @@ postsRouter.post(
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
+    const existedPost = await PostsService.getPostById(postId)
+
+    if (!existedPost) {
+      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    }
+
     const response = await CommentsService.createComment(req.body, existedUser)
+    console.log("-----!!!-----response:", response)
 
     if (!response) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
