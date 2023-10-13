@@ -52,6 +52,10 @@ commentsRouter.put(
     const existedUser = await UsersService.getUserById(req.userId)
     const existedComment = await CommentsService.getCommentById(id)
 
+    if (!existedUser) {
+      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    }
+
     if (existedComment?.commentatorInfo.userId !== existedUser?.id) {
       return res.sendStatus(HTTP_STATUSES.FORBIDEN_403)
     }
@@ -87,7 +91,7 @@ commentsRouter.delete(
     const existedUser = await UsersService.getUserById(req.userId)
     const existedComment = await CommentsService.getCommentById(id)
 
-    if (existedComment?.commentatorInfo.userId !== existedUser?._id) {
+    if (existedComment?.commentatorInfo.userId !== existedUser?.id) {
       return res.sendStatus(HTTP_STATUSES.FORBIDEN_403)
     }
 
