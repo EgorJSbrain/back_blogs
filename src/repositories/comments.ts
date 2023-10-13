@@ -10,7 +10,7 @@ import { UpdateCommentDto } from '../dtos/comments/update-comment.dto'
 const db = getCollection<IComment>(DBfields.comments)
 
 export const CommentsRepository = {
-  async getCommentsByPostId(params: RequestParams): Promise<ResponseBody<IComment> | null> {
+  async getCommentsByPostId(params: RequestParams, postId: string): Promise<ResponseBody<IComment> | null> {
     try {
       const {
         sortBy = 'createdAt',
@@ -32,7 +32,7 @@ export const CommentsRepository = {
       const pagesCount = Math.ceil(count / pageSizeNumber)
 
       const comments = await db
-        .find({}, { projection: { _id: false } })
+        .find({ postId }, { projection: { _id: 0, postId: 0 } })
         .sort(sort)
         .skip(skip)
         .limit(pageSizeNumber)
@@ -52,7 +52,7 @@ export const CommentsRepository = {
 
   async getCommentById(id: string) {
     try {
-      const comment = await db.findOne({ id }, { projection: { _id: 0 } })
+      const comment = await db.findOne({ id }, { projection: { _id: 0, postId: 0 } })
 
       return comment
     } catch {
@@ -69,7 +69,7 @@ export const CommentsRepository = {
       if (response.insertedId) {
         comment = await db.findOne(
           { id: data.id },
-          { projection: { _id: 0 } }
+          { projection: { _id: 0, postId: 0 } }
         )
       }
 
@@ -85,7 +85,7 @@ export const CommentsRepository = {
       const response = await db.updateOne({ id }, { $set: data })
 
       if (response.modifiedCount) {
-        comment = await db.findOne({ id }, { projection: { _id: 0 } })
+        comment = await db.findOne({ id }, { projection: { _id: 0, postId: 0 } })
       }
 
       return comment

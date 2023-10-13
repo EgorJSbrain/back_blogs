@@ -7,22 +7,22 @@ import { CommentInputFields } from '../constants/comments'
 import { UpdateCommentDto } from '../dtos/comments/update-comment.dto'
 
 export const CommentsService = {
-  async getCommentsByPostId(params: RequestParams) {
-    return await CommentsRepository.getCommentsByPostId(params)
+  async getCommentsByPostId(params: RequestParams, postId: string) {
+    return await CommentsRepository.getCommentsByPostId(params, postId)
   },
 
   async getCommentById(id: string) {
     return await CommentsRepository.getCommentById(id)
   },
 
-  async createComment(data: CreateCommentDto, user: IUser) {
+  async createComment(data: CreateCommentDto, user: IUser, postId: string) {
     const { content } = data
 
     const creatingData = {
       [CommentInputFields.content]: content
     }
 
-    const createdComment = generateNewComment(creatingData, user.id, user.login)
+    const createdComment = generateNewComment(creatingData, user.id, user.login, postId)
 
     return await CommentsRepository.createComment(createdComment)
   },
