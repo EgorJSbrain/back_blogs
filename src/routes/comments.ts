@@ -52,7 +52,7 @@ commentsRouter.put(
     const existedUser = await UsersService.getUserById(req.userId)
     const existedComment = await CommentsService.getCommentById(id)
 
-    if (existedComment?.commentatorInfo.userId !== existedUser?._id) {
+    if (existedComment?.commentatorInfo.userId !== existedUser?.id) {
       return res.sendStatus(HTTP_STATUSES.FORBIDEN_403)
     }
 
