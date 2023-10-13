@@ -1,8 +1,8 @@
 import { Router, Response } from 'express'
 
 import { HTTP_STATUSES } from '../constants/global'
-import { validationMiddleware, authMiddleware } from '../middlewares'
-import { CommentsService } from '../services'
+import { validationMiddleware } from '../middlewares'
+import { CommentsService, UsersService } from '../services'
 import { CommentsValidation } from '../utils/validation/inputValidations'
 
 import {
@@ -49,7 +49,12 @@ commentsRouter.put(
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
+    const existedUser = await UsersService.getUserById(req.userId)
     const existedComment = await CommentsService.getCommentById(id)
+
+    if (existedComment?.commentatorInfo.userId !== existedUser?._id) {
+      return res.sendStatus(HTTP_STATUSES.FORBIDEN_403)
+    }
 
     if (existedComment?.content === req.body.content) {
       return res.status(HTTP_STATUSES.OK_200).send(existedComment)
@@ -71,7 +76,7 @@ commentsRouter.put(
 
 commentsRouter.delete(
   '/:id',
-  authMiddleware,
+  authJWTMiddleware,
   async (req: RequestWithParams<{ id: string }>, res: Response) => {
     const { id } = req.params
 
