@@ -151,6 +151,12 @@ postsRouter.get(
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
+    const existedPost = await PostsService.getPostById(postId)
+
+    if (!existedPost) {
+      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    }
+
     const response = await CommentsService.getCommentsByPostId(req.query)
 
     if (!response) {
