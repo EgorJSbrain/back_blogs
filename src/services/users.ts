@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt'
 
 import { generateNewUser } from './utils'
 import { UsersRepository } from '../repositories'
+
 import { RequestParams } from '../types/global'
 import { CreateUserDto } from '../dtos/users/create-user.dto'
 
@@ -36,7 +37,7 @@ export const UsersService = {
 
   async createUser(data: CreateUserDto) {
     const { passwordSalt, passwordHash } = await this._generateHash(data.password)
-    const createdUser = await generateNewUser(data, passwordSalt, passwordHash)
+    const createdUser = generateNewUser(data, passwordSalt, passwordHash)
 
     return await UsersRepository.createUser(createdUser)
   },

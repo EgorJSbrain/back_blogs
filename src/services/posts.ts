@@ -1,10 +1,10 @@
 import { generateNewPost } from './utils'
+import { PostsRepository } from '../repositories'
+import { PostInputFields } from '../constants/posts'
 
 import { CreatePostDto } from '../dtos/posts/create-post.dto'
 import { UpdatePostDto } from '../dtos/posts/update-post.dto'
-import { PostsRepository } from '../repositories'
 import { RequestParams } from '../types/global'
-import { PostInputFields } from '../constants/posts'
 import { IBlog } from '../types/blogs'
 
 export const PostsService = {

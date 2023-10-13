@@ -2,5 +2,6 @@ export enum DBfields {
   videos = 'videos',
   blogs = 'blogs',
   posts = 'posts',
-  users = 'users'
+  users = 'users',
+  comments = 'comments'
 }

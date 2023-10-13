@@ -1,11 +1,11 @@
 import { generateNewBlog, generateNewPost } from './utils'
 import { BlogsRepository, PostsRepository } from '../repositories'
+import { BlogInputFields } from '../constants/blogs'
+import { PostInputFields } from '../constants/posts'
 
 import { CreateBlogDto } from '../dtos/blogs/create-blog.dto'
 import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
 import { BlogsRequestParams, IBlog } from '../types/blogs'
-import { BlogInputFields } from '../constants/blogs'
-import { PostInputFields } from '../constants/posts'
 import { CreatePostDto } from '../dtos/posts/create-post.dto'
 import { RequestParams } from '../types/global'
 

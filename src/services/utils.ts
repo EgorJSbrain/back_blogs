@@ -6,6 +6,8 @@ import { CreatePostDto } from '../dtos/posts/create-post.dto'
 import { CreateVideoDto } from '../dtos/videos/create-video.dto'
 import { CreateUserDto } from '../dtos/users/create-user.dto'
 import { ICreatingUser } from '../types/users'
+import { CreateCommentDto } from '../dtos/comments/create-comment.dto'
+import { IComment } from '../types/comments'
 
 export const generateNewVideo = (data: CreateVideoDto): IVideo => {
   const createdDate = Number(new Date()) - 1000 * 60 * 60 * 24
@@ -41,20 +43,29 @@ export const generateNewPost = (data: CreatePostDto): IPost => ({
   createdAt: new Date().toISOString()
 })
 
-export const generateNewUser = async (
+export const generateNewUser = (
   data: CreateUserDto,
   passwordSalt: string,
   passwordHash: string
-): Promise<ICreatingUser> => {
-  // const passwordSalt = await bcrypt.genSalt(10)
-  // const passwordHash = await bcrypt.hash(data.password, passwordSalt)
+): ICreatingUser => ({
+  id: Number(new Date()).toString(),
+  login: data.login,
+  passwordHash,
+  passwordSalt,
+  email: data.email,
+  createdAt: new Date().toISOString()
+})
 
-  return {
-    id: Number(new Date()).toString(),
-    login: data.login,
-    passwordHash,
-    passwordSalt,
-    email: data.email,
-    createdAt: new Date().toISOString()
-  }
-}
+export const generateNewComment = (
+  data: CreateCommentDto,
+  userId: string,
+  userLogin: string
+): IComment => ({
+  id: Number(new Date()).toString(),
+  content: data.content,
+  commentatorInfo: {
+    userId,
+    userLogin
+  },
+  createdAt: new Date().toISOString()
+})
