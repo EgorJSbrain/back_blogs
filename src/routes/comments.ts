@@ -84,6 +84,13 @@ commentsRouter.delete(
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
+    const existedUser = await UsersService.getUserById(req.userId)
+    const existedComment = await CommentsService.getCommentById(id)
+
+    if (existedComment?.commentatorInfo.userId !== existedUser?._id) {
+      return res.sendStatus(HTTP_STATUSES.FORBIDEN_403)
+    }
+
     const response = await CommentsService.deleteComment(id)
 
     if (!response) {
