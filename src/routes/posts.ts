@@ -157,7 +157,7 @@ postsRouter.get(
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
-    const response = await CommentsService.getCommentsByPostId(req.query)
+    const response = await CommentsService.getCommentsByPostId(req.query, existedPost.id)
 
     if (!response) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -190,8 +190,7 @@ postsRouter.post(
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
-    const response = await CommentsService.createComment(req.body, existedUser)
-    console.log("-----!!!-----response:", response)
+    const response = await CommentsService.createComment(req.body, existedUser, postId)
 
     if (!response) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)

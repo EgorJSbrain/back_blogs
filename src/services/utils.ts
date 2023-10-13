@@ -59,10 +59,12 @@ export const generateNewUser = (
 export const generateNewComment = (
   data: CreateCommentDto,
   userId: string,
-  userLogin: string
+  userLogin: string,
+  postId: string
 ): IComment => ({
   id: Number(new Date()).toString(),
   content: data.content,
+  postId,
   commentatorInfo: {
     userId,
     userLogin

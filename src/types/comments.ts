@@ -4,6 +4,7 @@ export interface IComment {
   id: string
   content: string
   createdAt: string
+  postId: string
   commentatorInfo: {
     userId: string
     userLogin: string
