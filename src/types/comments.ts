@@ -1,3 +1,5 @@
+import { RequestParams } from './global'
+
 export interface IComment {
   id: string
   content: string
@@ -6,4 +8,8 @@ export interface IComment {
     userId: string
     userLogin: string
   }
+}
+
+export type CommentsRequestParams = RequestParams & {
+  postId?: string
 }
