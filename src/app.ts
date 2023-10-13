@@ -6,7 +6,8 @@ import {
   blogsRouter,
   postsRouter,
   usersRouter,
-  authRouter
+  authRouter,
+  commentsRouter
 } from './routes'
 import { RouterPaths } from './constants/global'
 
@@ -20,3 +21,4 @@ app.use(RouterPaths.blogs, blogsRouter)
 app.use(RouterPaths.posts, postsRouter)
 app.use(RouterPaths.users, usersRouter)
 app.use(RouterPaths.auth, authRouter)
+app.use(RouterPaths.comments, commentsRouter)
