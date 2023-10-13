@@ -4,7 +4,7 @@ import { SortDirections } from '../constants/global'
 
 import { IComment } from '../types/comments'
 import { RequestParams, ResponseBody } from '../types/global'
-import { Sort } from 'mongodb'
+import { Filter, Sort } from 'mongodb'
 import { UpdateCommentDto } from '../dtos/comments/update-comment.dto'
 
 const db = getCollection<IComment>(DBfields.comments)
@@ -19,6 +19,7 @@ export const CommentsRepository = {
         pageSize = 10
       } = params
 
+      const filter: Filter<IComment> = { postId }
       const sort: Sort = {}
 
       if (sortBy && sortDirection) {
@@ -28,11 +29,11 @@ export const CommentsRepository = {
       const pageSizeNumber = Number(pageSize)
       const pageNumberNum = Number(pageNumber)
       const skip = (pageNumberNum - 1) * pageSizeNumber
-      const count = await db.estimatedDocumentCount()
+      const count = await db.countDocuments(filter)
       const pagesCount = Math.ceil(count / pageSizeNumber)
 
       const comments = await db
-        .find({ postId }, { projection: { _id: 0 } })
+        .find(filter, { projection: { _id: 0 } })
         .sort(sort)
         .skip(skip)
         .limit(pageSizeNumber)
@@ -72,7 +73,6 @@ export const CommentsRepository = {
           { projection: { _id: 0, postId: 0 } }
         )
       }
-      console.log("---create---comment:", comment)
 
       return comment
     } catch {
