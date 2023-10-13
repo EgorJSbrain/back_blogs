@@ -157,7 +157,7 @@ postsRouter.get(
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
-    res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+    res.status(HTTP_STATUSES.OK_200).send(response)
   }
 )
 
