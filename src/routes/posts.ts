@@ -1,7 +1,7 @@
 import { Router, Response } from 'express'
 
-import { BlogsService, PostsService } from '../services'
-import { PostsCreateUpdateValidation } from '../utils/validation/inputValidations'
+import { BlogsService, CommentsService, PostsService, UsersService } from '../services'
+import { CommentsValidation, PostsCreateUpdateValidation } from '../utils/validation/inputValidations'
 import { authMiddleware, validationMiddleware } from '../middlewares'
 import { PostInputFields } from '../constants/posts'
 import { HTTP_STATUSES } from '../constants/global'
@@ -15,6 +15,9 @@ import {
 import { IPost } from '../types/posts'
 import { CreatePostDto } from '../dtos/posts/create-post.dto'
 import { UpdatePostDto } from '../dtos/posts/update-post.dto'
+import { CommentsRequestParams } from '../types/comments'
+import { CreateCommentDto } from '../dtos/comments/create-comment.dto'
+import { authJWTMiddleware } from '../middlewares/authJWTMiddleware'
 
 export const postsRouter = Router({})
 
@@ -136,5 +139,51 @@ postsRouter.delete(
     }
 
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+  }
+)
+
+postsRouter.get(
+  '/:postId/comments',
+  async (req: RequestWithParams<CommentsRequestParams>, res: Response) => {
+    const { postId } = req.params
+
+    if (!postId) {
+      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    }
+
+    const response = await CommentsService.getCommentsByPostId(req.query)
+
+    if (!response) {
+      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    }
+
+    res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+  }
+)
+
+postsRouter.post(
+  '/:postId/comments',
+  authJWTMiddleware,
+  CommentsValidation(),
+  validationMiddleware,
+  async (req: RequestWithParamsAndBody<{ postId: string }, CreateCommentDto>, res: Response) => {
+    const { postId } = req.params
+    const existedUser = await UsersService.getUserById(req.userId)
+
+    if (!existedUser) {
+      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    }
+
+    if (!postId) {
+      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    }
+
+    const response = await CommentsService.createComment(req.body, existedUser)
+
+    if (!response) {
+      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    }
+
+    res.status(HTTP_STATUSES.CREATED_201).send(response)
   }
 )

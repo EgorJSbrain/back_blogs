@@ -11,6 +11,7 @@ import {
 } from '../types/global'
 import { IComment } from '../types/comments'
 import { UpdateCommentDto } from '../dtos/comments/update-comment.dto'
+import { authJWTMiddleware } from '../middlewares/authJWTMiddleware'
 
 export const commentsRouter = Router({})
 
@@ -35,7 +36,7 @@ commentsRouter.get(
 
 commentsRouter.put(
   '/:id',
-  authMiddleware,
+  authJWTMiddleware,
   CommentsValidation(),
   validationMiddleware,
   async (
@@ -50,13 +51,17 @@ commentsRouter.put(
 
     const existedComment = await CommentsService.getCommentById(id)
 
+    if (existedComment?.content === req.body.content) {
+      return res.status(HTTP_STATUSES.OK_200).send(existedComment)
+    }
+
     if (!existedComment) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
-    const blog = await CommentsService.updateComment(id, req.body)
+    const comment = await CommentsService.updateComment(id, req.body)
 
-    if (!blog) {
+    if (!comment) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
