@@ -50,6 +50,12 @@ import {
   UserInputFields,
   usersErrorMessage
 } from '../../constants/users'
+import {
+  COMMENT_CONTENT_MAX_LENGTH,
+  COMMENT_CONTENT_MIN_LENGTH,
+  CommentInputFields,
+  commentsErrorMessage
+} from '../../constants/comments'
 
 // params
 
@@ -227,3 +233,10 @@ export const userLoginOrEmailValidation = body([UserInputFields.loginOrEmail])
   .trim()
   .isLength({ min: LOGIN_MIN_LENGTH })
   .withMessage(usersErrorMessage.loginOrEmailRequired)
+
+// comments
+
+export const commentContentValidation = body([CommentInputFields.content])
+  .trim()
+  .isLength({ min: COMMENT_CONTENT_MIN_LENGTH, max: COMMENT_CONTENT_MAX_LENGTH })
+  .withMessage(commentsErrorMessage.contentLength)

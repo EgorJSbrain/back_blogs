@@ -6,7 +6,7 @@ import { IUser } from '../types/users'
 import { CommentInputFields } from '../constants/comments'
 import { UpdateCommentDto } from '../dtos/comments/update-comment.dto'
 
-export const CommentssService = {
+export const CommentsService = {
   async getCommentsByPostId(params: RequestParams) {
     return await CommentsRepository.getCommentsByPostId(params)
   },

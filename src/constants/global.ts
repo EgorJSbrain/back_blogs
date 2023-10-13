@@ -17,6 +17,7 @@ export const RouterPaths = {
   posts: '/posts',
   testing: '/testing',
   users: '/users',
+  comments: '/comments',
   auth: '/auth'
 }
 
