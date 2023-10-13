@@ -5,12 +5,13 @@ import { PostInputFields } from '../constants/posts'
 
 import { CreateBlogDto } from '../dtos/blogs/create-blog.dto'
 import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
-import { BlogsRequestParams, IBlog } from '../types/blogs'
+import { IBlog } from '../types/blogs'
 import { CreatePostDto } from '../dtos/posts/create-post.dto'
 import { RequestParams } from '../types/global'
+import { CommentsRequestParams } from '../types/comments'
 
 export const BlogsService = {
-  async getBlogs(params: BlogsRequestParams) {
+  async getBlogs(params: CommentsRequestParams) {
     return await BlogsRepository.getBlogs(params)
   },
 
