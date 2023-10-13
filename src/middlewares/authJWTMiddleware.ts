@@ -17,6 +17,10 @@ export const authJWTMiddleware = async(
 
     const userId = JwtService.getUserIdByToken(token)
 
+    if (!userId) {
+      return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+    }
+
     if (userId) {
       req.userId = userId
 
