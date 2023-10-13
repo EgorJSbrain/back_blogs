@@ -33,7 +33,7 @@ export const CommentsRepository = {
       const pagesCount = Math.ceil(count / pageSizeNumber)
 
       const comments = await db
-        .find(filter, { projection: { _id: 0 } })
+        .find(filter, { projection: { _id: 0, postId: 0 } })
         .sort(sort)
         .skip(skip)
         .limit(pageSizeNumber)
