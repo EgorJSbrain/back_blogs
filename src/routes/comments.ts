@@ -56,16 +56,16 @@ commentsRouter.put(
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
+    if (!existedComment) {
+      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    }
+
     if (existedComment?.commentatorInfo.userId !== existedUser?.id) {
       return res.sendStatus(HTTP_STATUSES.FORBIDEN_403)
     }
 
     if (existedComment?.content === req.body.content) {
       return res.status(HTTP_STATUSES.OK_200).send(existedComment)
-    }
-
-    if (!existedComment) {
-      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
     const comment = await CommentsService.updateComment(id, req.body)
