@@ -26,14 +26,14 @@ export const UsersRepository = {
       if (searchLoginTerm) {
         filter = {
           $or: [
-            { login: { $regex: searchLoginTerm, $options: 'i' } }
+            { 'accountData.login': { $regex: searchLoginTerm, $options: 'i' } }
           ]
         }
       }
 
       if (searchEmailTerm) {
         filter = {
-          $or: [...(filter.$or || []), { email: { $regex: searchEmailTerm, $options: 'i' } }]
+          $or: [...(filter.$or || []), { 'accountData.email': { $regex: searchEmailTerm, $options: 'i' } }]
         }
       }
 
@@ -69,7 +69,7 @@ export const UsersRepository = {
   async getUserByLoginOrEmail(login: string, email: string) {
     try {
       const user = await db.findOne(
-        { $or: [{ login }, { email }] },
+        { $or: [{ 'accountData.login': login }, { 'accountData.email': email }] },
         { projection: { _id: 0 } }
       )
 
@@ -82,7 +82,7 @@ export const UsersRepository = {
   async getUserById(id: string) {
     try {
       const user = await db.findOne(
-        { id },
+        { 'accountData.id': id },
         { projection: { _id: 0 } }
       )
 
@@ -100,7 +100,7 @@ export const UsersRepository = {
 
       if (response.insertedId) {
         user = await db.findOne(
-          { id: data.id },
+          { 'accountData.id': data.accountData.id },
           { projection: { _id: 0, passwordHash: 0, passwordSalt: 0 } }
         )
       }
@@ -113,7 +113,7 @@ export const UsersRepository = {
 
   async deleteUser(id: string) {
     try {
-      const response = await db.deleteOne({ id })
+      const response = await db.deleteOne({ 'accountData.id': id })
 
       return !!response.deletedCount
     } catch {

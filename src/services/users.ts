@@ -22,8 +22,8 @@ export const UsersService = {
   async checkCredentials(loginOrEmail: string, password: string) {
     const existedUser = await UsersRepository.getUserByLoginOrEmail(loginOrEmail, loginOrEmail)
 
-    if (existedUser && existedUser.passwordHash) {
-      const passwordChecked = await bcrypt.compare(password, existedUser.passwordHash)
+    if (existedUser && existedUser.accountData.passwordHash) {
+      const passwordChecked = await bcrypt.compare(password, existedUser.accountData.passwordHash)
 
       if (passwordChecked) {
         return existedUser
@@ -35,9 +35,9 @@ export const UsersService = {
     return null
   },
 
-  async createUser(data: CreateUserDto) {
+  async createUser(data: CreateUserDto, isConfirmed?: boolean) {
     const { passwordSalt, passwordHash } = await this._generateHash(data.password)
-    const createdUser = generateNewUser(data, passwordSalt, passwordHash)
+    const createdUser = generateNewUser(data, passwordSalt, passwordHash, isConfirmed)
 
     return await UsersRepository.createUser(createdUser)
   },

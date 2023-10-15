@@ -8,6 +8,8 @@ import { CreateUserDto } from '../dtos/users/create-user.dto'
 import { ICreatingUser } from '../types/users'
 import { CreateCommentDto } from '../dtos/comments/create-comment.dto'
 import { IComment } from '../types/comments'
+import { v4 } from 'uuid'
+import add from 'date-fns/add'
 
 export const generateNewVideo = (data: CreateVideoDto): IVideo => {
   const createdDate = Number(new Date()) - 1000 * 60 * 60 * 24
@@ -46,14 +48,25 @@ export const generateNewPost = (data: CreatePostDto): IPost => ({
 export const generateNewUser = (
   data: CreateUserDto,
   passwordSalt: string,
-  passwordHash: string
+  passwordHash: string,
+  isConfirmed?: boolean
 ): ICreatingUser => ({
-  id: Number(new Date()).toString(),
-  login: data.login,
-  passwordHash,
-  passwordSalt,
-  email: data.email,
-  createdAt: new Date().toISOString()
+  accountData: {
+    id: Number(new Date()).toString(),
+    login: data.login,
+    passwordHash,
+    passwordSalt,
+    email: data.email,
+    createdAt: new Date().toISOString()
+  },
+  emailConfirmation: {
+    confirmationCode: v4(),
+    expirationDate: add(new Date(), {
+      hours: 1,
+      minutes: 10
+    }),
+    isConfirmed: !!isConfirmed
+  }
 })
 
 export const generateNewComment = (

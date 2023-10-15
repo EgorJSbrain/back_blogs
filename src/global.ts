@@ -8,5 +8,7 @@ export const GLOBALS = {
   MONGO_DB_NAME: process.env.MONGO_DB_NAME,
   TEST_MONGO_URL: process.env.TEST_MONGO_URL,
   TEST_MONGO_DB_NAME: process.env.TEST_MONGO_DB_NAME,
-  JWT_SECRET: 'user_jwt_secret'
+  JWT_SECRET: 'user_jwt_secret',
+  SMTP_USER: process.env.SMTP_USER,
+  SMTP_PASSWORD: process.env.SMTP_PASSWORD
 }

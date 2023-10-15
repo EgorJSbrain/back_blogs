@@ -4,7 +4,7 @@ import { GLOBALS } from '../global'
 
 export const JwtService = {
   createJWT(user: IUser) {
-    const token = jwt.sign({ userId: user.id }, GLOBALS.JWT_SECRET, { expiresIn: '1h' })
+    const token = jwt.sign({ userId: user.accountData.id }, GLOBALS.JWT_SECRET, { expiresIn: '1h' })
 
     return token
   },
