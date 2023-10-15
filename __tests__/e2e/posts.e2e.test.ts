@@ -21,7 +21,7 @@ describe('POSTS tests', () => {
     await dbConnection()
   })
 
-  const creatingData: Record<string, string> = {
+  const creatingData = {
     title: 'title',
     content: 'test content',
     shortDescription: 'test description',
