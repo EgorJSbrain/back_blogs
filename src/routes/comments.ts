@@ -60,7 +60,7 @@ commentsRouter.put(
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
-    if (existedComment?.commentatorInfo.userId !== existedUser?.id) {
+    if (existedComment?.commentatorInfo.userId !== existedUser?.accountData.id) {
       return res.sendStatus(HTTP_STATUSES.FORBIDEN_403)
     }
 
@@ -95,7 +95,7 @@ commentsRouter.delete(
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
-    if (existedComment?.commentatorInfo.userId !== existedUser?.id) {
+    if (existedComment?.commentatorInfo.userId !== existedUser?.accountData.id) {
       return res.sendStatus(HTTP_STATUSES.FORBIDEN_403)
     }
 
