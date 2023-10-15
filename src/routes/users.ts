@@ -40,13 +40,18 @@ usersRouter.post(
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
     }
 
-    const user = await UsersService.createUser(req.body)
+    const user = await UsersService.createUser(req.body, true)
 
     if (!user) {
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
     }
 
-    res.status(HTTP_STATUSES.CREATED_201).send(user)
+    res.status(HTTP_STATUSES.CREATED_201).send({
+      id: user.accountData.id,
+      email: user.accountData.email,
+      login: user.accountData.login,
+      createdAt: user.accountData.createdAt
+    })
   }
 )
 

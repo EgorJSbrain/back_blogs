@@ -22,7 +22,7 @@ export const CommentsService = {
       [CommentInputFields.content]: content
     }
 
-    const createdComment = generateNewComment(creatingData, user.id, user.login, postId)
+    const createdComment = generateNewComment(creatingData, user.accountData.id, user.accountData.login, postId)
 
     return await CommentsRepository.createComment(createdComment)
   },
