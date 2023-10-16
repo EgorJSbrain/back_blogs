@@ -282,7 +282,21 @@ export const checkExistedUserByEmailValidation = body([UserInputFields.email])
   .customSanitizer(async (value) => {
     const existedUser = await UsersService.getUserByLoginOrEmail(value, value)
 
-    if (existedUser && existedUser.emailConfirmation.isConfirmed) {
+    if (!existedUser) {
+      return null
+    }
+
+    return value
+  })
+  .exists({ checkNull: true })
+  .withMessage(usersErrorMessage.existedUser)
+
+export const checkExistedConfirmedUserByEmailValidation = body([UserInputFields.email])
+  .trim()
+  .customSanitizer(async (value) => {
+    const existedUser = await UsersService.getUserByLoginOrEmail(value, value)
+
+    if (existedUser && !existedUser.emailConfirmation.isConfirmed) {
       return null
     }
 
