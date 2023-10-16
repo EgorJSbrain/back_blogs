@@ -268,7 +268,7 @@ export const checkExistedUserByEmailValidation = body([UserInputFields.email])
   .customSanitizer(async (value) => {
     const existedUser = await UsersService.getUserByLoginOrEmail(value, value)
 
-    if (!existedUser) {
+    if (existedUser) {
       return null
     }
 
