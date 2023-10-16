@@ -294,7 +294,7 @@ export const checkExistedUserByEmailValidation = body([UserInputFields.email])
 export const checkExistedConfirmedUserByEmailValidation = body([UserInputFields.email])
   .trim()
   .customSanitizer(async (value) => {
-    const existedUser = await UsersService.getUserByVerificationCode(value)
+    const existedUser = await UsersService.getUserByLoginOrEmail(value, value)
 
     if (existedUser && existedUser.emailConfirmation.isConfirmed) {
       return null
