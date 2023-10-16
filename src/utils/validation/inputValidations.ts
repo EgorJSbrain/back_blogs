@@ -27,7 +27,9 @@ import {
   websiteUrlLengthValidation,
   websiteUrlValidation,
   checkExistedUserByCodeValidation,
-  checkExistedVerificationCodeValidation
+  checkExistedVerificationCodeValidation,
+  checkUnexistedUserByEmailValidation,
+  checkExistedConfirmedUserByEmailValidation
 } from './validationRules'
 import { Error } from '../../types/global'
 
@@ -93,7 +95,8 @@ export const UserLoginValidation = (): ValidationChain[] => [
 
 export const UserEmailValidation = (): ValidationChain[] => [
   userEmailValidation,
-  checkExistedUserByEmailValidation
+  checkUnexistedUserByEmailValidation,
+  checkExistedConfirmedUserByEmailValidation
 ]
 
 export const CommentsValidation = (): ValidationChain[] => [
