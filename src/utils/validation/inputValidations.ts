@@ -26,7 +26,8 @@ import {
   videoTitleValidation,
   websiteUrlLengthValidation,
   websiteUrlValidation,
-  checkExistedUserByCodeValidation
+  checkExistedUserByCodeValidation,
+  checkExistedVerificationCodeValidation
 } from './validationRules'
 import { Error } from '../../types/global'
 
@@ -81,7 +82,8 @@ export const UserCreateValidation = (): ValidationChain[] => [
 
 export const RegistrationConfirmValidation = (): ValidationChain[] => [
   confirmationCodeValidation,
-  checkExistedUserByCodeValidation
+  checkExistedUserByCodeValidation,
+  checkExistedVerificationCodeValidation
 ]
 
 export const UserLoginValidation = (): ValidationChain[] => [
@@ -90,8 +92,8 @@ export const UserLoginValidation = (): ValidationChain[] => [
 ]
 
 export const UserEmailValidation = (): ValidationChain[] => [
-  userEmailValidation,
-  checkExistedUserByEmailValidation
+  userEmailValidation
+  // checkExistedUserByEmailValidation
 ]
 
 export const CommentsValidation = (): ValidationChain[] => [
