@@ -28,7 +28,8 @@ import {
   websiteUrlValidation,
   checkExistedUserByCodeValidation,
   checkExistedVerificationCodeValidation,
-  checkConfirmedUserlValidation
+  checkConfirmedUserlValidation,
+  checkExistedConfirmedUserByEmailValidation
 } from './validationRules'
 import { Error } from '../../types/global'
 
@@ -94,7 +95,7 @@ export const UserLoginValidation = (): ValidationChain[] => [
 
 export const UserEmailValidation = (): ValidationChain[] => [
   userEmailValidation,
-  checkExistedUserByEmailValidation,
+  checkExistedConfirmedUserByEmailValidation,
   checkConfirmedUserlValidation
 ]
 
