@@ -43,6 +43,7 @@ import {
   requestParamErrorMessage
 } from '../../constants/requests'
 import {
+  CONFIRMATION_CODE_MIN_LENGTH,
   LOGIN_MAX_LENGTH,
   LOGIN_MIN_LENGTH,
   PASSWORD_MAX_LENGTH,
@@ -233,6 +234,11 @@ export const userLoginOrEmailValidation = body([UserInputFields.loginOrEmail])
   .trim()
   .isLength({ min: LOGIN_MIN_LENGTH })
   .withMessage(usersErrorMessage.loginOrEmailRequired)
+
+export const ConfirmationCodeValidation = body([UserInputFields.code])
+  .trim()
+  .isLength({ min: CONFIRMATION_CODE_MIN_LENGTH })
+  .withMessage(usersErrorMessage.codeRequired)
 
 // comments
 

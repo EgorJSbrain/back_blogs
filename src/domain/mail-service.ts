@@ -9,7 +9,7 @@ export const mailService = {
       return null
     }
 
-    const response = await emailManager.sendMailRegistrationConfirmation({ email: existedUser?.accountData.email })
+    const response = await emailManager.sendMailRegistrationConfirmation(existedUser)
 
     if (!response) return false
 
