@@ -51,12 +51,6 @@ authRouter.post(
   UserCreateValidation(),
   validationMiddleware,
   async (req: RequestWithBody<CreateUserDto>, res: Response) => {
-    const existedUser = await UsersService.getUserByLoginOrEmail(req.body.email, req.body.login)
-
-    if (existedUser) {
-      return res.status(HTTP_STATUSES.BAD_REQUEST_400).send({ email: 'User yet existed' })
-    }
-
     const user = await UsersService.createUser(req.body)
 
     if (!user) {
@@ -107,7 +101,7 @@ authRouter.post(
     const existedUser = await UsersService.getUserByVerificationCode(req.body.code)
 
     if (!existedUser) {
-      return res.status(HTTP_STATUSES.BAD_REQUEST_400).send({ code: 'Code isn\'t correct' })
+      return res.status(HTTP_STATUSES.BAD_REQUEST_400)
     }
 
     if (existedUser && existedUser.emailConfirmation.isConfirmed) {

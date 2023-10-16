@@ -10,7 +10,6 @@ export const mailService = {
     }
 
     const response = await emailManager.sendMailRegistrationConfirmation(existedUser)
-    console.log("-----!--------response:", response)
 
     if (!response) return false
 
