@@ -77,7 +77,7 @@ export const UsersRepository = {
     try {
       const user = await db.findOne(
         { $or: [{ 'accountData.login': login }, { 'accountData.email': email }] },
-        { projection: { _id: 0, passwordHash: 0, passwordSolt: 0 } }
+        { projection: { _id: 0 } }
       )
 
       return user
