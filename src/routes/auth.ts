@@ -1,15 +1,20 @@
 import { Router, Response } from 'express'
 
 import { UsersService } from '../services'
-import { UserCreateValidation, UserLoginValidation } from '../utils/validation/inputValidations'
+import { mailService } from '../domain/mail-service'
+import {
+  RegistrationConfirmValidation,
+  UserCreateValidation,
+  UserLoginValidation
+} from '../utils/validation/inputValidations'
 import { validationMiddleware } from '../middlewares'
 import { HTTP_STATUSES } from '../constants/global'
+import { authJWTMiddleware } from '../middlewares/authJWTMiddleware'
+import { JwtService } from '../applications/jwt-service'
+
 import { RequestWithBody } from '../types/global'
 import { LoginUserDto } from '../dtos/users/login-user.dto'
-import { JwtService } from '../applications/jwt-service'
-import { authJWTMiddleware } from '../middlewares/authJWTMiddleware'
 import { CreateUserDto } from '../dtos/users/create-user.dto'
-import { mailService } from '../domain/mail-service'
 
 export const authRouter = Router({})
 
@@ -54,6 +59,41 @@ authRouter.post(
     }
 
     res.sendStatus(HTTP_STATUSES.OK_200)
+  }
+)
+
+authRouter.post(
+  '/registration-confirmation',
+  RegistrationConfirmValidation(),
+  validationMiddleware,
+  async (req: RequestWithBody<{ code: string }>, res: Response) => {
+    const existedUser = await UsersService.getUserByVerificationCode(req.body.code)
+
+    if (!existedUser) {
+      return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+    }
+
+    if (existedUser && existedUser.emailConfirmation.isConfirmed) {
+      return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+    }
+
+    if (existedUser && existedUser.emailConfirmation.expirationDate < new Date()) {
+      return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+    }
+
+    const user = await UsersService.updateUser(existedUser.accountData.id, {
+      ...existedUser,
+      emailConfirmation: {
+        ...existedUser.emailConfirmation,
+        isConfirmed: true
+      }
+    })
+
+    if (!user) {
+      return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+    }
+
+    res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
   }
 )
 

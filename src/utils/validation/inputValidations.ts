@@ -1,5 +1,6 @@
 import { ValidationChain, FieldValidationError } from 'express-validator'
 import {
+  ConfirmationCodeValidation,
   blogDescriptionValidation,
   blogNameValidation,
   commentContentValidation,
@@ -71,6 +72,10 @@ export const UserCreateValidation = (): ValidationChain[] => [
   userLoginFormatValidation,
   userPasswordValidation,
   userEmailValidation
+]
+
+export const RegistrationConfirmValidation = (): ValidationChain[] => [
+  ConfirmationCodeValidation
 ]
 
 export const UserLoginValidation = (): ValidationChain[] => [

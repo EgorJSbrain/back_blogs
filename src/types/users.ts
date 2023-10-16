@@ -3,19 +3,21 @@ import { RequestParams } from './global'
 export interface IUser {
   accountData: IUserAccountData
   emailConfirmation: IUserEmailConfirmation
+  passwordSalt?: string
+  passwordHash?: string
 }
 
 export interface ICreatingUser {
   accountData: IUserAccountData
   emailConfirmation: IUserEmailConfirmation
+  passwordSalt?: string
+  passwordHash?: string
 }
 
 export interface IUserAccountData {
   id: string
   login: string
   email: string
-  passwordSalt?: string
-  passwordHash?: string
   createdAt: string
 }
 

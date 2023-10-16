@@ -5,6 +5,7 @@ import { UsersRepository } from '../repositories'
 
 import { RequestParams } from '../types/global'
 import { CreateUserDto } from '../dtos/users/create-user.dto'
+import { IUser } from '../types/users'
 
 export const UsersService = {
   async getUsers(params: RequestParams) {
@@ -19,11 +20,19 @@ export const UsersService = {
     return await UsersRepository.getUserByLoginOrEmail(login, email)
   },
 
+  async getUserByVerificationCode(code: string) {
+    return await UsersRepository.getUserByVerificationCode(code)
+  },
+
+  async updateUser(id: string, data: IUser) {
+    return await UsersRepository.updateUser(id, data)
+  },
+
   async checkCredentials(loginOrEmail: string, password: string) {
     const existedUser = await UsersRepository.getUserByLoginOrEmail(loginOrEmail, loginOrEmail)
 
-    if (existedUser && existedUser.accountData.passwordHash) {
-      const passwordChecked = await bcrypt.compare(password, existedUser.accountData.passwordHash)
+    if (existedUser && existedUser.passwordHash) {
+      const passwordChecked = await bcrypt.compare(password, existedUser.passwordHash)
 
       if (passwordChecked) {
         return existedUser

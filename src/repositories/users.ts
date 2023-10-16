@@ -48,7 +48,14 @@ export const UsersRepository = {
       const pagesCount = Math.ceil(count / pageSizeNumber)
 
       const users = await db
-        .find(filter, { projection: { _id: 0, passwordHash: 0, passwordSalt: 0 } })
+        .find(filter, {
+          projection: {
+            _id: 0,
+            passwordHash: 0,
+            passwordSalt: 0,
+            'emailConfirmation.confirmationCode': 0
+          }
+        })
         .sort(sort)
         .skip(skip)
         .limit(pageSizeNumber)
@@ -70,7 +77,20 @@ export const UsersRepository = {
     try {
       const user = await db.findOne(
         { $or: [{ 'accountData.login': login }, { 'accountData.email': email }] },
-        { projection: { _id: 0 } }
+        { projection: { _id: 0, passwordHash: 0, passwordSolt: 0 } }
+      )
+
+      return user
+    } catch {
+      return null
+    }
+  },
+
+  async getUserByVerificationCode(code: string) {
+    try {
+      const user = await db.findOne(
+        { 'emailConfirmation.confirmationCode': code },
+        { projection: { _id: 0, passwordHash: 0, passwordSolt: 0, 'emailConfirmation.confirmationCode': 0 } }
       )
 
       return user
@@ -83,7 +103,7 @@ export const UsersRepository = {
     try {
       const user = await db.findOne(
         { 'accountData.id': id },
-        { projection: { _id: 0 } }
+        { projection: { _id: 0, passwordHash: 0, passwordSolt: 0, 'emailConfirmation.confirmationCode': 0 } }
       )
 
       return user
@@ -101,9 +121,22 @@ export const UsersRepository = {
       if (response.insertedId) {
         user = await db.findOne(
           { 'accountData.id': data.accountData.id },
-          { projection: { _id: 0, passwordHash: 0, passwordSalt: 0 } }
+          { projection: { _id: 0, passwordHash: 0, passwordSalt: 0, 'emailConfirmation.confirmationCode': 0 } }
         )
       }
+
+      return user
+    } catch {
+      return null
+    }
+  },
+
+  async updateUser(id: string, data: IUser) {
+    try {
+      const user = await db.findOneAndUpdate(
+        { 'accountData.id': id },
+        { $set: data }
+      )
 
       return user
     } catch {
