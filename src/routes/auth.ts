@@ -54,7 +54,7 @@ authRouter.post(
     const existedUser = await UsersService.getUserByLoginOrEmail(req.body.email, req.body.login)
 
     if (existedUser) {
-      return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+      return res.status(HTTP_STATUSES.BAD_REQUEST_400).send({ email: 'User yet existed' })
     }
 
     const user = await UsersService.createUser(req.body)
@@ -69,7 +69,7 @@ authRouter.post(
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
     }
 
-    res.sendStatus(HTTP_STATUSES.OK_200)
+    res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
   }
 )
 
@@ -95,7 +95,7 @@ authRouter.post(
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
     }
 
-    res.sendStatus(HTTP_STATUSES.OK_200)
+    res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
   }
 )
 
@@ -107,7 +107,7 @@ authRouter.post(
     const existedUser = await UsersService.getUserByVerificationCode(req.body.code)
 
     if (!existedUser) {
-      return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+      return res.status(HTTP_STATUSES.BAD_REQUEST_400).send({ code: 'Code isn\'t correct' })
     }
 
     if (existedUser && existedUser.emailConfirmation.isConfirmed) {
