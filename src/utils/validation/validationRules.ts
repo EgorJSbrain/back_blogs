@@ -254,7 +254,7 @@ export const checkExistedUserByCodeValidation = body([UserInputFields.code])
   .customSanitizer(async (value) => {
     const existedUser = await UsersService.getUserByVerificationCode(value)
 
-    if (!existedUser) {
+    if (existedUser) {
       return null
     }
 
