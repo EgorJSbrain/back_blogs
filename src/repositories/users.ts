@@ -73,10 +73,23 @@ export const UsersRepository = {
     }
   },
 
-  async getUserByLoginOrEmail(login: string, email: string) {
+  async getUserByLoginOrEmail(email: string, login: string) {
     try {
       const user = await db.findOne(
-        { $or: [{ 'accountData.login': login }, { 'accountData.email': email }] },
+        { $or: [{ 'accountData.email': email }, { 'accountData.login': login }] },
+        { projection: { _id: 0 } }
+      )
+
+      return user
+    } catch {
+      return null
+    }
+  },
+
+  async getUserByEmail(email: string) {
+    try {
+      const user = await db.findOne(
+        { 'accountData.email': email },
         { projection: { _id: 0 } }
       )
 

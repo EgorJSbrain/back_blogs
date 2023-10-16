@@ -34,7 +34,7 @@ usersRouter.post(
   UserCreateValidation(),
   validationMiddleware,
   async (req: RequestWithBody<CreateUserDto>, res: Response) => {
-    const existedUser = await UsersService.getUserByLoginOrEmail(req.body.login, req.body.email)
+    const existedUser = await UsersService.getUserByLoginOrEmail(req.body.email, req.body.login)
 
     if (existedUser) {
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)

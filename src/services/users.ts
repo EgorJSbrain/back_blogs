@@ -16,8 +16,12 @@ export const UsersService = {
     return await UsersRepository.getUserById(id)
   },
 
-  async getUserByLoginOrEmail(login: string, email: string) {
-    return await UsersRepository.getUserByLoginOrEmail(login, email)
+  async getUserByLoginOrEmail(email: string, login: string) {
+    return await UsersRepository.getUserByLoginOrEmail(email, login)
+  },
+
+  async getUserByEmail(email: string) {
+    return await UsersRepository.getUserByEmail(email)
   },
 
   async getUserByVerificationCode(code: string) {
