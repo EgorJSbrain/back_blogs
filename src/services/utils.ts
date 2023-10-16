@@ -54,8 +54,6 @@ export const generateNewUser = (
   accountData: {
     id: Number(new Date()).toString(),
     login: data.login,
-    passwordHash,
-    passwordSalt,
     email: data.email,
     createdAt: new Date().toISOString()
   },
@@ -66,7 +64,9 @@ export const generateNewUser = (
       minutes: 10
     }),
     isConfirmed: !!isConfirmed
-  }
+  },
+  passwordHash,
+  passwordSalt
 })
 
 export const generateNewComment = (
