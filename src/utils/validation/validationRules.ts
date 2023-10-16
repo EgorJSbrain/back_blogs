@@ -291,6 +291,34 @@ export const checkExistedUserByEmailValidation = body([UserInputFields.email])
   .exists({ checkNull: true })
   .withMessage(usersErrorMessage.existedUser)
 
+export const checkExistedConfirmedUserByEmailValidation = body([UserInputFields.email])
+  .trim()
+  .customSanitizer(async (value) => {
+    const existedUser = await UsersService.getUserByVerificationCode(value)
+
+    if (existedUser && existedUser.emailConfirmation.isConfirmed) {
+      return null
+    }
+
+    return value
+  })
+  .exists({ checkNull: true })
+  .withMessage(usersErrorMessage.existedUser)
+
+export const checkUnexistedUserByEmailValidation = body([UserInputFields.email])
+  .trim()
+  .customSanitizer(async (value) => {
+    const existedUser = await UsersService.getUserByLoginOrEmail(value, value)
+
+    if (!existedUser) {
+      return null
+    }
+
+    return value
+  })
+  .exists({ checkNull: true })
+  .withMessage(usersErrorMessage.noExistedUser)
+
 export const checkExistedUserByLoginValidation = body([UserInputFields.login])
   .trim()
   .customSanitizer(async (value) => {
