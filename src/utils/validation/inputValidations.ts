@@ -1,8 +1,10 @@
 import { ValidationChain, FieldValidationError } from 'express-validator'
 import {
-  ConfirmationCodeValidation,
+  confirmationCodeValidation,
   blogDescriptionValidation,
   blogNameValidation,
+  checkExistedUserByLoginValidation,
+  checkExistedUserByEmailValidation,
   commentContentValidation,
   pageNumberValidation,
   pageSizeNumberValidation,
@@ -23,7 +25,8 @@ import {
   videoPublicationDateValidation,
   videoTitleValidation,
   websiteUrlLengthValidation,
-  websiteUrlValidation
+  websiteUrlValidation,
+  checkExistedUserByCodeValidation
 } from './validationRules'
 import { Error } from '../../types/global'
 
@@ -71,11 +74,14 @@ export const UserCreateValidation = (): ValidationChain[] => [
   userLoginValidation,
   userLoginFormatValidation,
   userPasswordValidation,
-  userEmailValidation
+  userEmailValidation,
+  checkExistedUserByLoginValidation,
+  checkExistedUserByEmailValidation
 ]
 
 export const RegistrationConfirmValidation = (): ValidationChain[] => [
-  ConfirmationCodeValidation
+  confirmationCodeValidation,
+  checkExistedUserByCodeValidation
 ]
 
 export const UserLoginValidation = (): ValidationChain[] => [
@@ -84,7 +90,8 @@ export const UserLoginValidation = (): ValidationChain[] => [
 ]
 
 export const UserEmailValidation = (): ValidationChain[] => [
-  userEmailValidation
+  userEmailValidation,
+  checkExistedUserByEmailValidation
 ]
 
 export const CommentsValidation = (): ValidationChain[] => [

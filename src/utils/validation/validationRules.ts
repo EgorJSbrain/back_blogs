@@ -32,7 +32,7 @@ import {
   videoAvailableResolutions,
   VideoAvailableResolutions
 } from '../../constants/videos'
-import { BlogsService } from '../../services'
+import { BlogsService, UsersService } from '../../services'
 import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_SIZE,
@@ -235,14 +235,58 @@ export const userLoginOrEmailValidation = body([UserInputFields.loginOrEmail])
   .isLength({ min: LOGIN_MIN_LENGTH })
   .withMessage(usersErrorMessage.loginOrEmailRequired)
 
-export const ConfirmationCodeValidation = body([UserInputFields.code])
-  .trim()
-  .isLength({ min: CONFIRMATION_CODE_MIN_LENGTH })
-  .withMessage(usersErrorMessage.codeRequired)
-
 // comments
 
 export const commentContentValidation = body([CommentInputFields.content])
   .trim()
   .isLength({ min: COMMENT_CONTENT_MIN_LENGTH, max: COMMENT_CONTENT_MAX_LENGTH })
   .withMessage(commentsErrorMessage.contentLength)
+
+// auth
+
+export const confirmationCodeValidation = body([UserInputFields.code])
+  .trim()
+  .isLength({ min: CONFIRMATION_CODE_MIN_LENGTH })
+  .withMessage(usersErrorMessage.codeRequired)
+
+export const checkExistedUserByCodeValidation = body([UserInputFields.code])
+  .trim()
+  .customSanitizer(async (value) => {
+    const existedUser = await UsersService.getUserByVerificationCode(value)
+
+    if (existedUser && existedUser.emailConfirmation.isConfirmed) {
+      return null
+    }
+
+    return value
+  })
+  .exists({ checkNull: true })
+  .withMessage(usersErrorMessage.existedUser)
+
+export const checkExistedUserByEmailValidation = body([UserInputFields.email])
+  .trim()
+  .customSanitizer(async (value) => {
+    const existedUser = await UsersService.getUserByLoginOrEmail(value, value)
+
+    if (existedUser) {
+      return null
+    }
+
+    return value
+  })
+  .exists({ checkNull: true })
+  .withMessage(usersErrorMessage.existedUser)
+
+export const checkExistedUserByLoginValidation = body([UserInputFields.login])
+  .trim()
+  .customSanitizer(async (value) => {
+    const existedUser = await UsersService.getUserByLoginOrEmail(value, value)
+
+    if (existedUser) {
+      return null
+    }
+
+    return value
+  })
+  .exists({ checkNull: true })
+  .withMessage(usersErrorMessage.existedUser)

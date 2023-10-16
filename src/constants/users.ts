@@ -19,5 +19,6 @@ export const usersErrorMessage = {
   // eslint-disable-next-line max-len
   passwordLength: `Length of password shouldn't be less than ${PASSWORD_MIN_LENGTH} and more than ${PASSWORD_MAX_LENGTH} symbols`,
   emailFormat: 'Email is not valid',
-  codeRequired: 'code is required'
+  codeRequired: 'code is required',
+  existedUser: 'Email or login is already used'
 }

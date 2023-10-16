@@ -103,7 +103,14 @@ export const UsersRepository = {
     try {
       const user = await db.findOne(
         { 'emailConfirmation.confirmationCode': code },
-        { projection: { _id: 0, passwordHash: 0, passwordSolt: 0, 'emailConfirmation.confirmationCode': 0 } }
+        {
+          projection: {
+            _id: 0,
+            passwordHash: 0,
+            passwordSolt: 0
+            // 'emailConfirmation.confirmationCode': 0
+          }
+        }
       )
 
       return user
