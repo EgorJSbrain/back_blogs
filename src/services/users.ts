@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt'
+import { v4 } from 'uuid'
 
 import { generateNewUser } from './utils'
 import { UsersRepository } from '../repositories'
@@ -26,6 +27,26 @@ export const UsersService = {
 
   async getUserByVerificationCode(code: string) {
     return await UsersRepository.getUserByVerificationCode(code)
+  },
+
+  async generateNewCode(data: IUser) {
+    return await this.updateUser(data.accountData.id, {
+      ...data,
+      emailConfirmation: {
+        ...data.emailConfirmation,
+        confirmationCode: v4()
+      }
+    })
+  },
+
+  async confirmUserEmail(data: IUser) {
+    return await this.updateUser(data.accountData.id, {
+      ...data,
+      emailConfirmation: {
+        ...data.emailConfirmation,
+        isConfirmed: true
+      }
+    })
   },
 
   async updateUser(id: string, data: IUser) {

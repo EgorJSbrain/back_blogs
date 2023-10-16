@@ -1,3 +1,6 @@
+import { v4 } from 'uuid'
+import add from 'date-fns/add'
+
 import { IBlog } from '../types/blogs'
 import { IPost } from '../types/posts'
 import { IVideo } from '../types/videos'
@@ -8,8 +11,6 @@ import { CreateUserDto } from '../dtos/users/create-user.dto'
 import { ICreatingUser } from '../types/users'
 import { CreateCommentDto } from '../dtos/comments/create-comment.dto'
 import { IComment } from '../types/comments'
-import { v4 } from 'uuid'
-import add from 'date-fns/add'
 
 export const generateNewVideo = (data: CreateVideoDto): IVideo => {
   const createdDate = Number(new Date()) - 1000 * 60 * 60 * 24

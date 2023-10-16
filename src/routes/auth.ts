@@ -78,6 +78,10 @@ authRouter.post(
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
     }
 
+    if (existedUser) {
+      await UsersService.generateNewCode(existedUser)
+    }
+
     const responseConfirmMail =
       await mailService.sendRegistrationConfirmationMail(existedUser.accountData.email)
 
@@ -108,13 +112,7 @@ authRouter.post(
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
     }
 
-    const user = await UsersService.updateUser(existedUser.accountData.id, {
-      ...existedUser,
-      emailConfirmation: {
-        ...existedUser.emailConfirmation,
-        isConfirmed: true
-      }
-    })
+    const user = await UsersService.confirmUserEmail(existedUser)
 
     if (!user) {
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
