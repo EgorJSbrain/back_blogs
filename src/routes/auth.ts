@@ -78,10 +78,6 @@ authRouter.post(
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
     }
 
-    if (existedUser && existedUser.emailConfirmation.isConfirmed) {
-      return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
-    }
-
     const responseConfirmMail =
       await mailService.sendRegistrationConfirmationMail(existedUser.accountData.email)
 
