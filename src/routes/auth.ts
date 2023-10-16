@@ -29,6 +29,16 @@ authRouter.post(
       return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
+    if (
+      user &&
+      (
+        !user.emailConfirmation.isConfirmed ||
+        user.emailConfirmation.expirationDate < new Date()
+      )
+    ) {
+      return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+    }
+
     const token = JwtService.createJWT(user)
 
     res.status(HTTP_STATUSES.OK_200).send({ accessToken: token })
