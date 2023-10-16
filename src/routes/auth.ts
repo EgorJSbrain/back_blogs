@@ -5,6 +5,7 @@ import { mailService } from '../domain/mail-service'
 import {
   RegistrationConfirmValidation,
   UserCreateValidation,
+  UserEmailValidation,
   UserLoginValidation
 } from '../utils/validation/inputValidations'
 import { validationMiddleware } from '../middlewares'
@@ -50,7 +51,7 @@ authRouter.post(
   UserCreateValidation(),
   validationMiddleware,
   async (req: RequestWithBody<CreateUserDto>, res: Response) => {
-    const existedUser = await UsersService.getUserByLoginOrEmail(req.body.login, req.body.email)
+    const existedUser = await UsersService.getUserByLoginOrEmail(req.body.email, req.body.login)
 
     if (existedUser) {
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
@@ -62,7 +63,33 @@ authRouter.post(
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
     }
 
-    const responseConfirmMail = await mailService.sendRegistrationConfirmationMail(req.body.login, req.body.email)
+    const responseConfirmMail = await mailService.sendRegistrationConfirmationMail(req.body.email)
+
+    if (!responseConfirmMail) {
+      return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+    }
+
+    res.sendStatus(HTTP_STATUSES.OK_200)
+  }
+)
+
+authRouter.post(
+  '/registration-email-resending',
+  UserEmailValidation(),
+  validationMiddleware,
+  async (req: RequestWithBody<{ email: string }>, res: Response) => {
+    const existedUser = await UsersService.getUserByEmail(req.body.email)
+
+    if (!existedUser) {
+      return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+    }
+
+    if (existedUser && existedUser.emailConfirmation.isConfirmed) {
+      return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+    }
+
+    const responseConfirmMail =
+      await mailService.sendRegistrationConfirmationMail(existedUser.accountData.email)
 
     if (!responseConfirmMail) {
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
