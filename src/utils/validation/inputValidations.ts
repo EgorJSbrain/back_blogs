@@ -83,6 +83,10 @@ export const UserLoginValidation = (): ValidationChain[] => [
   userPasswordValidation
 ]
 
+export const UserEmailValidation = (): ValidationChain[] => [
+  userEmailValidation
+]
+
 export const CommentsValidation = (): ValidationChain[] => [
   commentContentValidation
 ]
