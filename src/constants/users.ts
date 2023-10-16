@@ -21,5 +21,6 @@ export const usersErrorMessage = {
   emailFormat: 'Email is not valid',
   codeRequired: 'Code is required',
   codeInvalid: 'Code is not valid',
-  existedUser: 'Email or login is already used'
+  existedUser: 'Email or login is already used',
+  noExistedUser: 'User is not exist'
 }
