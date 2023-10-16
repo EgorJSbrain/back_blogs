@@ -9,6 +9,7 @@ export const validationMiddleware = (
   next: NextFunction
 ): Response | undefined => {
   const resultValidation: Result<ValidationError> = validationResult(req)
+  console.log("🚀 ~ file: validationMiddleware.ts:12 ~ resultValidation:", resultValidation)
 
   if (!resultValidation.isEmpty()) {
     return res.status(HTTP_STATUSES.BAD_REQUEST_400).send({
