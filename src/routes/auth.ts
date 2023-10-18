@@ -141,16 +141,27 @@ authRouter.get(
 authRouter.post(
   '/refresh-token',
   async (req: Request, res: Response) => {
-    const refreshToken = req.cookies.refreshToken
+    const token = req.cookies.refreshToken
 
-    if (!refreshToken) {
+    if (!token) {
       res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
-    const tokens = await JwtService.refreshTokens(refreshToken)
+    const isTokenVerified = await JwtService.verifyExperationToken(token)
+
+    if (!isTokenVerified) {
+      res.clearCookie('refreshToken')
+
+      return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+    }
+
+    const tokens = await JwtService.refreshTokens(token)
 
     if (!tokens) {
-      return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+      res.clearCookie('refreshToken')
+      res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+
+      return
     }
 
     res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true })

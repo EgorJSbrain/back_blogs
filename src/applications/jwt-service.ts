@@ -30,18 +30,17 @@ export const JwtService = {
     const { userId, exp } = jwt.decode(token) as jwt.JwtPayload
 
     if (!exp) return false
-    console.log('-----2-----')
+
     const user = await UsersService.getUserById(userId)
 
     if (!user) return false
-    console.log('-----3-----')
+
     const expTime = exp * 1000
 
     if (expTime < Number(new Date())) {
       return false
     }
-    console.log('-----4-----')
-    console.log('-----5-----')
+
     return true
   },
 
