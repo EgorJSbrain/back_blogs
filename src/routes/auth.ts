@@ -1,4 +1,4 @@
-import { Router, Response } from 'express'
+import { Router, Response, Request } from 'express'
 
 import { UsersService } from '../services'
 import { mailService } from '../domain/mail-service'
@@ -30,19 +30,15 @@ authRouter.post(
       return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
-    if (
-      user &&
-      (
-        !user.emailConfirmation.isConfirmed ||
-        user.emailConfirmation.expirationDate < new Date()
-      )
-    ) {
+    if (user && !user.emailConfirmation.isConfirmed) {
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
     }
 
-    const token = JwtService.createJWT(user)
+    const accessToken = JwtService.createAccessJWT(user.accountData.id)
+    const refreshToken = JwtService.createRefreshJWT(user.accountData.id)
 
-    res.status(HTTP_STATUSES.OK_200).send({ accessToken: token })
+    res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true })
+    res.status(HTTP_STATUSES.OK_200).send({ accessToken })
   }
 )
 
@@ -139,5 +135,25 @@ authRouter.get(
     }
 
     res.status(HTTP_STATUSES.OK_200).send(user)
+  }
+)
+
+authRouter.post(
+  '/refresh-token',
+  (req: Request, res: Response) => {
+    const refreshToken = req.cookies.refreshToken
+
+    if (!refreshToken) {
+      res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+    }
+
+    const tokens = JwtService.verifyRefreshToken(refreshToken)
+
+    if (!tokens) {
+      return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+    }
+
+    res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true })
+    res.status(HTTP_STATUSES.OK_200).send({ accessToken: tokens.accessToken })
   }
 )
