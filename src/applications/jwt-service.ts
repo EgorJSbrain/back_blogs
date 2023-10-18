@@ -1,19 +1,24 @@
 import jwt from 'jsonwebtoken'
-import { IUser } from '../types/users'
-import { GLOBALS } from '../global'
+import { APP_CONFIG } from '../app-config'
 
 export const JwtService = {
-  createJWT(user: IUser) {
-    const token = jwt.sign({ userId: user.accountData.id }, GLOBALS.JWT_SECRET, { expiresIn: '1h' })
+  createAccessJWT(userId: string) {
+    const token = jwt.sign({ userId }, APP_CONFIG.ACCESS_JWT_SECRET, { expiresIn: '10s' })
+
+    return token
+  },
+
+  createRefreshJWT(userId: string) {
+    const token = jwt.sign({ userId }, APP_CONFIG.REFRESH_JWT_SECRET, { expiresIn: '20s' })
 
     return token
   },
 
   getUserIdByToken(token: string): string | null {
     try {
-      const result: any = jwt.verify(token, GLOBALS.JWT_SECRET)
+      const result: string | jwt.JwtPayload = jwt.verify(token, APP_CONFIG.ACCESS_JWT_SECRET)
 
-      return result.userId
+      return typeof result !== 'string' ? result.userId : null
     } catch {
       return null
     }

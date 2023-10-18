@@ -1,5 +1,6 @@
 import bcrypt from 'bcrypt'
 import { v4 } from 'uuid'
+import add from 'date-fns/add'
 
 import { generateNewUser } from './utils'
 import { UsersRepository } from '../repositories'
@@ -34,6 +35,10 @@ export const UsersService = {
       ...data,
       emailConfirmation: {
         ...data.emailConfirmation,
+        expirationDate: add(new Date(), {
+          hours: 1,
+          minutes: 10
+        }),
         confirmationCode: v4()
       }
     })

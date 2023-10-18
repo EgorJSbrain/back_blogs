@@ -30,19 +30,15 @@ authRouter.post(
       return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
-    if (
-      user &&
-      (
-        !user.emailConfirmation.isConfirmed ||
-        user.emailConfirmation.expirationDate < new Date()
-      )
-    ) {
+    if (user && !user.emailConfirmation.isConfirmed) {
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
     }
 
-    const token = JwtService.createJWT(user)
+    const accessToken = JwtService.createAccessJWT(user.accountData.id)
+    const refreshToken = JwtService.createRefreshJWT(user.accountData.id)
 
-    res.status(HTTP_STATUSES.OK_200).send({ accessToken: token })
+    res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true })
+    res.status(HTTP_STATUSES.OK_200).send({ accessToken })
   }
 )
 

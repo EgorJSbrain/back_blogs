@@ -1,8 +1,8 @@
 import { app } from './app'
 import { dbConnection } from './db/mongo-db'
-import { GLOBALS } from './global'
+import { APP_CONFIG } from './app-config'
 
-const PORT = GLOBALS.PORT
+const PORT = APP_CONFIG.PORT
 
 app.listen(PORT, async () => {
   await dbConnection()
