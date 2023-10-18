@@ -108,7 +108,6 @@ export const UsersRepository = {
             _id: 0,
             passwordHash: 0,
             passwordSolt: 0
-            // 'emailConfirmation.confirmationCode': 0
           }
         }
       )
