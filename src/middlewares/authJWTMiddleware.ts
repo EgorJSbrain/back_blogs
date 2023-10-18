@@ -15,6 +15,10 @@ export const authJWTMiddleware = async(
       return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
+    if (!JwtService.verifyExperationToken(token)) {
+      return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+    }
+
     const userId = JwtService.getUserIdByToken(token)
 
     if (!userId) {
