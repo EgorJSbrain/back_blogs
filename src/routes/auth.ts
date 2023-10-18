@@ -1,6 +1,6 @@
 import { Router, Response, Request } from 'express'
 
-import { UsersService } from '../services'
+import { TokensService, UsersService } from '../services'
 import { mailService } from '../domain/mail-service'
 import {
   RegistrationConfirmValidation,
@@ -147,15 +147,18 @@ authRouter.post(
       res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
-    const isTokenVerified = await JwtService.verifyExperationToken(token)
+    if (!req.headers) {
+      res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+    }
 
-    if (!isTokenVerified) {
-      res.clearCookie('refreshToken')
+    const expiredToken = await TokensService.getToken(token)
 
+    if (expiredToken) {
       return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
     const tokens = await JwtService.refreshTokens(token)
+    await TokensService.setExpiredToken(token)
 
     if (!tokens) {
       res.clearCookie('refreshToken')
@@ -172,17 +175,25 @@ authRouter.post(
 authRouter.post(
   '/logout',
   async (req: Request, res: Response) => {
-    const refreshToken = req.cookies.refreshToken
+    const token = req.cookies.refreshToken
 
-    if (!refreshToken) {
+    if (!token) {
       res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
-    const isTokenVerified = await JwtService.verifyExperationToken(refreshToken)
+    const expiredToken = await TokensService.getToken(token)
+
+    if (expiredToken) {
+      return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+    }
+
+    const isTokenVerified = await JwtService.verifyExperationToken(token)
 
     if (!isTokenVerified) {
       return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
+
+    await TokensService.setExpiredToken(token)
 
     res.clearCookie('refreshToken')
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
