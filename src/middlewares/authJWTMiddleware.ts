@@ -9,13 +9,16 @@ export const authJWTMiddleware = async(
 ): Promise<Response | undefined> => {
   if (req.headers.authorization) {
     const token = req.headers.authorization.split(' ')[1]
+
     const bearer = req.headers.authorization.split(' ')[0]
 
     if (bearer !== 'Bearer') {
       return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
-    if (!JwtService.verifyExperationToken(token)) {
+    const isTokenVerified = await JwtService.verifyExperationToken(token)
+
+    if (!isTokenVerified) {
       return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
