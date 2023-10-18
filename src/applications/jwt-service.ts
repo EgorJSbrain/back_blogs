@@ -1,5 +1,6 @@
-import jwt from 'jsonwebtoken'
+import jwt, { JwtPayload } from 'jsonwebtoken'
 import { APP_CONFIG } from '../app-config'
+import { UsersService } from '../services'
 
 export const JwtService = {
   createAccessJWT(userId: string) {
@@ -16,9 +17,37 @@ export const JwtService = {
 
   getUserIdByToken(token: string): string | null {
     try {
-      const result: string | jwt.JwtPayload = jwt.verify(token, APP_CONFIG.ACCESS_JWT_SECRET)
+      const result = jwt.decode(token) as JwtPayload
 
       return typeof result !== 'string' ? result.userId : null
+    } catch {
+      return null
+    }
+  },
+
+  verifyRefreshToken(token: string): { accessToken: string, refreshToken: string } | null {
+    try {
+      const { exp } = jwt.decode(token) as jwt.JwtPayload
+      if (!exp) return null
+
+      const expTime = exp * 1000
+
+      if (expTime > Number(new Date())) {
+        return null
+      }
+
+      const userId = this.getUserIdByToken(token)
+
+      if (!userId) return null
+
+      const user = UsersService.getUserById(userId)
+
+      if (!user) return null
+
+      const accessToken = this.createAccessJWT(userId)
+      const refreshToken = this.createRefreshJWT(userId)
+
+      return { accessToken, refreshToken }
     } catch {
       return null
     }
