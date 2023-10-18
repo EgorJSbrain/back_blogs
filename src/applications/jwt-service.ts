@@ -25,10 +25,14 @@ export const JwtService = {
     }
   },
 
-  verifyExperationToken(token: string) {
-    const { exp } = jwt.decode(token) as jwt.JwtPayload
+  async verifyExperationToken(token: string) {
+    const { userId, exp } = jwt.decode(token) as jwt.JwtPayload
 
     if (!exp) return false
+
+    const user = await UsersService.getUserById(userId)
+
+    if (!user) return false
 
     const expTime = exp * 1000
 
