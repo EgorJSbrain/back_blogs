@@ -174,6 +174,6 @@ authRouter.post(
     }
 
     res.clearCookie('refreshToken')
-    res.status(HTTP_STATUSES.NO_CONTENT_204)
+    res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
   }
 )
