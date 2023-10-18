@@ -25,17 +25,25 @@ export const JwtService = {
     }
   },
 
-  verifyRefreshToken(token: string): { accessToken: string, refreshToken: string } | null {
+  verifyExperationToken(token: string) {
+    const { exp } = jwt.decode(token) as jwt.JwtPayload
+
+    if (!exp) return false
+
+    const expTime = exp * 1000
+
+    if (expTime < Number(new Date())) {
+      return false
+    }
+
+    return true
+  },
+
+  refreshTokens(token: string): { accessToken: string, refreshToken: string } | null {
     try {
-      const { exp } = jwt.decode(token) as jwt.JwtPayload
-      if (!exp) return null
-
-      const expTime = exp * 1000
-
-      if (expTime > Number(new Date())) {
+      if (!this.verifyExperationToken(token)) {
         return null
       }
-
       const userId = this.getUserIdByToken(token)
 
       if (!userId) return null

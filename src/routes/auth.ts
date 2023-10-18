@@ -147,7 +147,7 @@ authRouter.post(
       res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
-    const tokens = JwtService.verifyRefreshToken(refreshToken)
+    const tokens = JwtService.refreshTokens(refreshToken)
 
     if (!tokens) {
       return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
@@ -155,5 +155,25 @@ authRouter.post(
 
     res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true })
     res.status(HTTP_STATUSES.OK_200).send({ accessToken: tokens.accessToken })
+  }
+)
+
+authRouter.post(
+  '/logout',
+  (req: Request, res: Response) => {
+    const refreshToken = req.cookies.refreshToken
+
+    if (!refreshToken) {
+      res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+    }
+
+    const tokens = JwtService.refreshTokens(refreshToken)
+
+    if (!tokens) {
+      return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+    }
+
+    res.clearCookie('refreshToken')
+    res.status(HTTP_STATUSES.NO_CONTENT_204).send({ accessToken: tokens.accessToken })
   }
 )
