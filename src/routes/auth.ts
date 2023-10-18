@@ -160,14 +160,16 @@ authRouter.post(
 
 authRouter.post(
   '/logout',
-  (req: Request, res: Response) => {
+  async (req: Request, res: Response) => {
     const refreshToken = req.cookies.refreshToken
 
     if (!refreshToken) {
       res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
-    if (!JwtService.verifyExperationToken(refreshToken)) {
+    const isTokenVerified = await JwtService.verifyExperationToken(refreshToken)
+
+    if (!isTokenVerified) {
       return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
