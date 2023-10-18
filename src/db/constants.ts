@@ -3,5 +3,6 @@ export enum DBfields {
   blogs = 'blogs',
   posts = 'posts',
   users = 'users',
-  comments = 'comments'
+  comments = 'comments',
+  tokens = 'tokens',
 }
