@@ -144,11 +144,11 @@ authRouter.post(
     const token = req.cookies.refreshToken
 
     if (!token) {
-      res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+      return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
     if (!req.headers) {
-      res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+      return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
     const expiredToken = await TokensService.getToken(token)
@@ -162,9 +162,7 @@ authRouter.post(
 
     if (!tokens) {
       res.clearCookie('refreshToken')
-      res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
-
-      return
+      return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
     res.cookie('refreshToken', tokens.refreshToken, { httpOnly: true, secure: true })
@@ -178,11 +176,11 @@ authRouter.post(
     const token = req.cookies.refreshToken
 
     if (!token) {
-      res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+      return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
     if (!req.headers) {
-      res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+      return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
     const expiredToken = await TokensService.getToken(token)
