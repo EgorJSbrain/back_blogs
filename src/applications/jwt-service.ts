@@ -44,6 +44,7 @@ export const JwtService = {
       if (!this.verifyExperationToken(token)) {
         return null
       }
+
       const userId = this.getUserIdByToken(token)
 
       if (!userId) return null
