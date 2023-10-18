@@ -160,6 +160,7 @@ authRouter.post(
 
 authRouter.post(
   '/logout',
+  authJWTMiddleware,
   (req: Request, res: Response) => {
     const refreshToken = req.cookies.refreshToken
 
@@ -167,13 +168,11 @@ authRouter.post(
       res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
-    const tokens = JwtService.refreshTokens(refreshToken)
-
-    if (!tokens) {
+    if (!JwtService.verifyExperationToken(refreshToken)) {
       return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
     res.clearCookie('refreshToken')
-    res.status(HTTP_STATUSES.NO_CONTENT_204).send({ accessToken: tokens.accessToken })
+    res.status(HTTP_STATUSES.NO_CONTENT_204)
   }
 )
