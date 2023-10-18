@@ -26,7 +26,6 @@ export const JwtService = {
   },
 
   async verifyExperationToken(token: string) {
-    console.log('-----1-----')
     const { userId, exp } = jwt.decode(token) as jwt.JwtPayload
 
     if (!exp) return false
