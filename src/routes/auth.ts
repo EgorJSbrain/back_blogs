@@ -160,7 +160,6 @@ authRouter.post(
 
 authRouter.post(
   '/logout',
-  authJWTMiddleware,
   (req: Request, res: Response) => {
     const refreshToken = req.cookies.refreshToken
 
