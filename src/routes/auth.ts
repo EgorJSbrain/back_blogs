@@ -181,6 +181,10 @@ authRouter.post(
       res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
+    if (!req.headers) {
+      res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+    }
+
     const expiredToken = await TokensService.getToken(token)
 
     if (expiredToken) {
