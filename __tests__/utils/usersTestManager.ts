@@ -4,6 +4,7 @@ import { HTTP_STATUSES, RouterPaths } from '../../src/constants/global'
 import { CreateUserDto } from '../../src/dtos/users/create-user.dto';
 import { IUser } from '../../src/types/users';
 import { authUser } from '../../src/db/db';
+import { UsersService } from '../../src/services';
 
 export const usersTestManager = {
   async createUser(
@@ -17,5 +18,12 @@ export const usersTestManager = {
       .expect(expectedStatusCode)
 
     return {response, entity: response.body}
+  },
+  async getUserByEmail(
+    email: string,
+  ): Promise<IUser | null>   {
+    const existedUser = await UsersService.getUserByEmail(email)
+
+    return existedUser
   }
 }
