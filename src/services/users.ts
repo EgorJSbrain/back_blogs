@@ -31,7 +31,7 @@ export const UsersService = {
   },
 
   async generateNewCode(data: IUser) {
-    return await this.updateUser(data.accountData.id, {
+    await this.updateUser(data.accountData.id, {
       ...data,
       emailConfirmation: {
         ...data.emailConfirmation,
