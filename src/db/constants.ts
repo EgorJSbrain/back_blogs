@@ -5,4 +5,5 @@ export enum DBfields {
   users = 'users',
   comments = 'comments',
   tokens = 'tokens',
+  requests = 'requests',
 }
