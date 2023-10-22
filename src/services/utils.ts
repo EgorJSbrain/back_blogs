@@ -11,6 +11,8 @@ import { CreateUserDto } from '../dtos/users/create-user.dto'
 import { ICreatingUser } from '../types/users'
 import { CreateCommentDto } from '../dtos/comments/create-comment.dto'
 import { IComment } from '../types/comments'
+import { CreateRequestDto } from '../dtos/requests/create-request.dto'
+import { IRequest } from '../types/requests'
 
 export const generateNewVideo = (data: CreateVideoDto): IVideo => {
   const createdDate = Number(new Date()) - 1000 * 60 * 60 * 24
@@ -84,4 +86,11 @@ export const generateNewComment = (
     userLogin
   },
   createdAt: new Date().toISOString()
+})
+
+export const generateNewReuest = (data: CreateRequestDto): IRequest => ({
+  id: Number(new Date()).toString(),
+  ip: data.ip,
+  url: data.url,
+  date: new Date().toISOString()
 })

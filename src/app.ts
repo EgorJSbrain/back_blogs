@@ -12,11 +12,15 @@ import {
   commentsRouter
 } from './routes'
 import { RouterPaths } from './constants/global'
+import { requestLogMiddleware } from './middlewares/requestLogMiddleware'
 
 export const app = express()
 
+app.set('trust proxy', true)
 app.use(bodyParser.json())
 app.use(cookieParser())
+
+app.use(requestLogMiddleware)
 
 app.use(RouterPaths.testing, globalRouter)
 app.use(RouterPaths.videos, videosRouter)
