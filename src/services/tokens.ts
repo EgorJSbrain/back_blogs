@@ -29,8 +29,16 @@ export const TokensService = {
     return newRefreshToken
   },
 
-  async deleteRefreshTokens(date: string) {
-    const newRefreshToken = await TokensRepository.deleteRefreshTokens([])
+  async deleteRefreshTokens(token: string) {
+    const { lastActiveDate, userId } = JwtService.decodeRefreshToken(token)
+
+    const newRefreshToken = await TokensRepository.deleteRefreshTokens(userId, lastActiveDate)
+
+    return newRefreshToken
+  },
+
+  async deleteRefreshToken(userId: string, deviceId: string) {
+    const newRefreshToken = await TokensRepository.deleteRefreshToken(userId, deviceId)
 
     return newRefreshToken
   }
