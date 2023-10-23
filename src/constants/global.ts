@@ -19,7 +19,8 @@ export const RouterPaths = {
   testing: '/testing',
   users: '/users',
   comments: '/comments',
-  auth: '/auth'
+  auth: '/auth',
+  security: '/security'
 }
 
 export enum SortDirections {
