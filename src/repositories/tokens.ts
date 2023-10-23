@@ -50,9 +50,19 @@ export const TokensRepository = {
     }
   },
 
-  async deleteRefreshTokens(dates: string[]) {
+  async deleteRefreshTokens(userId: string, lastActiveDate: string) {
     try {
-      const response = await db.deleteMany({ lastActiveDate: dates })
+      const response = await db.deleteMany({ userId, $nor: [{ lastActiveDate }] })
+
+      return !!response.deletedCount
+    } catch {
+      return null
+    }
+  },
+
+  async deleteRefreshToken(userId: string, deviceId: string) {
+    try {
+      const response = await db.deleteOne({ userId, deviceId })
 
       return !!response.deletedCount
     } catch {

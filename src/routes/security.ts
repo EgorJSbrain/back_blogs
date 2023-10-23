@@ -24,14 +24,22 @@ securityRouter.delete(
   '/devices',
   authJWTMiddleware,
   async (req: Request, res: Response) => {
-    res.status(HTTP_STATUSES.NO_CONTENT_204)
+    const token = req.cookies.refreshToken
+
+    await TokensService.deleteRefreshTokens(token)
+
+    res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
   }
 )
 
 securityRouter.delete(
-  '/devices/:id',
+  '/devices/:deviceId',
   authJWTMiddleware,
-  async (req: Request, res: Response) => {
+  async (req: Request<{ deviceId: string }>, res: Response) => {
+    const { deviceId } = req.params
+
+    await TokensService.deleteRefreshToken(req.userId, deviceId)
+
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
   }
 )
