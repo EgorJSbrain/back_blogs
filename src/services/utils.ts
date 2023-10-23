@@ -13,6 +13,8 @@ import { CreateCommentDto } from '../dtos/comments/create-comment.dto'
 import { IComment } from '../types/comments'
 import { CreateRequestDto } from '../dtos/requests/create-request.dto'
 import { IRequest } from '../types/requests'
+import { IRefreshTokenMeta } from '../types/tokens'
+import { CreateRefreshTokenDto } from '../dtos/tokens/create-refresh-token.dto'
 
 export const generateNewVideo = (data: CreateVideoDto): IVideo => {
   const createdDate = Number(new Date()) - 1000 * 60 * 60 * 24
@@ -94,3 +96,20 @@ export const generateNewReuest = (data: CreateRequestDto): IRequest => ({
   url: data.url,
   date: new Date().toISOString()
 })
+
+export const generateNewRefreshToken = (
+  data: CreateRefreshTokenDto
+): IRefreshTokenMeta => {
+  const timeStamp = new Date()
+
+  return {
+    ip: data.ip,
+    userId: data.userId,
+    deviceId: v4(),
+    title: data.title,
+    lastActiveDate: timeStamp.toISOString(),
+    expiredDate: add(timeStamp, {
+      seconds: 20
+    }).toISOString()
+  }
+}

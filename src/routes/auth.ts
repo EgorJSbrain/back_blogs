@@ -24,6 +24,9 @@ authRouter.post(
   UserLoginValidation(),
   validationMiddleware,
   async (req: RequestWithBody<LoginUserDto>, res: Response) => {
+    const ip = req.ip
+    const deviceTitlt = req.headers['user-agent']
+
     const user = await UsersService.checkCredentials(req.body.loginOrEmail, req.body.password)
 
     if (!user) {
@@ -34,8 +37,17 @@ authRouter.post(
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
     }
 
+    const refreshTokenData = await TokensService.createRefreshToken({
+      ip,
+      title: deviceTitlt ?? 'device_title',
+      userId: user.accountData.id
+    })
     const accessToken = JwtService.createAccessJWT(user.accountData.id)
-    const refreshToken = JwtService.createRefreshJWT(user.accountData.id)
+    const refreshToken = JwtService.createRefreshJWT(
+      refreshTokenData.userId,
+      refreshTokenData.lastActiveDate,
+      refreshTokenData.deviceId
+    )
 
     res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true })
     res.status(HTTP_STATUSES.OK_200).send({ accessToken })
@@ -151,14 +163,29 @@ authRouter.post(
       return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
-    const expiredToken = await TokensService.getToken(token)
+    const isTokenVerified = await JwtService.verifyExperationToken(token)
 
-    if (expiredToken) {
+    if (!isTokenVerified) {
       return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
-    const tokens = await JwtService.refreshTokens(token)
-    await TokensService.setExpiredToken(token)
+    const existedToken = await TokensService.getToken(token)
+
+    if (!existedToken) {
+      return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+    }
+
+    const updatedToken = await TokensService.updateRefreshToken(existedToken.lastActiveDate)
+
+    if (!updatedToken) {
+      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    }
+
+    const tokens = await JwtService.refreshTokens(
+      updatedToken.userId,
+      updatedToken.deviceId,
+      updatedToken.lastActiveDate
+    )
 
     if (!tokens) {
       res.clearCookie('refreshToken')
@@ -194,8 +221,6 @@ authRouter.post(
     if (!isTokenVerified) {
       return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
-
-    await TokensService.setExpiredToken(token)
 
     res.clearCookie('refreshToken')
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)

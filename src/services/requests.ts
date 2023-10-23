@@ -1,6 +1,6 @@
 import { generateNewReuest } from './utils'
 import { CreateRequestDto } from '../dtos/requests/create-request.dto'
-import { RequestsRepository } from '../repositories/request-logs'
+import { RequestsRepository } from '../repositories'
 
 export const RequestsService = {
   async createRequest(data: CreateRequestDto) {

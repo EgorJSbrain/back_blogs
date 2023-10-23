@@ -4,13 +4,19 @@ import { UsersService } from '../services'
 
 export const JwtService = {
   createAccessJWT(userId: string) {
-    const token = jwt.sign({ userId }, APP_CONFIG.ACCESS_JWT_SECRET, { expiresIn: '10s' })
+    const token = jwt.sign({ userId }, APP_CONFIG.ACCESS_JWT_SECRET, {
+      expiresIn: '10s'
+    })
 
     return token
   },
 
-  createRefreshJWT(userId: string) {
-    const token = jwt.sign({ userId }, APP_CONFIG.REFRESH_JWT_SECRET, { expiresIn: '20s' })
+  createRefreshJWT(userId: string, lastActiveDate: string, deviceId: string) {
+    const token = jwt.sign(
+      { userId, lastActiveDate, deviceId },
+      APP_CONFIG.REFRESH_JWT_SECRET,
+      { expiresIn: '20s' }
+    )
 
     return token
   },
@@ -23,6 +29,12 @@ export const JwtService = {
     } catch {
       return null
     }
+  },
+
+  decodeRefreshToken(token: string) {
+    const { userId, deviceId, lastActiveDate } = jwt.decode(token) as jwt.JwtPayload
+
+    return { userId, deviceId, lastActiveDate }
   },
 
   async verifyExperationToken(token: string) {
@@ -43,24 +55,14 @@ export const JwtService = {
     return true
   },
 
-  async refreshTokens(token: string): Promise<{ accessToken: string, refreshToken: string } | null> {
+  async refreshTokens(
+    userId: string,
+    deviceId: string,
+    lastActiveDate: string
+  ): Promise<{ accessToken: string, refreshToken: string } | null> {
     try {
-      const isTokenVerified = await this.verifyExperationToken(token)
-
-      if (!isTokenVerified) {
-        return null
-      }
-
-      const userId = this.getUserIdByToken(token)
-
-      if (!userId) return null
-
-      const user = UsersService.getUserById(userId)
-
-      if (!user) return null
-
       const accessToken = this.createAccessJWT(userId)
-      const refreshToken = this.createRefreshJWT(userId)
+      const refreshToken = this.createRefreshJWT(userId, lastActiveDate, deviceId)
 
       return { accessToken, refreshToken }
     } catch {
