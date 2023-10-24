@@ -1,14 +1,14 @@
 import { Router, Response, Request } from 'express'
 import { HTTP_STATUSES } from '../constants/global'
 
-import { authJWTMiddleware } from '../middlewares/authJWTMiddleware'
+import { authJWTRefrshMiddleware } from '../middlewares'
 import { TokensService } from '../services'
 
 export const securityRouter = Router({})
 
 securityRouter.get(
   '/devices',
-  authJWTMiddleware,
+  authJWTRefrshMiddleware,
   async (req: Request, res: Response) => {
     const tokens = await TokensService.getAllTokens(req.userId)
 
@@ -22,9 +22,13 @@ securityRouter.get(
 
 securityRouter.delete(
   '/devices',
-  authJWTMiddleware,
+  authJWTRefrshMiddleware,
   async (req: Request, res: Response) => {
     const token = req.cookies.refreshToken
+
+    if (!token) {
+      return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+    }
 
     await TokensService.deleteRefreshTokens(token)
 
@@ -34,9 +38,15 @@ securityRouter.delete(
 
 securityRouter.delete(
   '/devices/:deviceId',
-  authJWTMiddleware,
+  authJWTRefrshMiddleware,
   async (req: Request<{ deviceId: string }>, res: Response) => {
     const { deviceId } = req.params
+
+    const existedToken = await TokensService.getTokenByDeviceId(deviceId)
+
+    if (!existedToken) {
+      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    }
 
     await TokensService.deleteRefreshToken(req.userId, deviceId)
 

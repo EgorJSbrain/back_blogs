@@ -25,6 +25,16 @@ export const TokensRepository = {
     }
   },
 
+  async getTokenByDeviceId(deviceId: string) {
+    try {
+      const token = await db.findOne({ deviceId }, { projection: { _id: 0 } })
+
+      return token
+    } catch {
+      return null
+    }
+  },
+
   async createRefreshToken(token: IRefreshTokenMeta) {
     try {
       const response = await db.insertOne(token)
@@ -35,10 +45,13 @@ export const TokensRepository = {
     }
   },
 
-  async updateRefreshToken(prevDate: string, currentDate: string) {
+  async updateRefreshToken(prevDate: string, currentDate: string, newExpiredDate: string) {
     try {
       let updatedToken
-      const response = await db.updateOne({ lastActiveDate: prevDate }, { $set: { lastActiveDate: currentDate } })
+      const response = await db.updateOne(
+        { lastActiveDate: prevDate },
+        { $set: { lastActiveDate: currentDate, expiredDate: newExpiredDate } }
+      )
 
       if (response.modifiedCount) {
         updatedToken = await db.findOne({ lastActiveDate: currentDate }, { projection: { _id: 0 } })
