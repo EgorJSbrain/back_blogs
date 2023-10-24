@@ -7,7 +7,7 @@ const db = getCollection<IRefreshTokenMeta>(DBfields.tokens)
 export const TokensRepository = {
   async getAllTokenByUserId(userId: string) {
     try {
-      const tokens = await db.find({ userId }, { projection: { _id: 0 } }).toArray()
+      const tokens = await db.find({ userId }, { projection: { _id: 0, expiredDate: 0 } }).toArray()
 
       return tokens
     } catch {
