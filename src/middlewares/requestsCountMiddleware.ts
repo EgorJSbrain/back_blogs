@@ -13,7 +13,7 @@ export const requestsCountMiddleware = async (
 
     const count = await RequestsService.getRequests(ip, url) || 0
 
-    if (count >= 5) {
+    if (count > 5) {
       return res.sendStatus(HTTP_STATUSES.MANY_REUESTS_404)
     }
 
