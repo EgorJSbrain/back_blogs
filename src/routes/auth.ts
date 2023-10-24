@@ -163,9 +163,9 @@ authRouter.post(
       return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
-    const isTokenVerified = await JwtService.verifyExperationToken(token)
+    const userId = await JwtService.verifyExperationToken(token)
 
-    if (!isTokenVerified) {
+    if (!userId) {
       return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
@@ -216,9 +216,9 @@ authRouter.post(
       return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
-    const isTokenVerified = await JwtService.verifyExperationToken(token)
+    const userId = await JwtService.verifyExperationToken(token)
 
-    if (!isTokenVerified) {
+    if (!userId) {
       return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 

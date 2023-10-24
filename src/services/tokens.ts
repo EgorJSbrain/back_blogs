@@ -1,3 +1,4 @@
+import add from 'date-fns/add'
 import { JwtService } from '../applications/jwt-service'
 import { CreateRefreshTokenDto } from '../dtos/tokens/create-refresh-token.dto'
 import { TokensRepository } from '../repositories'
@@ -14,6 +15,10 @@ export const TokensService = {
     return await TokensRepository.getTokenByDate(lastActiveDate)
   },
 
+  async getTokenByDeviceId(deviceId: string) {
+    return await TokensRepository.getTokenByDeviceId(deviceId)
+  },
+
   async createRefreshToken(data: CreateRefreshTokenDto) {
     const newRefreshToken = generateNewRefreshToken(data)
 
@@ -23,8 +28,15 @@ export const TokensService = {
   },
 
   async updateRefreshToken(date: string) {
-    const newDate = new Date().toISOString()
-    const newRefreshToken = await TokensRepository.updateRefreshToken(date, newDate)
+    const newDate = new Date()
+    const newExpiredDate = add(newDate, {
+      seconds: 20
+    }).toISOString()
+    const newRefreshToken = await TokensRepository.updateRefreshToken(
+      date,
+      newDate.toISOString(),
+      newExpiredDate
+    )
 
     return newRefreshToken
   },
