@@ -42,6 +42,10 @@ securityRouter.delete(
   async (req: Request<{ deviceId: string }>, res: Response) => {
     const { deviceId } = req.params
 
+    if (!deviceId) {
+      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    }
+
     const existedToken = await TokensService.getTokenByDeviceId(deviceId)
 
     if (!existedToken) {
