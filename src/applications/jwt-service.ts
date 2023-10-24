@@ -52,7 +52,7 @@ export const JwtService = {
       return false
     }
 
-    return true
+    return user.accountData.id
   },
 
   async refreshTokens(
