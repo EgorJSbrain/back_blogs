@@ -1,7 +1,7 @@
 import { Router, Response, Request } from 'express'
 import { HTTP_STATUSES } from '../constants/global'
 
-import { authJWTRefrshMiddleware } from '../middlewares'
+import { authJWTRefrshMiddleware, authMiddleware } from '../middlewares'
 import { TokensService } from '../services'
 
 export const securityRouter = Router({})
@@ -22,6 +22,7 @@ securityRouter.get(
 
 securityRouter.delete(
   '/devices',
+  authMiddleware,
   authJWTRefrshMiddleware,
   async (req: Request, res: Response) => {
     const token = req.cookies.refreshToken
@@ -38,6 +39,7 @@ securityRouter.delete(
 
 securityRouter.delete(
   '/devices/:deviceId',
+  authMiddleware,
   authJWTRefrshMiddleware,
   async (req: Request<{ deviceId: string }>, res: Response) => {
     const { deviceId } = req.params
