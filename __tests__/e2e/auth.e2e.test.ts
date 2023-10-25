@@ -124,7 +124,7 @@ describe('AUTH tests', () => {
     const response = await authTestManager.login({
       loginOrEmail: creatingData.email,
       password: creatingData.password
-    }, HTTP_STATUSES.OK_200)
+    })
 
     const responseq = await getRequest()
       .get(`${RouterPaths.auth}/me`)
@@ -134,9 +134,6 @@ describe('AUTH tests', () => {
         email: existedUser!.accountData.email,
         login: existedUser!.accountData.login
       })
-
-      console.log("🚀 ~ file: auth.e2e.test.ts:131 ~ it ~ responseq:", responseq)
-
   })
 
   afterEach(async () => {
