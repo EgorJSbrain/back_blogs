@@ -25,9 +25,9 @@ export const TokensRepository = {
     }
   },
 
-  async getTokenByDeviceId(deviceId: string, userId: string) {
+  async getTokenByDeviceId(deviceId: string, deviceTitle: string) {
     try {
-      const token = await db.findOne({ deviceId, userId }, { projection: { _id: 0 } })
+      const token = await db.findOne({ deviceId }, { projection: { _id: 0 } })
 
       return token
     } catch {

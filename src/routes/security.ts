@@ -41,8 +41,8 @@ securityRouter.delete(
   '/devices/:deviceId',
   async (req: Request<{ deviceId: string }>, res: Response) => {
     const { deviceId } = req.params
-    const token = req.cookies.refreshToken
-    const deviceTitle = req.headers['user-agent']
+    const token = req.cookies.refreshToken ?? ''
+    const deviceTitle = req.headers['user-agent'] ?? ''
 
     if (!deviceId) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -53,7 +53,7 @@ securityRouter.delete(
     }
 
     const userId = await JwtService.verifyExperationToken(token)
-    const existedToken = await TokensService.getTokenByDeviceId(deviceId, userId ?? '')
+    const existedToken = await TokensService.getTokenByDeviceId(deviceId, deviceTitle)
 
     if (
       existedToken?.title === deviceTitle &&

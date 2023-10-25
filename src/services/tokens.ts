@@ -15,8 +15,8 @@ export const TokensService = {
     return await TokensRepository.getTokenByDate(lastActiveDate)
   },
 
-  async getTokenByDeviceId(deviceId: string, userId: string) {
-    return await TokensRepository.getTokenByDeviceId(deviceId, userId)
+  async getTokenByDeviceId(deviceId: string, deviceTitle: string) {
+    return await TokensRepository.getTokenByDeviceId(deviceId, deviceTitle)
   },
 
   async createRefreshToken(data: CreateRefreshTokenDto) {
