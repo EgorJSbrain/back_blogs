@@ -9,6 +9,10 @@ export const authJWTRefrshMiddleware = async (
 ): Promise<Response | undefined> => {
   const token = req.cookies.refreshToken
 
+  if (!token) {
+    return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+  }
+
   const userId = await JwtService.verifyExperationToken(token)
 
   if (!userId) {

@@ -53,7 +53,7 @@ describe('DEVICES tests', () => {
     const response = await getRequest()
       .get(`${RouterPaths.security}/devices`)
       .set({'cookie': loginResponse.headers['set-cookie'][0]})
-      console.log("----", response.body[0].deviceId)
+      console.log("----", loginResponse.headers['set-cookie'][0])
 
     await getRequest()
       .delete(`${RouterPaths.security}/devices/${response.body[0].deviceId}`)
@@ -72,10 +72,23 @@ describe('DEVICES tests', () => {
       password: creatingData.password
     })
 
-      const deleRes = await getRequest()
+    await getRequest()
       .delete(`${RouterPaths.security}/devices/1`)
       .set({'cookie': loginResponse.headers['set-cookie'][0]})
       .expect(HTTP_STATUSES.NOT_FOUND_404)
+  })
+
+  it('DELETE - fail - delete device by id with incorrect token', async () => {
+    await usersTestManager.createUser(creatingData, HTTP_STATUSES.CREATED_201)
+    await authTestManager.login({
+      loginOrEmail: creatingData.email,
+      password: creatingData.password
+    })
+
+    await getRequest()
+      .delete(`${RouterPaths.security}/devices`)
+      .set({})
+      .expect(HTTP_STATUSES.NOT_AUTHORIZED_401)
   })
 
   afterEach(async () => {
