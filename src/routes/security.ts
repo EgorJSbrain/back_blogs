@@ -1,8 +1,9 @@
 import { Router, Response, Request } from 'express'
 import { HTTP_STATUSES } from '../constants/global'
 
-import { authJWTRefrshMiddleware, authMiddleware } from '../middlewares'
+import { authJWTRefrshMiddleware } from '../middlewares'
 import { TokensService } from '../services'
+import { JwtService } from '../applications/jwt-service'
 
 export const securityRouter = Router({})
 
@@ -22,7 +23,6 @@ securityRouter.get(
 
 securityRouter.delete(
   '/devices',
-  authMiddleware,
   authJWTRefrshMiddleware,
   async (req: Request, res: Response) => {
     const token = req.cookies.refreshToken
@@ -39,19 +39,28 @@ securityRouter.delete(
 
 securityRouter.delete(
   '/devices/:deviceId',
-  authMiddleware,
-  authJWTRefrshMiddleware,
   async (req: Request<{ deviceId: string }>, res: Response) => {
     const { deviceId } = req.params
+    const token = req.cookies.refreshToken
 
     if (!deviceId) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
     }
 
-    const existedToken = await TokensService.getTokenByDeviceId(deviceId, req.userId)
+    if (!token) {
+      return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+    }
+
+    const userId = await JwtService.verifyExperationToken(token)
+
+    const existedToken = await TokensService.getTokenByDeviceId(deviceId, userId ?? '')
 
     if (!existedToken) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    }
+
+    if (!userId) {
+      return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
     await TokensService.deleteRefreshToken(req.userId, deviceId)

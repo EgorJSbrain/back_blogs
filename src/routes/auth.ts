@@ -210,17 +210,19 @@ authRouter.post(
       return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
-    const expiredToken = await TokensService.getToken(token)
-
-    if (expiredToken) {
-      return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
-    }
-
     const userId = await JwtService.verifyExperationToken(token)
 
     if (!userId) {
       return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
+
+    const deviceToken = await TokensService.getToken(token)
+
+    if (!deviceToken) {
+      return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+    }
+
+    await TokensService.deleteRefreshToken(userId, deviceToken.deviceId)
 
     res.clearCookie('refreshToken')
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
