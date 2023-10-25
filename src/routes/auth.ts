@@ -25,7 +25,7 @@ authRouter.post(
   validationMiddleware,
   async (req: RequestWithBody<LoginUserDto>, res: Response) => {
     const ip = req.ip
-    const deviceTitlt = req.headers['user-agent']
+    const deviceTitle = req.headers['user-agent']
 
     const user = await UsersService.checkCredentials(req.body.loginOrEmail, req.body.password)
 
@@ -39,7 +39,7 @@ authRouter.post(
 
     const refreshTokenData = await TokensService.createRefreshToken({
       ip,
-      title: deviceTitlt ?? 'device_title',
+      title: deviceTitle ?? 'device_title',
       userId: user.accountData.id
     })
     const accessToken = JwtService.createAccessJWT(user.accountData.id)
