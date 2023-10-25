@@ -8,6 +8,7 @@ export const authJWTRefrshMiddleware = async (
   next: NextFunction
 ): Promise<Response | undefined> => {
   const token = req.cookies.refreshToken
+
   const userId = await JwtService.verifyExperationToken(token)
 
   if (!userId) {
