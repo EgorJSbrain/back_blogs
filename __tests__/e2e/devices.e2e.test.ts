@@ -89,7 +89,23 @@ describe('DEVICES tests', () => {
   })
 
   it('DELETE - fail - delete device ------', async () => {
-    await usersTestManager.createUser(creatingData, HTTP_STATUSES.CREATED_201)
+    await authTestManager.registration(creatingData)
+    const existedUser = await usersTestManager.getUserByEmail(creatingData.email)
+
+    await getRequest()
+      .post(`${RouterPaths.auth}/registration-confirmation`)
+      .send({
+        code: existedUser?.emailConfirmation.confirmationCode
+      })
+      .expect(HTTP_STATUSES.NO_CONTENT_204)
+
+    await authTestManager.login({
+      loginOrEmail: creatingData.email,
+      password: creatingData.password
+    },
+    { 'user-agent': '192.168.2.1' }
+    )
+
     await usersTestManager.createUser(creatingData2, HTTP_STATUSES.CREATED_201)
 
     const { response: user } = await authTestManager.login({
@@ -109,9 +125,10 @@ describe('DEVICES tests', () => {
     const devices = await getRequest()
       .get(`${RouterPaths.security}/devices`)
       .set({'cookie': user.headers['set-cookie'][0]})
+    console.log("🚀 ~ file: devices.e2e.test.ts:126 ~ it ~ devices:", devices)
 
     await getRequest()
-      .delete(`${RouterPaths.security}/devices/${devices.body[0].deviceId}`)
+      .delete(`${RouterPaths.security}/devices/${devices.body[1].deviceId}`)
       .set({'cookie': user2.headers['set-cookie'][0], 'user-agent': '192.168.2.1' })
       .expect(HTTP_STATUSES.FORBIDEN_403)
   })
