@@ -13,7 +13,7 @@ import {
   securityRouter
 } from './routes'
 import { RouterPaths } from './constants/global'
-import { requestLogMiddleware } from './middlewares'
+import { requestLogMiddleware, requestsCountMiddleware } from './middlewares'
 
 export const app = express()
 
@@ -22,7 +22,7 @@ app.use(bodyParser.json())
 app.use(cookieParser())
 
 app.use(requestLogMiddleware)
-// app.use(requestsCountMiddleware)
+app.use(requestsCountMiddleware)
 
 app.use(RouterPaths.testing, globalRouter)
 app.use(RouterPaths.videos, videosRouter)
