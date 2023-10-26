@@ -55,16 +55,12 @@ securityRouter.delete(
     const userId = await JwtService.verifyExperationToken(token)
     const existedToken = await TokensService.getTokenByDeviceId(deviceId, deviceTitle)
 
-    if (
-      existedToken?.title === deviceTitle &&
-      deviceId === existedToken?.deviceId &&
-      existedToken.userId !== userId
-    ) {
-      return res.sendStatus(HTTP_STATUSES.FORBIDEN_403)
-    }
-
     if (!existedToken) {
       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    }
+
+    if (existedToken?.userId !== userId) {
+      return res.sendStatus(HTTP_STATUSES.FORBIDEN_403)
     }
 
     if (!userId) {
