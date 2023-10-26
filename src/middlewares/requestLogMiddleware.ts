@@ -8,6 +8,15 @@ export const requestLogMiddleware = async (
   next: NextFunction
 ): Promise<Response | undefined> => {
   if ((req.baseUrl || req.originalUrl) && req.ip) {
+    const ip = req.ip
+    const url = req.originalUrl || req.baseUrl
+
+    const count = await RequestsService.getRequests(ip, url) || 0
+
+    if (count > 5) {
+      return res.sendStatus(HTTP_STATUSES.MANY_REUESTS_429)
+    }
+
     await RequestsService.createRequest({
       ip: req.ip,
       url: req.originalUrl || req.baseUrl
