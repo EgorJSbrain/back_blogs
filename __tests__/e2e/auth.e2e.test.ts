@@ -126,7 +126,7 @@ describe('AUTH tests', () => {
       password: creatingData.password
     })
 
-    const responseq = await getRequest()
+    await getRequest()
       .get(`${RouterPaths.auth}/me`)
       .set({Authorization: `Bearer ${response.entity.accessToken}`})
       .expect(HTTP_STATUSES.OK_200, {
@@ -134,6 +134,37 @@ describe('AUTH tests', () => {
         email: existedUser!.accountData.email,
         login: existedUser!.accountData.login
       })
+  })
+
+  it('DELETE - success - delete device by id', async () => {
+    await usersTestManager.createUser(creatingData, HTTP_STATUSES.CREATED_201)
+    await authTestManager.login({
+      loginOrEmail: creatingData.email,
+      password: creatingData.password
+    })
+    await authTestManager.login({
+      loginOrEmail: creatingData.email,
+      password: creatingData.password
+    })
+    await authTestManager.login({
+      loginOrEmail: creatingData.email,
+      password: creatingData.password
+    })
+    await authTestManager.login({
+      loginOrEmail: creatingData.email,
+      password: creatingData.password
+    })
+    await authTestManager.login({
+      loginOrEmail: creatingData.email,
+      password: creatingData.password
+    })
+    await authTestManager.login({
+      loginOrEmail: creatingData.email,
+      password: creatingData.password
+    },
+    {},
+    HTTP_STATUSES.MANY_REUESTS_429
+    )
   })
 
   afterEach(async () => {
