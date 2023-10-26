@@ -67,7 +67,7 @@ securityRouter.delete(
       return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
-    await TokensService.deleteRefreshToken(req.userId, deviceId)
+    await TokensService.deleteRefreshToken(deviceId)
 
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
   }

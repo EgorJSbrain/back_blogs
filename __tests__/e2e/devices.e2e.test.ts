@@ -43,6 +43,18 @@ describe('DEVICES tests', () => {
       loginOrEmail: creatingData.email,
       password: creatingData.password
     })
+    await authTestManager.login({
+      loginOrEmail: creatingData.email,
+      password: creatingData.password
+    })
+    await authTestManager.login({
+      loginOrEmail: creatingData.email,
+      password: creatingData.password
+    })
+    await authTestManager.login({
+      loginOrEmail: creatingData.email,
+      password: creatingData.password
+    })
     const {response: loginResponse} = await authTestManager.login({
       loginOrEmail: creatingData.email,
       password: creatingData.password
@@ -51,6 +63,7 @@ describe('DEVICES tests', () => {
     const response = await getRequest()
       .get(`${RouterPaths.security}/devices`)
       .set({'cookie': loginResponse.headers['set-cookie'][0]})
+    console.log("---1-----", response.body)
 
     await getRequest()
       .delete(`${RouterPaths.security}/devices/${response.body[0].deviceId}`)
@@ -60,6 +73,7 @@ describe('DEVICES tests', () => {
     const response2 = await getRequest()
       .get(`${RouterPaths.security}/devices`)
       .set({'cookie': loginResponse.headers['set-cookie'][0]})
+      console.log("---2-----", response2.body)
   })
 
   it('DELETE - fail - delete device by id', async () => {
@@ -88,7 +102,7 @@ describe('DEVICES tests', () => {
       .expect(HTTP_STATUSES.NOT_AUTHORIZED_401)
   })
 
-  it('DELETE - fail - delete device ------', async () => {
+  it('DELETE - success - delete device of another user. Should get 403 error', async () => {
     await authTestManager.registration(creatingData)
     const existedUser = await usersTestManager.getUserByEmail(creatingData.email)
 
@@ -99,12 +113,6 @@ describe('DEVICES tests', () => {
       })
       .expect(HTTP_STATUSES.NO_CONTENT_204)
 
-    // await authTestManager.login({
-    //   loginOrEmail: creatingData.email,
-    //   password: creatingData.password
-    // },
-    // { 'user-agent': '192.168.2.1' }
-    // )
     const { response: user } = await authTestManager.login({
       loginOrEmail: creatingData.email,
       password: creatingData.password
