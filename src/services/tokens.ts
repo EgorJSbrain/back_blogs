@@ -47,7 +47,7 @@ export const TokensService = {
     return await TokensRepository.deleteRefreshTokens(userId, lastActiveDate)
   },
 
-  async deleteRefreshToken(userId: string, deviceId: string) {
-    return await TokensRepository.deleteRefreshToken(userId, deviceId)
+  async deleteRefreshToken(deviceId: string) {
+    return await TokensRepository.deleteRefreshToken(deviceId)
   }
 }
