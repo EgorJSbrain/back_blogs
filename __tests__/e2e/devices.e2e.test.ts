@@ -47,14 +47,6 @@ describe('DEVICES tests', () => {
       loginOrEmail: creatingData.email,
       password: creatingData.password
     })
-    await authTestManager.login({
-      loginOrEmail: creatingData.email,
-      password: creatingData.password
-    })
-    await authTestManager.login({
-      loginOrEmail: creatingData.email,
-      password: creatingData.password
-    })
     const {response: loginResponse} = await authTestManager.login({
       loginOrEmail: creatingData.email,
       password: creatingData.password
@@ -63,7 +55,6 @@ describe('DEVICES tests', () => {
     const response = await getRequest()
       .get(`${RouterPaths.security}/devices`)
       .set({'cookie': loginResponse.headers['set-cookie'][0]})
-    console.log("---1-----", response.body)
 
     await getRequest()
       .delete(`${RouterPaths.security}/devices/${response.body[0].deviceId}`)
@@ -73,7 +64,8 @@ describe('DEVICES tests', () => {
     const response2 = await getRequest()
       .get(`${RouterPaths.security}/devices`)
       .set({'cookie': loginResponse.headers['set-cookie'][0]})
-      console.log("---2-----", response2.body)
+
+      expect(response.body.length - 1).toEqual(response2.body.length)
   })
 
   it('DELETE - fail - delete device by id', async () => {
@@ -87,6 +79,44 @@ describe('DEVICES tests', () => {
       .delete(`${RouterPaths.security}/devices/1`)
       .set({'cookie': loginResponse.headers['set-cookie'][0]})
       .expect(HTTP_STATUSES.NOT_FOUND_404)
+  })
+
+  it('DELETE - sucess - delete devices list, excepted current divice', async () => {
+    await usersTestManager.createUser(creatingData, HTTP_STATUSES.CREATED_201)
+    await authTestManager.login({
+      loginOrEmail: creatingData.email,
+      password: creatingData.password
+    })
+    await authTestManager.login({
+      loginOrEmail: creatingData.email,
+      password: creatingData.password
+    })
+    await authTestManager.login({
+      loginOrEmail: creatingData.email,
+      password: creatingData.password
+    })
+    await authTestManager.login({
+      loginOrEmail: creatingData.email,
+      password: creatingData.password
+    })
+    const { response } = await authTestManager.login({
+      loginOrEmail: creatingData.email,
+      password: creatingData.password
+    })
+
+    const devices = await getRequest()
+      .get(`${RouterPaths.security}/devices`)
+      .set({'cookie': response.headers['set-cookie'][0]})
+
+    await getRequest()
+      .delete(`${RouterPaths.security}/devices`)
+      .set({'cookie': response.headers['set-cookie'][0]})
+      .expect(HTTP_STATUSES.NO_CONTENT_204)
+    
+    await getRequest()
+      .get(`${RouterPaths.security}/devices`)
+      .set({'cookie': response.headers['set-cookie'][0]})
+      .expect(HTTP_STATUSES.OK_200, [devices.body[devices.body.length - 1]])
   })
 
   it('DELETE - fail - delete device by id with incorrect token', async () => {
