@@ -73,9 +73,9 @@ export const TokensRepository = {
     }
   },
 
-  async deleteRefreshToken(userId: string, deviceId: string) {
+  async deleteRefreshToken(deviceId: string) {
     try {
-      const response = await db.deleteOne({ userId, deviceId })
+      const response = await db.deleteOne({ deviceId })
 
       return !!response.deletedCount
     } catch {
