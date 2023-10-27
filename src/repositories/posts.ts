@@ -1,13 +1,10 @@
-import { DBfields } from '../db/constants'
-import { getCollection } from '../db/mongo-db'
+import { Sort } from 'mongodb'
 import { SortDirections } from '../constants/global'
+import { Post } from '../models'
 
 import { IPost } from '../types/posts'
 import { RequestParams, ResponseBody } from '../types/global'
 import { UpdatePostDto } from '../dtos/posts/update-post.dto'
-import { Sort } from 'mongodb'
-
-const db = getCollection<IPost>(DBfields.posts)
 
 export const PostsRepository = {
   async getPosts(params: RequestParams): Promise<ResponseBody<IPost> | null> {
@@ -28,15 +25,15 @@ export const PostsRepository = {
       const pageSizeNumber = Number(pageSize)
       const pageNumberNum = Number(pageNumber)
       const skip = (pageNumberNum - 1) * pageSizeNumber
-      const count = await db.estimatedDocumentCount()
+      const count = await Post.estimatedDocumentCount()
       const pagesCount = Math.ceil(count / pageSizeNumber)
 
-      const posts = await db
-        .find({}, { projection: { _id: false } })
+      const posts = await Post
+        .find({}, { projection: { _id: 0 } })
         .sort(sort)
         .skip(skip)
         .limit(pageSizeNumber)
-        .toArray()
+        .lean()
 
       return {
         pagesCount,
@@ -52,7 +49,7 @@ export const PostsRepository = {
 
   async getPostById(id: string) {
     try {
-      const post = await db.findOne({ id }, { projection: { _id: 0 } })
+      const post = await Post.findOne({ id }, { projection: { _id: 0 } })
 
       return post
     } catch {
@@ -64,11 +61,11 @@ export const PostsRepository = {
     try {
       let post
 
-      const response = await db.insertOne(data)
+      const response = await Post.create(data)
 
-      if (response.insertedId) {
-        post = await db.findOne(
-          { id: data.id },
+      if (response._id) {
+        post = await Post.findOne(
+          { _id: response._id },
           { projection: { _id: 0 } }
         )
       }
@@ -82,10 +79,10 @@ export const PostsRepository = {
   async updatePost(id: string, data: UpdatePostDto) {
     try {
       let post
-      const response = await db.updateOne({ id }, { $set: data })
+      const response = await Post.updateOne({ id }, { $set: data })
 
       if (response.modifiedCount) {
-        post = await db.findOne({ id }, { projection: { _id: 0 } })
+        post = await Post.findOne({ id }, { projection: { _id: 0 } })
       }
 
       return post
@@ -96,7 +93,7 @@ export const PostsRepository = {
 
   async deletePost(id: string) {
     try {
-      const response = await db.deleteOne({ id })
+      const response = await Post.deleteOne({ id })
 
       return !!response.deletedCount
     } catch {
@@ -119,7 +116,7 @@ export const PostsRepository = {
       const pageSizeNumber = Number(pageSize)
       const pageNumberNum = Number(pageNumber)
       const skip = (pageNumberNum - 1) * pageSizeNumber
-      const count = await db.countDocuments({ blogId })
+      const count = await Post.countDocuments({ blogId })
       const pagesCount = Math.ceil(count / pageSizeNumber)
 
       const sort: Sort = {}
@@ -128,12 +125,12 @@ export const PostsRepository = {
         sort[sortBy] = sortDirection === SortDirections.asc ? 1 : -1
       }
 
-      const posts = await db
-        .find({ blogId }, { projection: { _id: false } })
+      const posts = await Post
+        .find({ blogId }, { projection: { _id: 0 } })
         .sort(sort)
         .skip(skip)
         .limit(pageSizeNumber)
-        .toArray()
+        .lean()
 
       return {
         pagesCount,
@@ -151,11 +148,11 @@ export const PostsRepository = {
     try {
       let post
 
-      const response = await db.insertOne(data)
+      const response = await Post.create(data)
 
-      if (response.insertedId) {
-        post = await db.findOne(
-          { id: data.id },
+      if (response._id) {
+        post = await Post.findOne(
+          { _id: response._id },
           { projection: { _id: 0 } }
         )
       }

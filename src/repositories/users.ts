@@ -1,10 +1,10 @@
 import { Sort } from 'mongodb'
+import { FilterQuery } from 'mongoose'
+import { User } from '../models'
 import { SortDirections } from '../constants/global'
 
 import { ResponseBody } from '../types/global'
 import { ICreatingUser, IUser, IUserAccountData, UsersRequestParams } from '../types/users'
-import { User } from '../models/users'
-import { FilterQuery } from 'mongoose'
 
 export const UsersRepository = {
   async getUsers(params: UsersRequestParams): Promise<ResponseBody<IUserAccountData> | null> {
