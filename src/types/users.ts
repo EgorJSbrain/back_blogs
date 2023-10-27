@@ -25,7 +25,6 @@ export interface IUserEmailConfirmation {
   confirmationCode: string
   expirationDate: Date
   isConfirmed: boolean
-
 }
 
 export type UsersRequestParams = RequestParams & {
