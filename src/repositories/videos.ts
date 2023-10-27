@@ -1,15 +1,11 @@
-import { DBfields } from '../db/constants'
-import { getCollection } from '../db/mongo-db'
-
+import { Video } from '../models'
 import { UpdateVideoDto } from '../dtos/videos/update-video.dto'
 import { IVideo } from '../types/videos'
-
-const db = getCollection<IVideo>(DBfields.videos)
 
 export const VideosRepository = {
   async getVideos(): Promise<IVideo[]> {
     try {
-      const videos = await db.find({}, { projection: { _id: 0 } }).toArray()
+      const videos = await Video.find({}, { projection: { _id: 0 } }).lean()
 
       return videos || []
     } catch {
@@ -19,7 +15,7 @@ export const VideosRepository = {
 
   async getVideoById(id: string): Promise<IVideo | undefined | null> {
     try {
-      const video = await db.findOne({ id }, { projection: { _id: 0 } })
+      const video = await Video.findOne({ id }, { projection: { _id: 0 } })
 
       return video
     } catch {
@@ -31,10 +27,10 @@ export const VideosRepository = {
     try {
       let video = null
 
-      const response = await db.insertOne(data)
+      const response = await Video.create(data)
 
-      if (response.insertedId && data.id) {
-        video = await db.findOne({ id: data.id }, { projection: { _id: 0 } })
+      if (response._id && data.id) {
+        video = await Video.findOne({ id: data.id }, { projection: { _id: 0 } })
       }
 
       return video
@@ -47,10 +43,10 @@ export const VideosRepository = {
     try {
       let video
 
-      const response = await db.updateOne({ id }, { $set: data })
+      const response = await Video.updateOne({ id }, { $set: data })
 
       if (response.modifiedCount) {
-        video = await db.findOne({ id }, { projection: { _id: 0 } })
+        video = await Video.findOne({ id }, { projection: { _id: 0 } })
       }
 
       return video
@@ -61,7 +57,7 @@ export const VideosRepository = {
 
   async deleteVideo(id: string) {
     try {
-      const response = await db.deleteOne({ id })
+      const response = await Video.deleteOne({ id })
 
       return !!response.deletedCount
     } catch {
