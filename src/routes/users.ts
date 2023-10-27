@@ -11,13 +11,13 @@ import {
   ResponseBody
 } from '../types/global'
 import { CreateUserDto } from '../dtos/users/create-user.dto'
-import { IUser } from '../types/users'
+import { IUserAccountData } from '../types/users'
 
 export const usersRouter = Router({})
 
 usersRouter.get(
   '/',
-  async (req: RequestWithParams<RequestParams>, res: Response<ResponseBody<IUser>>) => {
+  async (req: RequestWithParams<RequestParams>, res: Response<ResponseBody<IUserAccountData>>) => {
     const users = await UsersService.getUsers(req.query)
 
     if (!users) {
