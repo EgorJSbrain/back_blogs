@@ -1,13 +1,11 @@
-import { DBfields } from '../db/constants'
-import { getCollection } from '../db/mongo-db'
+import { Sort } from 'mongodb'
+import { FilterQuery } from 'mongoose'
+import { Comment } from '../models'
 import { SortDirections } from '../constants/global'
 
 import { IComment } from '../types/comments'
 import { RequestParams, ResponseBody } from '../types/global'
-import { Filter, Sort } from 'mongodb'
 import { UpdateCommentDto } from '../dtos/comments/update-comment.dto'
-
-const db = getCollection<IComment>(DBfields.comments)
 
 export const CommentsRepository = {
   async getCommentsByPostId(params: RequestParams, postId: string): Promise<ResponseBody<IComment> | null> {
@@ -19,7 +17,7 @@ export const CommentsRepository = {
         pageSize = 10
       } = params
 
-      const filter: Filter<IComment> = { postId }
+      const filter: FilterQuery<IComment> = { postId }
       const sort: Sort = {}
 
       if (sortBy && sortDirection) {
@@ -29,15 +27,15 @@ export const CommentsRepository = {
       const pageSizeNumber = Number(pageSize)
       const pageNumberNum = Number(pageNumber)
       const skip = (pageNumberNum - 1) * pageSizeNumber
-      const count = await db.countDocuments(filter)
+      const count = await Comment.countDocuments(filter)
       const pagesCount = Math.ceil(count / pageSizeNumber)
 
-      const comments = await db
+      const comments = await Comment
         .find(filter, { projection: { _id: 0, postId: 0 } })
         .sort(sort)
         .skip(skip)
         .limit(pageSizeNumber)
-        .toArray()
+        .lean()
 
       return {
         pagesCount,
@@ -53,7 +51,7 @@ export const CommentsRepository = {
 
   async getCommentById(id: string) {
     try {
-      const comment = await db.findOne({ id }, { projection: { _id: 0, postId: 0 } })
+      const comment = await Comment.findOne({ id }, { projection: { _id: 0, postId: 0 } })
 
       return comment
     } catch {
@@ -65,11 +63,11 @@ export const CommentsRepository = {
     try {
       let comment
 
-      const response = await db.insertOne(data)
+      const response = await Comment.create(data)
 
-      if (response.insertedId) {
-        comment = await db.findOne(
-          { id: data.id },
+      if (response._id) {
+        comment = await Comment.findOne(
+          { _id: response._id },
           { projection: { _id: 0, postId: 0 } }
         )
       }
@@ -83,10 +81,10 @@ export const CommentsRepository = {
   async updateComment(id: string, data: UpdateCommentDto) {
     try {
       let comment
-      const response = await db.updateOne({ id }, { $set: data })
+      const response = await Comment.updateOne({ id }, { $set: data })
 
       if (response.modifiedCount) {
-        comment = await db.findOne({ id }, { projection: { _id: 0, postId: 0 } })
+        comment = await Comment.findOne({ id }, { projection: { _id: 0, postId: 0 } })
       }
 
       return comment
@@ -97,7 +95,7 @@ export const CommentsRepository = {
 
   async deleteComment(id: string) {
     try {
-      const response = await db.deleteOne({ id })
+      const response = await Comment.deleteOne({ id })
 
       return !!response.deletedCount
     } catch {
