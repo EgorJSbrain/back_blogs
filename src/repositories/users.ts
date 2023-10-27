@@ -1,15 +1,13 @@
-import { Filter, Sort } from 'mongodb'
-import { DBfields } from '../db/constants'
-import { getCollection } from '../db/mongo-db'
+import { Sort } from 'mongodb'
 import { SortDirections } from '../constants/global'
 
 import { ResponseBody } from '../types/global'
-import { ICreatingUser, IUser, UsersRequestParams } from '../types/users'
-
-const db = getCollection<IUser>(DBfields.users)
+import { ICreatingUser, IUser, IUserAccountData, UsersRequestParams } from '../types/users'
+import { User } from '../models/users'
+import { FilterQuery } from 'mongoose'
 
 export const UsersRepository = {
-  async getUsers(params: UsersRequestParams): Promise<ResponseBody<IUser> | null> {
+  async getUsers(params: UsersRequestParams): Promise<ResponseBody<IUserAccountData> | null> {
     try {
       const {
         sortBy = 'createdAt',
@@ -21,7 +19,7 @@ export const UsersRepository = {
       } = params
 
       const sort: Sort = {}
-      let filter: Filter<IUser> = {}
+      let filter: FilterQuery<IUser> = {}
 
       if (searchLoginTerm) {
         filter = {
@@ -44,22 +42,18 @@ export const UsersRepository = {
       const pageSizeNumber = Number(pageSize)
       const pageNumberNum = Number(pageNumber)
       const skip = (pageNumberNum - 1) * pageSizeNumber
-      const count = await db.countDocuments(filter)
+      const count = await User.countDocuments(filter)
       const pagesCount = Math.ceil(count / pageSizeNumber)
 
-      const users = await db
+      const users = await User
         .find(filter, {
-          projection: {
-            _id: 0,
-            passwordHash: 0,
-            passwordSalt: 0,
-            'emailConfirmation.confirmationCode': 0
-          }
+          _id: 0, passwordHash: 0, passwordSalt: 0, emailConfirmation: 0, 'accountData._id': 0
         })
         .sort(sort)
         .skip(skip)
         .limit(pageSizeNumber)
-        .toArray()
+        .lean()
+        .transform((doc) => doc.map(user => user.accountData))
 
       return {
         pagesCount,
@@ -75,7 +69,7 @@ export const UsersRepository = {
 
   async getUserByLoginOrEmail(email: string, login: string) {
     try {
-      const user = await db.findOne(
+      const user = await User.findOne(
         { $or: [{ 'accountData.email': email }, { 'accountData.login': login }] },
         { projection: { _id: 0 } }
       )
@@ -88,7 +82,7 @@ export const UsersRepository = {
 
   async getUserByEmail(email: string) {
     try {
-      const user = await db.findOne(
+      const user = await User.findOne(
         { 'accountData.email': email },
         { projection: { _id: 0 } }
       )
@@ -101,7 +95,7 @@ export const UsersRepository = {
 
   async getUserByVerificationCode(code: string) {
     try {
-      const user = await db.findOne(
+      const user = await User.findOne(
         { 'emailConfirmation.confirmationCode': code },
         {
           projection: {
@@ -120,7 +114,7 @@ export const UsersRepository = {
 
   async getUserById(id: string) {
     try {
-      const user = await db.findOne(
+      const user = await User.findOne(
         { 'accountData.id': id },
         { projection: { _id: 0, passwordHash: 0, passwordSolt: 0, 'emailConfirmation.confirmationCode': 0 } }
       )
@@ -135,13 +129,13 @@ export const UsersRepository = {
     try {
       let user
 
-      const response = await db.insertOne(data)
+      const response = await User.create(data)
 
-      if (response.insertedId) {
-        user = await db.findOne(
-          { 'accountData.id': data.accountData.id },
-          { projection: { _id: 0, passwordHash: 0, passwordSalt: 0, 'emailConfirmation.confirmationCode': 0 } }
-        )
+      if (response) {
+        user = await User.findOne(
+          { _id: response._id },
+          { projection: { _id: 0, passwordHash: 0, passwordSalt: 0, emailConfirmation: 0 } }
+        ).lean()
       }
 
       return user
@@ -152,7 +146,7 @@ export const UsersRepository = {
 
   async updateUser(id: string, data: IUser) {
     try {
-      const user = await db.findOneAndUpdate(
+      const user = await User.findOneAndUpdate(
         { 'accountData.id': id },
         { $set: data }
       )
@@ -165,7 +159,7 @@ export const UsersRepository = {
 
   async deleteUser(id: string) {
     try {
-      const response = await db.deleteOne({ 'accountData.id': id })
+      const response = await User.deleteOne({ 'accountData.id': id })
 
       return !!response.deletedCount
     } catch {
