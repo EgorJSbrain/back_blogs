@@ -1,5 +1,4 @@
-import { Sort } from 'mongodb'
-import { FilterQuery } from 'mongoose'
+import { FilterQuery, SortOrder } from 'mongoose'
 import { Comment } from '../models'
 import { SortDirections } from '../constants/global'
 
@@ -18,7 +17,7 @@ export const CommentsRepository = {
       } = params
 
       const filter: FilterQuery<IComment> = { postId }
-      const sort: Sort = {}
+      const sort: Record<string, SortOrder> = {}
 
       if (sortBy && sortDirection) {
         sort[sortBy] = sortDirection === SortDirections.asc ? 1 : -1

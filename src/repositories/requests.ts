@@ -1,14 +1,10 @@
-import { DBfields } from '../db/constants'
-import { getCollection } from '../db/mongo-db'
-
+import { Request } from '../models'
 import { IRequest } from '../types/requests'
-
-const db = getCollection<IRequest>(DBfields.requests)
 
 export const RequestsRepository = {
   async getRequests(ip: string, url: string, date: string) {
     try {
-      const count = await db.countDocuments({ ip, url, date: { $gt: date } })
+      const count = await Request.countDocuments({ ip, url, date: { $gt: date } })
 
       return count
     } catch {
@@ -18,7 +14,7 @@ export const RequestsRepository = {
 
   async createRequest(data: IRequest) {
     try {
-      await db.insertOne(data)
+      await Request.create(data)
 
       return true
     } catch {
