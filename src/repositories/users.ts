@@ -148,7 +148,8 @@ export const UsersRepository = {
     try {
       const user = await User.findOneAndUpdate(
         { 'accountData.id': id },
-        { $set: data }
+        { 'emailConfirmation.isConfirmed': true },
+        { new: true }
       )
 
       return user
