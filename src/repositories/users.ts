@@ -131,7 +131,7 @@ export const UsersRepository = {
 
       const response = await User.create(data)
 
-      if (response) {
+      if (response._id) {
         user = await User.findOne(
           { _id: response._id },
           { projection: { _id: 0, passwordHash: 0, passwordSalt: 0, emailConfirmation: 0 } }
