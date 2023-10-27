@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose'
 import { IBlog } from '../types/blogs'
 
-const BlogsSchema = new Schema<IBlog>({
+const BlogSchema = new Schema<IBlog>({
   id: { type: String, required: true },
   name: { type: String, required: true },
   description: { type: String, required: true },
@@ -10,4 +10,4 @@ const BlogsSchema = new Schema<IBlog>({
   isMembership: { type: Boolean, required: true }
 })
 
-export const Blog = model('blogs', BlogsSchema)
+export const Blog = model('blogs', BlogSchema)

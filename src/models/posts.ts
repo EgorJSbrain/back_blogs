@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose'
 import { IPost } from '../types/posts'
 
-const PostsSchema = new Schema<IPost>({
+const PostSchema = new Schema<IPost>({
   id: { type: String, required: true },
   blogId: { type: String, required: true },
   title: { type: String, required: true },
@@ -11,4 +11,4 @@ const PostsSchema = new Schema<IPost>({
   createdAt: { type: String, required: true }
 })
 
-export const Post = model('posts', PostsSchema)
+export const Post = model('posts', PostSchema)
