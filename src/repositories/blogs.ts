@@ -1,11 +1,11 @@
+import { FilterQuery } from 'mongoose'
 import { Sort } from 'mongodb'
+import { Blog } from '../models'
 
 import { BlogsRequestParams, IBlog } from '../types/blogs'
 import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
 import { SortDirections } from '../constants/global'
 import { ResponseBody } from '../types/global'
-import { Blog } from '../models'
-import { FilterQuery } from 'mongoose'
 
 export const BlogsRepository = {
   async getBlogs(params: BlogsRequestParams): Promise<ResponseBody<IBlog> | null> {
