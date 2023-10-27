@@ -1,13 +1,11 @@
-import { DBfields } from '../db/constants'
-import { getCollection } from '../db/mongo-db'
+import { Sort } from 'mongodb'
 
 import { BlogsRequestParams, IBlog } from '../types/blogs'
 import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
 import { SortDirections } from '../constants/global'
 import { ResponseBody } from '../types/global'
-import { Filter, Sort } from 'mongodb'
-
-const db = getCollection<IBlog>(DBfields.blogs)
+import { Blog } from '../models'
+import { FilterQuery } from 'mongoose'
 
 export const BlogsRepository = {
   async getBlogs(params: BlogsRequestParams): Promise<ResponseBody<IBlog> | null> {
@@ -20,7 +18,7 @@ export const BlogsRepository = {
         pageSize = 10
       } = params
 
-      const filter: Filter<IBlog> = {}
+      const filter: FilterQuery<IBlog> = {}
       const sort: Sort = {}
 
       if (searchNameTerm) {
@@ -34,15 +32,15 @@ export const BlogsRepository = {
       const pageSizeNumber = Number(pageSize)
       const pageNumberNum = Number(pageNumber)
       const skip = (pageNumberNum - 1) * pageSizeNumber
-      const count = await db.countDocuments(filter)
+      const count = await Blog.countDocuments(filter)
       const pagesCount = Math.ceil(count / pageSizeNumber)
 
-      const blogs = await db
-        .find(filter, { projection: { _id: false } })
+      const blogs = await Blog
+        .find(filter, { projection: { _id: 0 } })
         .sort(sort)
         .skip(skip)
         .limit(pageSizeNumber)
-        .toArray()
+        .lean()
 
       return {
         pagesCount,
@@ -58,7 +56,7 @@ export const BlogsRepository = {
 
   async getBlogById(id: string) {
     try {
-      const blog = await db.findOne({ id }, { projection: { _id: false } })
+      const blog = await Blog.findOne({ id }, { projection: { _id: false } })
 
       return blog
     } catch {
@@ -70,10 +68,10 @@ export const BlogsRepository = {
     try {
       let blog = null
 
-      const response = await db.insertOne(data)
+      const response = await Blog.create(data)
 
-      if (response.insertedId && data.id) {
-        blog = await db.findOne({ id: data.id }, { projection: { _id: 0 } })
+      if (response._id) {
+        blog = await Blog.findOne({ _id: response._id }, { projection: { _id: 0 } })
       }
 
       return blog
@@ -86,10 +84,10 @@ export const BlogsRepository = {
     try {
       let blog
 
-      const response = await db.updateOne({ id }, { $set: data })
+      const response = await Blog.updateOne({ id }, { $set: data })
 
       if (response.modifiedCount) {
-        blog = await db.findOne({ id }, { projection: { _id: 0 } })
+        blog = await Blog.findOne({ id }, { projection: { _id: 0 } })
       }
 
       return blog
@@ -100,7 +98,7 @@ export const BlogsRepository = {
 
   async deleteBlog(id: string) {
     try {
-      const response = await db.deleteOne({ id })
+      const response = await Blog.deleteOne({ id })
 
       return !!response.deletedCount
     } catch {
