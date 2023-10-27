@@ -1,4 +1,4 @@
-import { Sort } from 'mongodb'
+import { SortOrder } from 'mongoose'
 import { SortDirections } from '../constants/global'
 import { Post } from '../models'
 
@@ -16,7 +16,7 @@ export const PostsRepository = {
         pageSize = 10
       } = params
 
-      const sort: Sort = {}
+      const sort: Record<string, SortOrder> = {}
 
       if (sortBy && sortDirection) {
         sort[sortBy] = sortDirection === SortDirections.asc ? 1 : -1
@@ -119,7 +119,7 @@ export const PostsRepository = {
       const count = await Post.countDocuments({ blogId })
       const pagesCount = Math.ceil(count / pageSizeNumber)
 
-      const sort: Sort = {}
+      const sort: Record<string, SortOrder> = {}
 
       if (sortBy && sortDirection) {
         sort[sortBy] = sortDirection === SortDirections.asc ? 1 : -1

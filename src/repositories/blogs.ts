@@ -1,5 +1,4 @@
-import { FilterQuery } from 'mongoose'
-import { Sort } from 'mongodb'
+import { FilterQuery, SortOrder } from 'mongoose'
 import { Blog } from '../models'
 
 import { BlogsRequestParams, IBlog } from '../types/blogs'
@@ -19,7 +18,7 @@ export const BlogsRepository = {
       } = params
 
       const filter: FilterQuery<IBlog> = {}
-      const sort: Sort = {}
+      const sort: Record<string, SortOrder> = {}
 
       if (searchNameTerm) {
         filter.name = { $regex: searchNameTerm, $options: 'i' }
