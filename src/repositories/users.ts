@@ -1,5 +1,4 @@
-import { Sort } from 'mongodb'
-import { FilterQuery } from 'mongoose'
+import { FilterQuery, SortOrder } from 'mongoose'
 import { User } from '../models'
 import { SortDirections } from '../constants/global'
 
@@ -18,7 +17,7 @@ export const UsersRepository = {
         searchEmailTerm
       } = params
 
-      const sort: Sort = {}
+      const sort: Record<string, SortOrder> = {}
       let filter: FilterQuery<IUser> = {}
 
       if (searchLoginTerm) {
