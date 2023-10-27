@@ -1,13 +1,12 @@
-import { DBfields } from '../db/constants'
-import { getCollection } from '../db/mongo-db'
+import { Token } from '../models'
 import { IRefreshTokenMeta } from '../types/tokens'
-
-const db = getCollection<IRefreshTokenMeta>(DBfields.tokens)
 
 export const TokensRepository = {
   async getAllTokenByUserId(userId: string) {
     try {
-      const tokens = await db.find({ userId }, { projection: { _id: 0, expiredDate: 0, userId: 0 } }).toArray()
+      const tokens = await Token
+        .find({ userId }, { projection: { _id: 0, expiredDate: 0, userId: 0 } })
+        .lean()
 
       return tokens
     } catch {
@@ -17,7 +16,7 @@ export const TokensRepository = {
 
   async getTokenByDate(lastActiveDate: string) {
     try {
-      const token = await db.findOne({ lastActiveDate }, { projection: { _id: 0 } })
+      const token = await Token.findOne({ lastActiveDate }, { projection: { _id: 0 } })
 
       return token
     } catch {
@@ -27,7 +26,7 @@ export const TokensRepository = {
 
   async getTokenByDeviceId(deviceId: string, deviceTitle: string) {
     try {
-      const token = await db.findOne({ deviceId }, { projection: { _id: 0 } })
+      const token = await Token.findOne({ deviceId }, { projection: { _id: 0 } })
 
       return token
     } catch {
@@ -37,9 +36,9 @@ export const TokensRepository = {
 
   async createRefreshToken(token: IRefreshTokenMeta) {
     try {
-      const response = await db.insertOne(token)
+      const response = await Token.create(token)
 
-      return !!response.insertedId
+      return !!response._id
     } catch {
       return null
     }
@@ -48,13 +47,13 @@ export const TokensRepository = {
   async updateRefreshToken(prevDate: string, currentDate: string, newExpiredDate: string) {
     try {
       let updatedToken
-      const response = await db.updateOne(
+      const response = await Token.updateOne(
         { lastActiveDate: prevDate },
         { $set: { lastActiveDate: currentDate, expiredDate: newExpiredDate } }
       )
 
       if (response.modifiedCount) {
-        updatedToken = await db.findOne({ lastActiveDate: currentDate }, { projection: { _id: 0 } })
+        updatedToken = await Token.findOne({ lastActiveDate: currentDate }, { projection: { _id: 0 } })
       }
 
       return updatedToken
@@ -65,7 +64,7 @@ export const TokensRepository = {
 
   async deleteRefreshTokens(userId: string, lastActiveDate: string) {
     try {
-      const response = await db.deleteMany({ userId, $nor: [{ lastActiveDate }] })
+      const response = await Token.deleteMany({ userId, $nor: [{ lastActiveDate }] })
 
       return !!response.deletedCount
     } catch {
@@ -75,7 +74,7 @@ export const TokensRepository = {
 
   async deleteRefreshToken(deviceId: string) {
     try {
-      const response = await db.deleteOne({ deviceId })
+      const response = await Token.deleteOne({ deviceId })
 
       return !!response.deletedCount
     } catch {
