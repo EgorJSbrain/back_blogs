@@ -1,10 +1,7 @@
 import request, { Response,  } from 'supertest'
 import { app } from "../../src/app";
 import { HTTP_STATUSES, RouterPaths } from "../../src/constants/global";
-import { CreatePostDto } from "../../src/dtos/posts/create-post.dto";
-import { authUser } from "../../src/db/db";
 import { IPost } from '../../src/types/posts';
-import { blogsTestManager } from './blogsTestManager';
 import { postsTestManager } from './postsTestManager';
 import { usersTestManager } from './usersTestManager';
 import { authTestManager } from './authTestManager';
@@ -35,7 +32,7 @@ export const commetnsTestManager = {
 
     const { entity: post } = await postsTestManager.createPost(creatingPostData, HTTP_STATUSES.CREATED_201)
     await usersTestManager.createUser(creatingUserData, HTTP_STATUSES.CREATED_201)
-    const { entity: token } = await authTestManager.login(loginData, HTTP_STATUSES.OK_200)
+    const { entity: token } = await authTestManager.login(loginData, {}, HTTP_STATUSES.OK_200)
 
     const response = await request(app)
       .post(`${RouterPaths.posts}/${post.id}/comments`)
