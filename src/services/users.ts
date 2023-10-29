@@ -26,35 +26,33 @@ export const UsersService = {
     return await UsersRepository.getUserByEmail(email)
   },
 
+  async getUserByRecoveryCode(code: string) {
+    return await UsersRepository.getUserByData({ 'userSecurity.recoveryPasswordCode': code })
+  },
+
   async getUserByVerificationCode(code: string) {
     return await UsersRepository.getUserByVerificationCode(code)
   },
 
   async generateNewCode(data: IUser) {
     await this.updateUser(data.accountData.id, {
-      ...data,
-      emailConfirmation: {
-        ...data.emailConfirmation,
-        expirationDate: add(new Date(), {
-          hours: 1,
-          minutes: 10
-        }),
-        confirmationCode: v4()
-      }
+      'emailConfirmation.expirationDate': add(new Date(), {
+        hours: 1,
+        minutes: 10
+      }),
+      'emailConfirmation.confirmationCode': v4()
     })
+  },
+
+  async generateNewRecoveryPasswordCode(data: IUser) {
+    await this.updateUser(data.accountData.id, { 'userSecurity.recoveryPasswordCode': v4() })
   },
 
   async confirmUserEmail(data: IUser) {
-    return await this.updateUser(data.accountData.id, {
-      ...data,
-      emailConfirmation: {
-        ...data.emailConfirmation,
-        isConfirmed: true
-      }
-    })
+    return await this.updateUser(data.accountData.id, { 'emailConfirmation.isConfirmed': true })
   },
 
-  async updateUser(id: string, data: IUser) {
+  async updateUser(id: string, data: any) {
     return await UsersRepository.updateUser(id, data)
   },
 
@@ -79,6 +77,13 @@ export const UsersService = {
     const createdUser = generateNewUser(data, passwordSalt, passwordHash, isConfirmed)
 
     return await UsersRepository.createUser(createdUser)
+  },
+
+  async updatePasswordUser(userId: string, newPassword: string) {
+    console.log("-----!---userId:", userId)
+    const { passwordSalt, passwordHash } = await this._generateHash(newPassword)
+
+    return await this.updateUser(userId, { passwordSalt, passwordHash })
   },
 
   async deleteUser(id: string) {
