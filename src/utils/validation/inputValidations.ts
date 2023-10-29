@@ -108,3 +108,7 @@ export const requestParamsValidation = (): ValidationChain[] => [
   pageSizeNumberValidation,
   sortDirectionValidation
 ]
+
+export const EmailValidation = (): ValidationChain[] => [
+  userEmailValidation
+]

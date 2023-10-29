@@ -6,10 +6,24 @@ export const mailService = {
     const existedUser = await UsersService.getUserByEmail(email)
 
     if (!existedUser) {
-      return null
+      return false
     }
 
     const response = await emailManager.sendMailRegistrationConfirmation(existedUser)
+
+    if (!response) return false
+
+    return true
+  },
+
+  async sendRecoveryPasswordMail(email: string) {
+    const existedUser = await UsersService.getUserByEmail(email)
+
+    if (!existedUser) {
+      return false
+    }
+
+    const response = await emailManager.sendMailRecoveryPassword(existedUser)
 
     if (!response) return false
 
