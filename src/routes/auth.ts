@@ -3,6 +3,7 @@ import { Router, Response, Request } from 'express'
 import { TokensService, UsersService } from '../services'
 import { mailService } from '../domain/mail-service'
 import {
+  EmailValidation,
   RegistrationConfirmValidation,
   UserCreateValidation,
   UserEmailValidation,
@@ -65,7 +66,7 @@ authRouter.post(
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
     }
 
-    const responseConfirmMail = await mailService.sendRegistrationConfirmationMail(req.body.email)
+    const responseConfirmMail = await mailService.sendRegistrationConfirmationMail(user.accountData.email)
 
     if (!responseConfirmMail) {
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
@@ -80,18 +81,18 @@ authRouter.post(
   UserEmailValidation(),
   validationMiddleware,
   async (req: RequestWithBody<{ email: string }>, res: Response) => {
-    const existedUser = await UsersService.getUserByEmail(req.body.email)
+    const user = await UsersService.getUserByEmail(req.body.email)
 
-    if (!existedUser) {
+    if (!user) {
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
     }
 
-    if (existedUser) {
-      await UsersService.generateNewCode(existedUser)
+    if (user) {
+      await UsersService.generateNewCode(user)
     }
 
     const responseConfirmMail =
-      await mailService.sendRegistrationConfirmationMail(existedUser.accountData.email)
+      await mailService.sendRegistrationConfirmationMail(user.accountData.email)
 
     if (!responseConfirmMail) {
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
@@ -130,23 +131,64 @@ authRouter.post(
   }
 )
 
+authRouter.post(
+  '/password-recovery',
+  EmailValidation(),
+  validationMiddleware,
+  async (req: RequestWithBody<{ email: string }>, res: Response) => {
+    const user = await UsersService.getUserByEmail(req.body.email)
+
+    if (!user) {
+      return res.status(HTTP_STATUSES.BAD_REQUEST_400)
+    }
+
+    if (user) {
+      await UsersService.generateNewRecoveryPasswordCode(user)
+    }
+
+    const responseConfirmMail =
+      await mailService.sendRecoveryPasswordMail(user.accountData.email)
+
+    if (!responseConfirmMail) {
+      return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+    }
+
+    res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+  }
+)
+
+authRouter.post(
+  '/new-password',
+  async (req: RequestWithBody<{ recoveryCode: string, newPassword: string }>, res: Response) => {
+    const user = await UsersService.getUserByRecoveryCode(req.body.recoveryCode)
+
+    if (!user) {
+      return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+    }
+
+    if (user) {
+      await UsersService.updatePasswordUser(user.accountData.id, req.body.newPassword)
+    }
+
+    res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+  }
+)
+
 authRouter.get(
   '/me',
   authJWTMiddleware,
   async (req: RequestWithBody<LoginUserDto>, res: Response) => {
-    const existedUser = await UsersService.getUserById(req.userId)
+    const user = await UsersService.getUserById(req.userId)
 
-    if (!existedUser) {
+    if (!user) {
       return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
     }
 
-    const user = {
-      userId: existedUser.accountData.id,
-      email: existedUser.accountData.email,
-      login: existedUser.accountData.login
-    }
-
-    res.status(HTTP_STATUSES.OK_200).send(user)
+    res.status(HTTP_STATUSES.OK_200).send({
+      userId: user.accountData.id,
+      email: user.accountData.email,
+      login: user.accountData.login
+    })
   }
 )
 

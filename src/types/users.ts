@@ -3,8 +3,10 @@ import { RequestParams } from './global'
 export interface IUser {
   accountData: IUserAccountData
   emailConfirmation: IUserEmailConfirmation
+  userSecurity: IUserSecurity
   passwordSalt?: string
   passwordHash?: string
+  recoveryPasswordCode?: string
 }
 
 export interface ICreatingUser {
@@ -19,6 +21,10 @@ export interface IUserAccountData {
   login: string
   email: string
   createdAt: string
+}
+
+export interface IUserSecurity {
+  recoveryPasswordCode?: string
 }
 
 export interface IUserEmailConfirmation {

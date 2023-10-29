@@ -92,6 +92,19 @@ export const UsersRepository = {
     }
   },
 
+  async getUserByData(data: Record<string, string>) {
+    try {
+      const user = await User.findOne(
+        data,
+        { projection: { _id: 0 } }
+      )
+
+      return user
+    } catch {
+      return null
+    }
+  },
+
   async getUserByVerificationCode(code: string) {
     try {
       const user = await User.findOne(
@@ -143,13 +156,15 @@ export const UsersRepository = {
     }
   },
 
-  async updateUser(id: string, data: IUser) {
+  async updateUser(id: string, data: any) {
+    console.log("🚀 ~ file: users.ts:147 ~ updateUser ~ data:", data)
     try {
       const user = await User.findOneAndUpdate(
         { 'accountData.id': id },
-        { 'emailConfirmation.isConfirmed': true },
-        { new: true }
+        data,
+        { new: true, returnOriginal: false }
       )
+      console.log("🚀 ~ file: users.ts:154 ~ updateUser ~ user:", user)
 
       return user
     } catch {

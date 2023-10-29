@@ -1,5 +1,9 @@
 import { Schema, model } from 'mongoose'
-import { IUser, IUserAccountData, IUserEmailConfirmation } from '../types/users'
+import { IUser, IUserAccountData, IUserEmailConfirmation, IUserSecurity } from '../types/users'
+
+const UserSecuritySchema = new Schema<IUserSecurity>({
+  recoveryPasswordCode: { type: String }
+})
 
 const ProfileSchema = new Schema<IUserAccountData>({
   id: { type: String, required: true },
@@ -18,7 +22,8 @@ const UserSchema = new Schema<IUser>({
   accountData: { type: ProfileSchema },
   emailConfirmation: { type: ConfiramationSchema },
   passwordSalt: { type: String, required: true },
-  passwordHash: { type: String, required: true }
+  passwordHash: { type: String, required: true },
+  userSecurity: { type: UserSecuritySchema }
 })
 
 export const User = model('users', UserSchema)
