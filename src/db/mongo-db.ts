@@ -16,12 +16,7 @@ const dbUrl =
 
 export const dbConnection = async (): Promise<undefined> => {
   try {
-    await mongoose.connect(dbUrl, {
-      sslValidate: true,
-      tlsCertificateKeyFile: '/path/to/certificate.pem',
-      authMechanism: 'MONGODB-X509',
-      authSource: '$external'
-    })
+    await mongoose.connect('mongodb+srv://user:user@cluster0.gshiwjb.mongodb.net/studying-prd')
   } catch (err) {
     await mongoose.disconnect()
   }
