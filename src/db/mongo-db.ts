@@ -3,6 +3,7 @@ import dotenv from 'dotenv'
 import { APP_CONFIG } from '../app-config'
 
 dotenv.config()
+console.log("-------APP_CONFIG:", APP_CONFIG)
 
 if (!APP_CONFIG.MONGO_URL) {
   throw new Error('DB does not exist!')
