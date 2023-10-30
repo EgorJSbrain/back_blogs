@@ -3,7 +3,6 @@ import dotenv from 'dotenv'
 import { APP_CONFIG } from '../app-config'
 
 dotenv.config()
-console.log("-------APP_CONFIG:", APP_CONFIG)
 
 if (!APP_CONFIG.MONGO_URL) {
   throw new Error('DB does not exist!')
@@ -17,18 +16,14 @@ const dbUrl =
 
 export const dbConnection = async (): Promise<undefined> => {
   try {
-    console.log('------dbUrl-----', dbUrl)
     await mongoose.connect(dbUrl)
-
-    console.log('db connected', dbUrl)
   } catch (err) {
-    console.log('-DB--err--1-', err)
     await mongoose.disconnect()
   }
 }
 
 export const dbDisconnect = async (): Promise<undefined> => {
-  await mongoose.disconnect()
+  await mongoose.connection.close()
 }
 
 export const dbClear = async (): Promise<undefined> => {
@@ -37,9 +32,9 @@ export const dbClear = async (): Promise<undefined> => {
 
     for (const key in collectionsMongoose) {
       const collection = collectionsMongoose[key]
-      await collection.drop()
+      await collection.deleteMany({})
     }
   } catch {
-    await mongoose.disconnect()
+    await mongoose.connection.close()
   }
 }
