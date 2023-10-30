@@ -20,7 +20,8 @@ export const dbConnection = async (): Promise<undefined> => {
     await mongoose.connect(dbUrl)
 
     console.log('db connected', dbUrl)
-  } catch {
+  } catch (err) {
+    console.log('-DB--err---', err)
     await mongoose.disconnect()
   }
 }
@@ -35,7 +36,7 @@ export const dbClear = async (): Promise<undefined> => {
 
     for (const key in collectionsMongoose) {
       const collection = collectionsMongoose[key]
-      await collection.deleteMany({})
+      await collection.drop()
     }
   } catch {
     await mongoose.disconnect()
