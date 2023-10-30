@@ -157,14 +157,12 @@ export const UsersRepository = {
   },
 
   async updateUser(id: string, data: any) {
-    console.log("🚀 ~ file: users.ts:147 ~ updateUser ~ data:", data)
     try {
       const user = await User.findOneAndUpdate(
         { 'accountData.id': id },
         data,
         { new: true, returnOriginal: false }
       )
-      console.log("🚀 ~ file: users.ts:154 ~ updateUser ~ user:", user)
 
       return user
     } catch {

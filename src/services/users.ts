@@ -80,7 +80,6 @@ export const UsersService = {
   },
 
   async updatePasswordUser(userId: string, newPassword: string) {
-    console.log("-----!---userId:", userId)
     const { passwordSalt, passwordHash } = await this._generateHash(newPassword)
 
     return await this.updateUser(userId, { passwordSalt, passwordHash })
