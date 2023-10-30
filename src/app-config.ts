@@ -5,9 +5,7 @@ dotenv.config()
 export const APP_CONFIG = {
   PORT: process.env.PORT || 3001,
   MONGO_URL: process.env.MONGO_URL,
-  MONGO_DB_NAME: process.env.MONGO_DB_NAME,
   TEST_MONGO_URL: process.env.TEST_MONGO_URL,
-  TEST_MONGO_DB_NAME: process.env.TEST_MONGO_DB_NAME,
   REFRESH_JWT_SECRET: 'refresh_jwt-secret',
   ACCESS_JWT_SECRET: 'access-jwt_secret',
   SMTP_USER: process.env.SMTP_USER,
