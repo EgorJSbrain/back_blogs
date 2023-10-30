@@ -16,7 +16,7 @@ const dbUrl =
 
 export const dbConnection = async (): Promise<undefined> => {
   try {
-    await mongoose.connect('mongodb+srv://user:user@cluster0.gshiwjb.mongodb.net/studying-prd')
+    await mongoose.connect('mongodb+srv://user:user@cluster0.gshiwjb.mongodb.net/studying-dev')
   } catch (err) {
     await mongoose.disconnect()
   }
