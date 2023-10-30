@@ -32,7 +32,6 @@ export const dbDisconnect = async (): Promise<undefined> => {
 export const dbClear = async (): Promise<undefined> => {
   try {
     const collectionsMongoose = mongoose.connection.collections
-    console.log("-----collectionsMongoose:", collectionsMongoose)
 
     for (const key in collectionsMongoose) {
       const collection = collectionsMongoose[key]
