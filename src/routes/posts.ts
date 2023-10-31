@@ -55,7 +55,7 @@ postsRouter.get(
 
 postsRouter.post(
   '/',
-  authMiddleware,
+  // authMiddleware,
   PostsCreateUpdateValidation(),
   validationMiddleware,
   async (req: RequestWithBody<CreatePostDto>, res: Response) => {
@@ -77,7 +77,7 @@ postsRouter.post(
 
 postsRouter.put(
   '/:id',
-  authMiddleware,
+  // authMiddleware,
   PostsCreateUpdateValidation(),
   validationMiddleware,
   async (
@@ -124,7 +124,7 @@ postsRouter.put(
 
 postsRouter.delete(
   '/:id',
-  authMiddleware,
+  // authMiddleware,
   async (req: RequestWithParams<{ id: string }>, res: Response) => {
     const { id } = req.params
 
