@@ -30,9 +30,10 @@ import {
   checkExistedVerificationCodeValidation,
   checkUnexistedUserByEmailValidation,
   checkExistedConfirmedUserByEmailValidation,
-  checkReciveryCodeValidation
+  checkRecoveryCodeValidation
 } from './validationRules'
 import { Error } from '../../types/global'
+import { UserInputFields } from '../../constants/users'
 
 export const transformErrors = (errors: FieldValidationError[]): Error[] => errors.map(error => ({
   field: error.path,
@@ -77,7 +78,7 @@ export const PostCreateByBlogIdValidation = (): ValidationChain[] => [
 export const UserCreateValidation = (): ValidationChain[] => [
   userLoginValidation,
   userLoginFormatValidation,
-  userPasswordValidation,
+  userPasswordValidation(UserInputFields.password),
   userEmailValidation,
   checkExistedUserByLoginValidation,
   checkExistedUserByEmailValidation
@@ -91,7 +92,7 @@ export const RegistrationConfirmValidation = (): ValidationChain[] => [
 
 export const UserLoginValidation = (): ValidationChain[] => [
   userLoginOrEmailValidation,
-  userPasswordValidation
+  userPasswordValidation(UserInputFields.password)
 ]
 
 export const UserEmailValidation = (): ValidationChain[] => [
@@ -114,6 +115,6 @@ export const EmailValidation = (): ValidationChain[] => [
   userEmailValidation
 ]
 export const RecoveryPasswordValidation = (): ValidationChain[] => [
-  userPasswordValidation,
-  checkReciveryCodeValidation
+  userPasswordValidation(UserInputFields.newPassword),
+  checkRecoveryCodeValidation
 ]

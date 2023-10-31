@@ -1,4 +1,4 @@
-import { body, query } from 'express-validator'
+import { ValidationChain, body, query } from 'express-validator'
 import {
   BlogInputFields,
   NAME_MIN_LENGTH,
@@ -215,10 +215,12 @@ export const userLoginValidation = body([UserInputFields.login])
   .isLength({ min: LOGIN_MIN_LENGTH, max: LOGIN_MAX_LENGTH })
   .withMessage(usersErrorMessage.loginLength)
 
-export const userPasswordValidation = body([UserInputFields.password])
-  .trim()
-  .isLength({ min: PASSWORD_MIN_LENGTH, max: PASSWORD_MAX_LENGTH })
-  .withMessage(usersErrorMessage.passwordLength)
+export const userPasswordValidation = (field: string): ValidationChain => {
+  return body([field])
+    .trim()
+    .isLength({ min: PASSWORD_MIN_LENGTH, max: PASSWORD_MAX_LENGTH })
+    .withMessage(usersErrorMessage[field])
+}
 
 export const userLoginFormatValidation = body([UserInputFields.login])
   .trim()
@@ -333,16 +335,16 @@ export const checkExistedUserByLoginValidation = body([UserInputFields.login])
   .exists({ checkNull: true })
   .withMessage(usersErrorMessage.existedUser)
 
-export const checkReciveryCodeValidation = body([UserInputFields.recoveryCode])
+export const checkRecoveryCodeValidation = body([UserInputFields.recoveryCode])
   .trim()
   .customSanitizer(async (value) => {
     const existedUser = await UsersService.getUserByRecoveryCode(value)
 
-    if (existedUser) {
+    if (!existedUser) {
       return null
     }
 
     return value
   })
   .exists({ checkNull: true })
-  .withMessage(usersErrorMessage.recoveryPasswordFailed)
+  .withMessage(usersErrorMessage.recoveryPasswordInvalid)

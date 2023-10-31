@@ -11,18 +11,20 @@ export enum UserInputFields {
   loginOrEmail = 'loginOrEmail',
   code = 'code',
   recoveryCode = 'recoveryCode',
+  newPassword = 'newPassword',
 }
 
-export const usersErrorMessage = {
+export const usersErrorMessage: Record<string, string> = {
   loginOrEmailRequired: 'loginOrEmail is required',
   loginLength: `Length of login shouldn't be less than ${LOGIN_MIN_LENGTH} and more than ${LOGIN_MAX_LENGTH} symbols`,
   loginFormat: 'Login is not valid',
   // eslint-disable-next-line max-len
-  passwordLength: `Length of password shouldn't be less than ${PASSWORD_MIN_LENGTH} and more than ${PASSWORD_MAX_LENGTH} symbols`,
+  password: `Length of password shouldn't be less than ${PASSWORD_MIN_LENGTH} and more than ${PASSWORD_MAX_LENGTH} symbols`,
   emailFormat: 'Email is not valid',
   codeRequired: 'Code is required',
   codeInvalid: 'Code is not valid',
   existedUser: 'Email or login is already used',
   noExistedUser: 'User is not exist',
-  recoveryPasswordFailed: 'Recovery password si nor correct'
+  recoveryPasswordInvalid: 'Recovery password is not correct',
+  newPassword: 'Recovery password is not correct'
 }
