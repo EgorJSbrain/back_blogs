@@ -65,15 +65,10 @@ export const BlogsRepository = {
 
   async createBlog(data: IBlog) {
     try {
-      let blog = null
-
       const response = await Blog.create(data)
+      console.log("---blog----", response)
 
-      if (response._id) {
-        blog = await Blog.findOne({ _id: response._id }, { projection: { _id: 0 } })
-      }
-
-      return blog
+      return response
     } catch {
       return null
     }
