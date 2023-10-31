@@ -15,7 +15,7 @@ import {
 import { RouterPaths } from './constants/global'
 import { requestLogMiddleware, requestsCountMiddleware } from './middlewares'
 
-export const genApp = () => {
+export const genApp = (): any => {
   const app = express()
   app.use(RouterPaths.testing, requestLogMiddleware, globalRouter)
   app.use(RouterPaths.videos, requestLogMiddleware, videosRouter)
