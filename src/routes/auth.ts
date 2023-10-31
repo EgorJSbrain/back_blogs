@@ -140,17 +140,15 @@ authRouter.post(
   async (req: RequestWithBody<{ email: string }>, res: Response) => {
     const user = await UsersService.getUserByEmail(req.body.email)
 
-    if (!user) {
-      return res.status(HTTP_STATUSES.BAD_REQUEST_400)
+    if (user) {
+      const updatedUser = await UsersService.updateUserWithNewRecoveryPasswordCode(user)
+
+      if (!updatedUser) {
+        return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+      }
+
+      await mailService.sendRecoveryPasswordMail(updatedUser)
     }
-
-    const updatedUser = await UsersService.updateUserWithNewRecoveryPasswordCode(user)
-
-    if (!updatedUser) {
-      return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
-    }
-
-    await mailService.sendRecoveryPasswordMail(updatedUser)
 
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
   }
