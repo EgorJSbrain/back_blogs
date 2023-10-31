@@ -4,6 +4,7 @@ import { TokensService, UsersService } from '../services'
 import { mailService } from '../domain/mail-service'
 import {
   EmailValidation,
+  RecoveryPasswordValidation,
   RegistrationConfirmValidation,
   UserCreateValidation,
   UserEmailValidation,
@@ -66,7 +67,7 @@ authRouter.post(
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
     }
 
-    const responseConfirmMail = await mailService.sendRegistrationConfirmationMail(user.accountData.email)
+    const responseConfirmMail = await mailService.sendRegistrationConfirmationMail(user)
 
     if (!responseConfirmMail) {
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
@@ -87,12 +88,13 @@ authRouter.post(
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
     }
 
-    if (user) {
-      await UsersService.generateNewCode(user)
+    const updatedUser = await UsersService.updateUserWithNewConfirmatioCode(user)
+
+    if (!updatedUser) {
+      return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
     }
 
-    const responseConfirmMail =
-      await mailService.sendRegistrationConfirmationMail(user.accountData.email)
+    const responseConfirmMail = await mailService.sendRegistrationConfirmationMail(updatedUser)
 
     if (!responseConfirmMail) {
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
@@ -142,16 +144,13 @@ authRouter.post(
       return res.status(HTTP_STATUSES.BAD_REQUEST_400)
     }
 
-    if (user) {
-      await UsersService.generateNewRecoveryPasswordCode(user)
-    }
+    const updatedUser = await UsersService.updateUserWithNewRecoveryPasswordCode(user)
 
-    const responseConfirmMail =
-      await mailService.sendRecoveryPasswordMail(user.accountData.email)
-
-    if (!responseConfirmMail) {
+    if (!updatedUser) {
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
     }
+
+    await mailService.sendRecoveryPasswordMail(updatedUser)
 
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
   }
@@ -159,6 +158,8 @@ authRouter.post(
 
 authRouter.post(
   '/new-password',
+  RecoveryPasswordValidation(),
+  validationMiddleware,
   async (req: RequestWithBody<{ recoveryCode: string, newPassword: string }>, res: Response) => {
     const user = await UsersService.getUserByRecoveryCode(req.body.recoveryCode)
 
@@ -166,9 +167,7 @@ authRouter.post(
       return res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
     }
 
-    if (user) {
-      await UsersService.updatePasswordUser(user.accountData.id, req.body.newPassword)
-    }
+    await UsersService.updatePasswordUser(user.accountData.id, req.body.newPassword)
 
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
   }

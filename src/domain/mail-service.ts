@@ -1,29 +1,17 @@
 import { emailManager } from '../managers/email-manager'
-import { UsersService } from '../services'
+import { IUser } from '../types/users'
 
 export const mailService = {
-  async sendRegistrationConfirmationMail(email: string) {
-    const existedUser = await UsersService.getUserByEmail(email)
-
-    if (!existedUser) {
-      return false
-    }
-
-    const response = await emailManager.sendMailRegistrationConfirmation(existedUser)
+  async sendRegistrationConfirmationMail(user: IUser) {
+    const response = await emailManager.sendMailRegistrationConfirmation(user)
 
     if (!response) return false
 
     return true
   },
 
-  async sendRecoveryPasswordMail(email: string) {
-    const existedUser = await UsersService.getUserByEmail(email)
-
-    if (!existedUser) {
-      return false
-    }
-
-    const response = await emailManager.sendMailRecoveryPassword(existedUser)
+  async sendRecoveryPasswordMail(user: IUser) {
+    const response = await emailManager.sendMailRecoveryPassword(user)
 
     if (!response) return false
 

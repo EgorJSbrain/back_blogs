@@ -332,3 +332,17 @@ export const checkExistedUserByLoginValidation = body([UserInputFields.login])
   })
   .exists({ checkNull: true })
   .withMessage(usersErrorMessage.existedUser)
+
+export const checkReciveryCodeValidation = body([UserInputFields.recoveryCode])
+  .trim()
+  .customSanitizer(async (value) => {
+    const existedUser = await UsersService.getUserByRecoveryCode(value)
+
+    if (existedUser) {
+      return null
+    }
+
+    return value
+  })
+  .exists({ checkNull: true })
+  .withMessage(usersErrorMessage.recoveryPasswordFailed)
