@@ -1,6 +1,7 @@
 import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import { APP_CONFIG } from '../app-config'
+console.log("----APP_CONFIG:", APP_CONFIG)
 
 dotenv.config()
 
@@ -16,7 +17,7 @@ const dbUrl =
 
 export const dbConnection = async (): Promise<undefined> => {
   try {
-    await mongoose.connect('mongodb+srv://user:user@cluster0.gshiwjb.mongodb.net/studying-dev')
+    await mongoose.connect(dbUrl)
   } catch (err) {
     await mongoose.disconnect()
   }
