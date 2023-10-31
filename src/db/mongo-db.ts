@@ -18,7 +18,7 @@ export const dbConnection = async (): Promise<undefined> => {
   try {
     await mongoose.connect(dbUrl)
   } catch (err) {
-    await mongoose.disconnect()
+    await mongoose.connection.close()
   }
 }
 

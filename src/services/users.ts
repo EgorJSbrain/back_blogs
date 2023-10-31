@@ -34,8 +34,8 @@ export const UsersService = {
     return await UsersRepository.getUserByVerificationCode(code)
   },
 
-  async generateNewCode(data: IUser) {
-    await this.updateUser(data.accountData.id, {
+  async updateUserWithNewConfirmatioCode(data: IUser) {
+    return await this.updateUser(data.accountData.id, {
       'emailConfirmation.expirationDate': add(new Date(), {
         hours: 1,
         minutes: 10
@@ -44,8 +44,8 @@ export const UsersService = {
     })
   },
 
-  async generateNewRecoveryPasswordCode(data: IUser) {
-    await this.updateUser(data.accountData.id, { 'userSecurity.recoveryPasswordCode': v4() })
+  async updateUserWithNewRecoveryPasswordCode(data: IUser) {
+    return await this.updateUser(data.accountData.id, { 'userSecurity.recoveryPasswordCode': v4() })
   },
 
   async confirmUserEmail(data: IUser) {

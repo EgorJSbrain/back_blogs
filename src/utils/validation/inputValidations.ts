@@ -29,7 +29,8 @@ import {
   checkExistedUserByCodeValidation,
   checkExistedVerificationCodeValidation,
   checkUnexistedUserByEmailValidation,
-  checkExistedConfirmedUserByEmailValidation
+  checkExistedConfirmedUserByEmailValidation,
+  checkReciveryCodeValidation
 } from './validationRules'
 import { Error } from '../../types/global'
 
@@ -111,4 +112,8 @@ export const requestParamsValidation = (): ValidationChain[] => [
 
 export const EmailValidation = (): ValidationChain[] => [
   userEmailValidation
+]
+export const RecoveryPasswordValidation = (): ValidationChain[] => [
+  userPasswordValidation,
+  checkReciveryCodeValidation
 ]

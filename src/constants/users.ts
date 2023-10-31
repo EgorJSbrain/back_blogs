@@ -10,6 +10,7 @@ export enum UserInputFields {
   email = 'email',
   loginOrEmail = 'loginOrEmail',
   code = 'code',
+  recoveryCode = 'recoveryCode',
 }
 
 export const usersErrorMessage = {
@@ -22,5 +23,6 @@ export const usersErrorMessage = {
   codeRequired: 'Code is required',
   codeInvalid: 'Code is not valid',
   existedUser: 'Email or login is already used',
-  noExistedUser: 'User is not exist'
+  noExistedUser: 'User is not exist',
+  recoveryPasswordFailed: 'Recovery password si nor correct'
 }
