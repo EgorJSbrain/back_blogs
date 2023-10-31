@@ -235,6 +235,38 @@ describe('AUTH tests', () => {
       HTTP_STATUSES.OK_200)
   })
 
+  it('POST - fail - recovery password for user which was regisrated', async () => {
+    await authTestManager.registration(creatingData)
+    const user = await usersTestManager.getUserByEmail(
+      creatingData.email
+    )
+
+    await getRequest()
+      .post(`${RouterPaths.auth}/registration-confirmation`)
+      .send({
+        code: user?.emailConfirmation.confirmationCode
+      })
+      .expect(HTTP_STATUSES.NO_CONTENT_204)
+    const newPassword = '654321'
+    
+    await getRequest()
+      .post(`${RouterPaths.auth}/password-recovery`)
+      .send({
+        email: user?.accountData.email
+      })
+      .expect(HTTP_STATUSES.NO_CONTENT_204)
+    
+    const existedUser = await usersTestManager.getUserByEmail(creatingData.email)
+
+    await getRequest()
+      .post(`${RouterPaths.auth}/new-password`)
+      .send({
+        recoveryCode: '33434j-3434344-344fdfgfg-56gkghkghh',
+        newPassword,
+      })
+      .expect(HTTP_STATUSES.BAD_REQUEST_400)
+  })
+
   afterEach(async () => {
     await dbClear()
   })
