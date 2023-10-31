@@ -60,7 +60,7 @@ blogsRouter.get(
 
 blogsRouter.post(
   '/',
-  authMiddleware,
+  // authMiddleware,
   BlogsCreateUpdateValidation(),
   validationMiddleware,
   async (req: RequestWithBody<CreateBlogDto>, res: Response) => {
@@ -76,7 +76,7 @@ blogsRouter.post(
 
 blogsRouter.put(
   '/:id',
-  authMiddleware,
+  // authMiddleware,
   BlogsCreateUpdateValidation(),
   validationMiddleware,
   async (
