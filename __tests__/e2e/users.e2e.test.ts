@@ -1,11 +1,11 @@
 import request from 'supertest'
-import { app } from '../../src/app'
+import { generateApp } from '../../src/app'
 import { authUser } from '../../src/db/db'
 import { dbConnection, dbClear, dbDisconnect } from '../../src/db/mongo-db'
 import { usersTestManager } from '../utils/usersTestManager'
 import { HTTP_STATUSES, RouterPaths } from '../../src/constants/global'
 
-const getRequest = () => request(app)
+const getRequest = () => request(generateApp())
 
 const responseData = {
   pagesCount: 0,

@@ -1,11 +1,11 @@
 import request from 'supertest'
-import { app } from '../../src/app'
+import { generateApp } from '../../src/app'
 import { HTTP_STATUSES, RouterPaths } from '../../src/constants/global'
 import { videosTestManager } from '../utils/videosTestManager'
 import { VideoAvailableResolutions } from '../../src/constants/videos'
 import { dbConnection, dbClear, dbDisconnect } from '../../src/db/mongo-db'
 
-const getRequest = () => request(app)
+const getRequest = () => request(generateApp())
 
 describe('VIDEOS tests', () => {
   beforeAll(async () => {

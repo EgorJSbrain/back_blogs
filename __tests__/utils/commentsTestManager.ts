@@ -1,5 +1,5 @@
 import request, { Response,  } from 'supertest'
-import { app } from "../../src/app";
+import { generateApp } from "../../src/app";
 import { HTTP_STATUSES, RouterPaths } from "../../src/constants/global";
 import { IPost } from '../../src/types/posts';
 import { postsTestManager } from './postsTestManager';
@@ -34,7 +34,7 @@ export const commetnsTestManager = {
     await usersTestManager.createUser(creatingUserData, HTTP_STATUSES.CREATED_201)
     const { entity: token } = await authTestManager.login(loginData, {}, HTTP_STATUSES.OK_200)
 
-    const response = await request(app)
+    const response = await request(generateApp())
       .post(`${RouterPaths.posts}/${post.id}/comments`)
       .set({ Authorization: `Bearer ${token.accessToken}` })
       .send(data)

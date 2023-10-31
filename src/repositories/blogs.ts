@@ -4,7 +4,7 @@ import { BlogsRequestParams, IBlog } from '../types/blogs'
 import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
 import { SortDirections } from '../constants/global'
 import { ResponseBody } from '../types/global'
-import { Blog } from '../db/mongo-db'
+import { Blog } from '../models'
 
 export const BlogsRepository = {
   async getBlogs(params: BlogsRequestParams): Promise<ResponseBody<IBlog> | null> {
@@ -66,7 +66,6 @@ export const BlogsRepository = {
   async createBlog(data: IBlog) {
     try {
       const response = await Blog.create(data)
-      console.log("---blog----", response)
 
       return response
     } catch {

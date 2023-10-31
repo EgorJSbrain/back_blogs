@@ -1,5 +1,5 @@
 import request, { Response } from 'supertest'
-import { app } from "../../src/app";
+import { generateApp } from "../../src/app";
 import { HTTP_STATUSES, RouterPaths } from "../../src/constants/global";
 import { authUser } from "../../src/db/db";
 import { CreateVideoDto } from "../../src/dtos/videos/create-video.dto";
@@ -10,7 +10,7 @@ export const videosTestManager = {
     data: CreateVideoDto,
     expectedStatusCode: HTTP_STATUSES = HTTP_STATUSES.CREATED_201
   ): Promise<{response: Response, entity: IVideo}>   {
-    const response = await request(app)
+    const response = await request(generateApp())
       .post(RouterPaths.videos)
       .set({ Authorization: `Basic ${authUser.password}` })
       .send(data)

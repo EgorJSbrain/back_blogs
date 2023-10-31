@@ -15,7 +15,7 @@ import {
 import { RouterPaths } from './constants/global'
 import { requestLogMiddleware, requestsCountMiddleware } from './middlewares'
 
-export const genApp = (): any => {
+export const generateApp = (): any => {
   const app = express()
   app.set('trust proxy', true)
   app.use(bodyParser.json())

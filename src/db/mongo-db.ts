@@ -1,9 +1,6 @@
-import mongoose, { model } from 'mongoose'
+import mongoose from 'mongoose'
 import dotenv from 'dotenv'
 import { APP_CONFIG } from '../app-config'
-import { BlogSchema } from '../models/blogs'
-
-export const Blog = model('blogs', BlogSchema)
 
 dotenv.config()
 

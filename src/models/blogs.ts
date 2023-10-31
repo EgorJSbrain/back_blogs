@@ -1,4 +1,4 @@
-import { Schema } from 'mongoose'
+import { Schema, model } from 'mongoose'
 import { IBlog } from '../types/blogs'
 
 export const BlogSchema = new Schema<IBlog>({
@@ -9,3 +9,5 @@ export const BlogSchema = new Schema<IBlog>({
   createdAt: { type: String, required: true },
   isMembership: { type: Boolean, required: true }
 })
+
+export const Blog = model('blogs', BlogSchema)
