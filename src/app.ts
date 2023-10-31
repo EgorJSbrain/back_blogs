@@ -15,17 +15,21 @@ import {
 import { RouterPaths } from './constants/global'
 import { requestLogMiddleware, requestsCountMiddleware } from './middlewares'
 
-export const app = express()
+export const genApp = () => {
+  const app = express()
+  app.use(RouterPaths.testing, requestLogMiddleware, globalRouter)
+  app.use(RouterPaths.videos, requestLogMiddleware, videosRouter)
+  app.use(RouterPaths.blogs, requestLogMiddleware, blogsRouter)
+  app.use(RouterPaths.posts, requestLogMiddleware, postsRouter)
+  app.use(RouterPaths.users, requestLogMiddleware, usersRouter)
+  app.use(
+    RouterPaths.auth,
+    requestsCountMiddleware,
+    requestLogMiddleware,
+    authRouter
+  )
+  app.use(RouterPaths.comments, requestLogMiddleware, commentsRouter)
+  app.use(RouterPaths.security, requestLogMiddleware, securityRouter)
 
-app.set('trust proxy', true)
-app.use(bodyParser.json())
-app.use(cookieParser())
-
-app.use(RouterPaths.testing, requestLogMiddleware, globalRouter)
-app.use(RouterPaths.videos, requestLogMiddleware, videosRouter)
-app.use(RouterPaths.blogs, requestLogMiddleware, blogsRouter)
-app.use(RouterPaths.posts, requestLogMiddleware, postsRouter)
-app.use(RouterPaths.users, requestLogMiddleware, usersRouter)
-app.use(RouterPaths.auth, requestsCountMiddleware, requestLogMiddleware, authRouter)
-app.use(RouterPaths.comments, requestLogMiddleware, commentsRouter)
-app.use(RouterPaths.security, requestLogMiddleware, securityRouter)
+  return app
+}
