@@ -1,5 +1,5 @@
 import request, { Response,  } from 'supertest'
-import { app } from "../../src/app";
+import { generateApp } from "../../src/app";
 import { HTTP_STATUSES, RouterPaths } from "../../src/constants/global";
 import { CreatePostDto } from "../../src/dtos/posts/create-post.dto";
 import { authUser } from "../../src/db/db";
@@ -21,7 +21,7 @@ export const postsTestManager = {
       ...data
     }
 
-    const response = await request(app)
+    const response = await request(generateApp())
       .post(RouterPaths.posts)
       .set({ Authorization: `Basic ${authUser.password}` })
       .send(creatingData)

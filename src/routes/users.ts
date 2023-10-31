@@ -30,7 +30,7 @@ usersRouter.get(
 
 usersRouter.post(
   '/',
-  // authMiddleware,
+  authMiddleware,
   UserCreateValidation(),
   validationMiddleware,
   async (req: RequestWithBody<CreateUserDto>, res: Response) => {
@@ -57,7 +57,7 @@ usersRouter.post(
 
 usersRouter.delete(
   '/:id',
-  // authMiddleware,
+  authMiddleware,
   async (req: RequestWithParams<{ id: string }>, res: Response) => {
     const { id } = req.params
 
