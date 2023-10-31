@@ -1,5 +1,5 @@
 import request, { Response } from 'supertest'
-import { app } from "../../src/app";
+import { generateApp } from "../../src/app";
 import { HTTP_STATUSES, RouterPaths } from '../../src/constants/global'
 import { IUser } from '../../src/types/users';
 import { LoginUserDto } from '../../src/dtos/users/login-user.dto';
@@ -11,7 +11,7 @@ export const authTestManager = {
     data: CreateUserDto,
     expectedStatusCode: HTTP_STATUSES = HTTP_STATUSES.NO_CONTENT_204
   ): Promise<{response: Response, entity: boolean}>   {
-    const response = await request(app)
+    const response = await request(generateApp())
       .post(`${RouterPaths.auth}/registration`)
       .send(data)
       .expect(expectedStatusCode)
@@ -23,7 +23,7 @@ export const authTestManager = {
     ip?: Record<string, string>,
     expectedStatusCode: HTTP_STATUSES | undefined = HTTP_STATUSES.OK_200
   ): Promise<{response: Response, entity: { accessToken: string }}> {
-    const response = await request(app)
+    const response = await request(generateApp())
       .post(`${RouterPaths.auth}/login`)
       .send(data)
       .set(ip || {})

@@ -1,5 +1,5 @@
 import request, { Response } from 'supertest'
-import { app } from "../../src/app";
+import { generateApp } from "../../src/app";
 import { HTTP_STATUSES, RouterPaths } from '../../src/constants/global'
 import { CreateUserDto } from '../../src/dtos/users/create-user.dto';
 import { IUser, IUserAccountData } from '../../src/types/users';
@@ -11,7 +11,7 @@ export const usersTestManager = {
     data: CreateUserDto,
     expectedStatusCode: HTTP_STATUSES = HTTP_STATUSES.CREATED_201
   ): Promise<{response: Response, entity: IUserAccountData}>   {
-    const response = await request(app)
+    const response = await request(generateApp())
       .post(RouterPaths.users)
       .set({ Authorization: `Basic ${authUser.password}` })
       .send(data)

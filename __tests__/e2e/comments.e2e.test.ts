@@ -1,10 +1,10 @@
 import request from 'supertest'
-import { app } from '../../src/app'
+import { generateApp } from '../../src/app'
 import { HTTP_STATUSES, RouterPaths } from '../../src/constants/global'
 import { dbClear, dbConnection, dbDisconnect } from '../../src/db/mongo-db'
 import { commetnsTestManager } from '../utils/commentsTestManager'
 
-const getRequest = () => request(app)
+const getRequest = () => request(generateApp())
 
 const responseData = {
   pagesCount: 0,

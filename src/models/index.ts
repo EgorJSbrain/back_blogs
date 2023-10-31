@@ -1,5 +1,5 @@
 export { User } from './users'
-export { BlogSchema } from './blogs'
+export { Blog } from './blogs'
 export { Post } from './posts'
 export { Comment } from './comments'
 export { Token } from './tokens'

@@ -1,11 +1,11 @@
 import request from 'supertest'
-import { app } from '../../src/app'
+import { generateApp } from '../../src/app'
 import { HTTP_STATUSES, RouterPaths } from '../../src/constants/global'
 import { dbConnection, dbClear, dbDisconnect } from '../../src/db/mongo-db'
 import { usersTestManager } from '../utils/usersTestManager'
 import { authTestManager } from '../utils/authTestManager'
 
-const getRequest = () => request(app)
+const getRequest = () => request(generateApp())
 
 describe('AUTH tests', () => {
   beforeAll(async () => {
