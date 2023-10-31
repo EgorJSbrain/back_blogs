@@ -67,10 +67,10 @@ export const BlogsRepository = {
     try {
       let blog = null
 
-      const response = await Blog.insertMany([data])
+      const response = await Blog.create(data)
 
-      if (response[0]._id) {
-        blog = await Blog.findOne({ _id: response[0]._id }, { projection: { _id: 0 } })
+      if (response._id) {
+        blog = await Blog.findOne({ _id: response._id }, { projection: { _id: 0 } })
       }
 
       return blog

@@ -6,7 +6,7 @@ const PORT = APP_CONFIG.PORT
 
 app.listen(PORT, async () => {
   console.log('-----INDEX-BEFORE DB CONNECTION---')
-  await dbConnection()
+  // await dbConnection()
 
   console.log(`SERVER START PORT-${PORT}`)
 })
