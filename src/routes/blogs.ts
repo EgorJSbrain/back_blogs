@@ -120,7 +120,7 @@ blogsRouter.put(
 
 blogsRouter.delete(
   '/:id',
-  authMiddleware,
+  // authMiddleware,
   async (req: RequestWithParams<{ id: string }>, res: Response) => {
     const { id } = req.params
 
@@ -165,7 +165,7 @@ blogsRouter.get(
 
 blogsRouter.post(
   '/:blogId/posts',
-  authMiddleware,
+  // authMiddleware,
   PostCreateByBlogIdValidation(),
   validationMiddleware,
   async (
