@@ -17,6 +17,10 @@ import { requestLogMiddleware, requestsCountMiddleware } from './middlewares'
 
 export const genApp = (): any => {
   const app = express()
+  app.set('trust proxy', true)
+  app.use(bodyParser.json())
+  app.use(cookieParser())
+
   app.use(RouterPaths.testing, requestLogMiddleware, globalRouter)
   app.use(RouterPaths.videos, requestLogMiddleware, videosRouter)
   app.use(RouterPaths.blogs, requestLogMiddleware, blogsRouter)
