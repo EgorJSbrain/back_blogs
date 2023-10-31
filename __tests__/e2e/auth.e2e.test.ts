@@ -66,14 +66,12 @@ describe('AUTH tests', () => {
   it('POST - success - registration-email-resending', async () => {
     await authTestManager.registration(creatingData)
 
-    const response = await getRequest()
+    await getRequest()
       .post(`${RouterPaths.auth}/registration-email-resending`)
       .send({
         email: creatingData.email
       })
       .expect(HTTP_STATUSES.NO_CONTENT_204)
-
-      expect(response.status).toBe(HTTP_STATUSES.NO_CONTENT_204)
   })
 
   it('POST - fail - registration-email-resending with not existed email', async () => {
@@ -89,7 +87,9 @@ describe('AUTH tests', () => {
 
   it('POST - success - registration-confirmation', async () => {
     await authTestManager.registration(creatingData)
-    const existedUser = await usersTestManager.getUserByEmail(creatingData.email)
+    const existedUser = await usersTestManager.getUserByEmail(
+      creatingData.email
+    )
 
     await getRequest()
       .post(`${RouterPaths.auth}/registration-confirmation`)
@@ -128,7 +128,7 @@ describe('AUTH tests', () => {
 
     await getRequest()
       .get(`${RouterPaths.auth}/me`)
-      .set({Authorization: `Bearer ${response.entity.accessToken}`})
+      .set({ Authorization: `Bearer ${response.entity.accessToken}` })
       .expect(HTTP_STATUSES.OK_200, {
         userId: existedUser!.accountData.id,
         email: existedUser!.accountData.email,
@@ -136,7 +136,7 @@ describe('AUTH tests', () => {
       })
   })
 
-  it('DELETE - success - delete device by id', async () => {
+  it('REQUESTS - success - many requests', async () => {
     await usersTestManager.createUser(creatingData, HTTP_STATUSES.CREATED_201)
     await authTestManager.login({
       loginOrEmail: creatingData.email,
@@ -165,6 +165,74 @@ describe('AUTH tests', () => {
     {},
     HTTP_STATUSES.MANY_REUESTS_429
     )
+  })
+
+  it('POST - success - recovery password for user which was created by admin', async () => {
+    const { entity } = await usersTestManager.createUser(creatingData, HTTP_STATUSES.CREATED_201)
+    const newPassword = '654321'
+    
+    await getRequest()
+      .post(`${RouterPaths.auth}/password-recovery`)
+      .send({
+        email: entity.email
+      })
+      .expect(HTTP_STATUSES.NO_CONTENT_204)
+    
+    const existedUser = await usersTestManager.getUserByEmail(creatingData.email)
+
+    await getRequest()
+      .post(`${RouterPaths.auth}/new-password`)
+      .send({
+        recoveryCode: existedUser?.userSecurity.recoveryPasswordCode,
+        newPassword,
+      })
+      .expect(HTTP_STATUSES.NO_CONTENT_204)
+
+    await authTestManager.login({
+        loginOrEmail: existedUser?.accountData.email ?? '',
+        password: newPassword
+      },
+      {},
+      HTTP_STATUSES.OK_200)
+  })
+
+  it('POST - success - recovery password for user which was regisrated', async () => {
+    await authTestManager.registration(creatingData)
+    const user = await usersTestManager.getUserByEmail(
+      creatingData.email
+    )
+
+    await getRequest()
+      .post(`${RouterPaths.auth}/registration-confirmation`)
+      .send({
+        code: user?.emailConfirmation.confirmationCode
+      })
+      .expect(HTTP_STATUSES.NO_CONTENT_204)
+    const newPassword = '654321'
+    
+    await getRequest()
+      .post(`${RouterPaths.auth}/password-recovery`)
+      .send({
+        email: user?.accountData.email
+      })
+      .expect(HTTP_STATUSES.NO_CONTENT_204)
+    
+    const existedUser = await usersTestManager.getUserByEmail(creatingData.email)
+
+    await getRequest()
+      .post(`${RouterPaths.auth}/new-password`)
+      .send({
+        recoveryCode: existedUser?.userSecurity.recoveryPasswordCode,
+        newPassword,
+      })
+      .expect(HTTP_STATUSES.NO_CONTENT_204)
+
+    await authTestManager.login({
+        loginOrEmail: existedUser?.accountData.email ?? '',
+        password: newPassword
+      },
+      {},
+      HTTP_STATUSES.OK_200)
   })
 
   afterEach(async () => {
