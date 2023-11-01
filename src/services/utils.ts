@@ -3,7 +3,7 @@ import add from 'date-fns/add'
 
 import { IVideo } from '../types/videos'
 import { CreateVideoDto } from '../dtos/videos/create-video.dto'
-import { IRefreshTokenMeta } from '../types/tokens'
+import { IRefreshTokenMeta } from '../types/devices'
 import { CreateRefreshTokenDto } from '../dtos/tokens/create-refresh-token.dto'
 
 export const generateNewVideo = (data: CreateVideoDto): IVideo => {
