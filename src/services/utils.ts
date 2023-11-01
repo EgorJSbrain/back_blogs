@@ -3,8 +3,6 @@ import add from 'date-fns/add'
 
 import { IVideo } from '../types/videos'
 import { CreateVideoDto } from '../dtos/videos/create-video.dto'
-import { CreateRequestDto } from '../dtos/requests/create-request.dto'
-import { IRequest } from '../types/requests'
 import { IRefreshTokenMeta } from '../types/tokens'
 import { CreateRefreshTokenDto } from '../dtos/tokens/create-refresh-token.dto'
 
@@ -22,13 +20,6 @@ export const generateNewVideo = (data: CreateVideoDto): IVideo => {
     publicationDate: new Date().toISOString()
   }
 }
-
-export const generateNewReuest = (data: CreateRequestDto): IRequest => ({
-  id: Number(new Date()).toString(),
-  ip: data.ip,
-  url: data.url,
-  date: new Date().toISOString()
-})
 
 export const generateNewRefreshToken = (
   data: CreateRefreshTokenDto
