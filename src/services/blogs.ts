@@ -12,6 +12,7 @@ import { IPost } from '../types/posts'
 
 export class BlogsService {
   constructor(protected blogsRepository: BlogsRepository) {}
+
   async getBlogs(params: CommentsRequestParams): Promise<ResponseBody<IBlog> | null> {
     return await this.blogsRepository.getBlogs(params)
   }
