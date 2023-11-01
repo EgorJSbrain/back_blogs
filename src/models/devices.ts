@@ -1,7 +1,7 @@
 import { Schema, model } from 'mongoose'
-import { IRefreshTokenMeta } from '../types/tokens'
+import { IDevice } from '../types/devices'
 
-const TokenSchema = new Schema<IRefreshTokenMeta>({
+const DeviceSchema = new Schema<IDevice>({
   ip: { type: String, required: true },
   deviceId: { type: String, required: true },
   title: { type: String, required: true },
@@ -10,4 +10,4 @@ const TokenSchema = new Schema<IRefreshTokenMeta>({
   expiredDate: { type: String, required: true }
 })
 
-export const Token = model('tokens', TokenSchema)
+export const Device = model('devices', DeviceSchema)

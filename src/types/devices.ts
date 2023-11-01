@@ -1,4 +1,4 @@
-export interface IRefreshTokenMeta {
+export interface IDevice {
   ip: string
   deviceId: string
   title: string
