@@ -5,7 +5,7 @@ import { SortDirections } from '../constants/global'
 import { ResponseBody } from '../types/global'
 import { ICreatingUser, IUser, IUserAccountData, UsersRequestParams } from '../types/users'
 
-export const UsersRepository = {
+export class UsersRepository {
   async getUsers(params: UsersRequestParams): Promise<ResponseBody<IUserAccountData> | null> {
     try {
       const {
@@ -64,9 +64,9 @@ export const UsersRepository = {
     } catch {
       return null
     }
-  },
+  }
 
-  async getUserByLoginOrEmail(email: string, login: string) {
+  async getUserByLoginOrEmail(email: string, login: string): Promise<IUser | null> {
     try {
       const user = await User.findOne(
         { $or: [{ 'accountData.email': email }, { 'accountData.login': login }] },
@@ -77,9 +77,9 @@ export const UsersRepository = {
     } catch {
       return null
     }
-  },
+  }
 
-  async getUserByEmail(email: string) {
+  async getUserByEmail(email: string): Promise<IUser | null> {
     try {
       const user = await User.findOne(
         { 'accountData.email': email },
@@ -90,9 +90,9 @@ export const UsersRepository = {
     } catch {
       return null
     }
-  },
+  }
 
-  async getUserByData(data: Record<string, string>) {
+  async getUserByData(data: Record<string, string>): Promise<IUser | null> {
     try {
       const user = await User.findOne(
         data,
@@ -103,9 +103,9 @@ export const UsersRepository = {
     } catch {
       return null
     }
-  },
+  }
 
-  async getUserByVerificationCode(code: string) {
+  async getUserByVerificationCode(code: string): Promise<IUser | null> {
     try {
       const user = await User.findOne(
         { 'emailConfirmation.confirmationCode': code },
@@ -122,9 +122,9 @@ export const UsersRepository = {
     } catch {
       return null
     }
-  },
+  }
 
-  async getUserById(id: string) {
+  async getUserById(id: string): Promise<IUser | null> {
     try {
       const user = await User.findOne(
         { 'accountData.id': id },
@@ -135,11 +135,11 @@ export const UsersRepository = {
     } catch {
       return null
     }
-  },
+  }
 
-  async createUser(data: ICreatingUser) {
+  async createUser(data: ICreatingUser): Promise<IUser | null> {
     try {
-      let user
+      let user = null
 
       const response = await User.create(data)
 
@@ -154,9 +154,9 @@ export const UsersRepository = {
     } catch {
       return null
     }
-  },
+  }
 
-  async updateUser(id: string, data: any) {
+  async updateUser(id: string, data: any): Promise<IUser | null> {
     try {
       const user = await User.findOneAndUpdate(
         { 'accountData.id': id },
@@ -168,15 +168,15 @@ export const UsersRepository = {
     } catch {
       return null
     }
-  },
+  }
 
-  async deleteUser(id: string) {
+  async deleteUser(id: string): Promise<boolean> {
     try {
       const response = await User.deleteOne({ 'accountData.id': id })
 
       return !!response.deletedCount
     } catch {
-      return null
+      return false
     }
   }
 }
