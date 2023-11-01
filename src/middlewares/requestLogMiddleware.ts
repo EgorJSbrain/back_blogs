@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { HTTP_STATUSES } from '../constants/global'
-import { RequestsService } from '../services'
+import { requestsService } from '../compositions/requests'
 
 export const requestLogMiddleware = async (
   req: Request,
@@ -8,7 +8,7 @@ export const requestLogMiddleware = async (
   next: NextFunction
 ): Promise<Response | undefined> => {
   if ((req.baseUrl || req.originalUrl) && req.ip) {
-    await RequestsService.createRequest({
+    await requestsService.createRequest({
       ip: req.ip,
       url: req.originalUrl || req.baseUrl
     })

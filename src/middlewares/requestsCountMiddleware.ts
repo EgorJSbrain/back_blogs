@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { HTTP_STATUSES } from '../constants/global'
-import { RequestsService } from '../services'
+import { requestsService } from '../compositions/requests'
 
 export const requestsCountMiddleware = async (
   req: Request,
@@ -11,10 +11,10 @@ export const requestsCountMiddleware = async (
     const ip = req.ip
     const url = req.originalUrl || req.baseUrl
 
-    const count = await RequestsService.getRequests(ip, url) || 0
+    const count = await requestsService.getRequests(ip, url) || 0
 
     if (count > 4) {
-      return res.sendStatus(HTTP_STATUSES.MANY_REUESTS_429)
+      return res.sendStatus(HTTP_STATUSES.MANY_REQUESTS_429)
     }
 
     next()
