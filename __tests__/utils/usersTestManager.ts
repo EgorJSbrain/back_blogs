@@ -5,6 +5,7 @@ import { CreateUserDto } from '../../src/dtos/users/create-user.dto';
 import { IUser, IUserAccountData } from '../../src/types/users';
 import { authUser } from '../../src/db/db';
 import { UsersService } from '../../src/services';
+import { usersService } from '../../src/compositions/users';
 
 export const usersTestManager = {
   async createUser(
@@ -22,7 +23,7 @@ export const usersTestManager = {
   async getUserByEmail(
     email: string,
   ): Promise<IUser | null>   {
-    const existedUser = await UsersService.getUserByEmail(email)
+    const existedUser = await usersService.getUserByEmail(email)
 
     return existedUser
   }
