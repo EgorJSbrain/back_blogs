@@ -144,9 +144,9 @@ export const PostsRepository = {
     }
   },
 
-  async createPostByBlogId(data: IPost) {
+  async createPostByBlogId(data: IPost): Promise<IPost | null> {
     try {
-      let post
+      let post = null
 
       const response = await Post.create(data)
 
@@ -154,7 +154,7 @@ export const PostsRepository = {
         post = await Post.findOne(
           { _id: response._id },
           { projection: { _id: 0 } }
-        )
+        ).lean()
       }
 
       return post

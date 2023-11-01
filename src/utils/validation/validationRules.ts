@@ -32,7 +32,6 @@ import {
   videoAvailableResolutions,
   VideoAvailableResolutions
 } from '../../constants/videos'
-import { BlogsService } from '../../services'
 import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_SIZE,
@@ -58,6 +57,7 @@ import {
   commentsErrorMessage
 } from '../../constants/comments'
 import { usersService } from '../../compositions/users'
+import { blogsService } from '../../compositions/blogs'
 
 // params
 
@@ -138,7 +138,7 @@ export const postBlogIdValidation = body([PostInputFields.blogId])
   .trim()
   .isLength({ min: BLOG_ID_MIN_LENGTH })
   .customSanitizer(async (value) => {
-    const existedBlog = await BlogsService.getBlogById(value)
+    const existedBlog = await blogsService.getBlogById(value)
 
     if (!existedBlog) {
       return null
