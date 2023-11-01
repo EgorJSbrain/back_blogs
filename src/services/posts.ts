@@ -1,42 +1,33 @@
-import { generateNewPost } from './utils'
 import { PostsRepository } from '../repositories'
-import { PostInputFields } from '../constants/posts'
 
 import { CreatePostDto } from '../dtos/posts/create-post.dto'
 import { UpdatePostDto } from '../dtos/posts/update-post.dto'
-import { RequestParams } from '../types/global'
+import { RequestParams, ResponseBody } from '../types/global'
 import { IBlog } from '../types/blogs'
+import { IPost, Post } from '../types/posts'
 
-export const PostsService = {
-  async getPosts(params: RequestParams) {
-    return await PostsRepository.getPosts(params)
-  },
+export class PostsService {
+  constructor(protected postsRepository: PostsRepository) {}
 
-  async getPostById(id: string) {
-    return await PostsRepository.getPostById(id)
-  },
+  async getPosts(params: RequestParams): Promise<ResponseBody<IPost> | null> {
+    return await this.postsRepository.getPosts(params)
+  }
 
-  async createPost(data: CreatePostDto, blog: IBlog) {
-    const { title, shortDescription, content, blogId } = data
+  async getPostById(id: string): Promise<IPost | null> {
+    return await this.postsRepository.getPostById(id)
+  }
 
-    const creatingData = {
-      [PostInputFields.title]: title,
-      [PostInputFields.shortDescription]: shortDescription,
-      [PostInputFields.content]: content,
-      [PostInputFields.blogId]: blogId,
-      [PostInputFields.blogName]: blog?.name ?? ''
-    }
+  async createPost(data: CreatePostDto, blog: IBlog): Promise<IPost | null> {
+    const createdPost = new Post(data, blog?.name ?? '')
 
-    const createdPost = generateNewPost(creatingData)
+    return await this.postsRepository.createPost(createdPost)
+  }
 
-    return await PostsRepository.createPost(createdPost)
-  },
+  async updatePost(id: string, data: UpdatePostDto): Promise<IPost | null> {
+    return await this.postsRepository.updatePost(id, data)
+  }
 
-  async updatePost(id: string, data: UpdatePostDto) {
-    return await PostsRepository.updatePost(id, data)
-  },
-
-  async deletePost(id: string) {
-    return await PostsRepository.deletePost(id)
+  async deletePost(id: string): Promise<boolean> {
+    return await this.postsRepository.deletePost(id)
   }
 }

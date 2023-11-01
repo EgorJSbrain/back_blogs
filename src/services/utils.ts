@@ -1,9 +1,7 @@
 import { v4 } from 'uuid'
 import add from 'date-fns/add'
 
-import { IPost } from '../types/posts'
 import { IVideo } from '../types/videos'
-import { CreatePostDto } from '../dtos/posts/create-post.dto'
 import { CreateVideoDto } from '../dtos/videos/create-video.dto'
 import { CreateRequestDto } from '../dtos/requests/create-request.dto'
 import { IRequest } from '../types/requests'
@@ -24,16 +22,6 @@ export const generateNewVideo = (data: CreateVideoDto): IVideo => {
     publicationDate: new Date().toISOString()
   }
 }
-
-export const generateNewPost = (data: CreatePostDto): IPost => ({
-  id: Number(new Date()).toString(),
-  blogId: data.blogId,
-  title: data.title,
-  content: data.content,
-  shortDescription: data.shortDescription,
-  blogName: data.blogName,
-  createdAt: new Date().toISOString()
-})
 
 export const generateNewReuest = (data: CreateRequestDto): IRequest => ({
   id: Number(new Date()).toString(),
