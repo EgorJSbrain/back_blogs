@@ -1,6 +1,6 @@
 import jwt, { JwtPayload } from 'jsonwebtoken'
 import { APP_CONFIG } from '../app-config'
-import { UsersService } from '../services'
+import { usersService } from '../compositions/users'
 
 export const JwtService = {
   createAccessJWT(userId: string) {
@@ -38,21 +38,21 @@ export const JwtService = {
   },
 
   async verifyExperationToken(token: string) {
-    // const { userId, exp } = jwt.decode(token) as jwt.JwtPayload
+    const { userId, exp } = jwt.decode(token) as jwt.JwtPayload
 
-    // if (!exp) return null
+    if (!exp) return null
 
-    // const user = await UsersService.getUserById(userId)
+    const user = await usersService.getUserById(userId)
 
-    // if (!user) return null
+    if (!user) return null
 
-    // const expTime = exp * 1000
+    const expTime = exp * 1000
 
-    // if (expTime < Number(new Date())) {
-    //   return null
-    // }
+    if (expTime < Number(new Date())) {
+      return null
+    }
 
-    // return user.accountData.id
+    return user.accountData.id
   },
 
   async refreshTokens(
