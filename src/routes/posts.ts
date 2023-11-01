@@ -167,35 +167,35 @@ postsRouter.get(
   }
 )
 
-postsRouter.post(
-  '/:postId/comments',
-  authJWTMiddleware,
-  CommentsValidation(),
-  validationMiddleware,
-  async (req: RequestWithParamsAndBody<{ postId: string }, CreateCommentDto>, res: Response) => {
-    const { postId } = req.params
-    const existedUser = await UsersService.getUserById(req.userId)
+// postsRouter.post(
+//   '/:postId/comments',
+//   authJWTMiddleware,
+//   CommentsValidation(),
+//   validationMiddleware,
+//   async (req: RequestWithParamsAndBody<{ postId: string }, CreateCommentDto>, res: Response) => {
+//     const { postId } = req.params
+//     const existedUser = await UsersService.getUserById(req.userId)
 
-    if (!existedUser) {
-      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-    }
+//     if (!existedUser) {
+//       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+//     }
 
-    if (!postId) {
-      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-    }
+//     if (!postId) {
+//       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+//     }
 
-    const existedPost = await PostsService.getPostById(postId)
+//     const existedPost = await PostsService.getPostById(postId)
 
-    if (!existedPost) {
-      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-    }
+//     if (!existedPost) {
+//       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+//     }
 
-    const response = await CommentsService.createComment(req.body, existedUser, postId)
+//     const response = await CommentsService.createComment(req.body, existedUser, postId)
 
-    if (!response) {
-      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-    }
+//     if (!response) {
+//       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+//     }
 
-    res.status(HTTP_STATUSES.CREATED_201).send(response)
-  }
-)
+//     res.status(HTTP_STATUSES.CREATED_201).send(response)
+//   }
+// )

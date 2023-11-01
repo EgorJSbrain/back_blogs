@@ -34,77 +34,77 @@ commentsRouter.get(
   }
 )
 
-commentsRouter.put(
-  '/:id',
-  authJWTMiddleware,
-  CommentsValidation(),
-  validationMiddleware,
-  async (
-    req: RequestWithParamsAndBody<{ id: string }, UpdateCommentDto>,
-    res: Response
-  ) => {
-    const { id } = req.params
+// commentsRouter.put(
+//   '/:id',
+//   authJWTMiddleware,
+//   CommentsValidation(),
+//   validationMiddleware,
+//   async (
+//     req: RequestWithParamsAndBody<{ id: string }, UpdateCommentDto>,
+//     res: Response
+//   ) => {
+//     const { id } = req.params
 
-    if (!id) {
-      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-    }
+//     if (!id) {
+//       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+//     }
 
-    const existedUser = await UsersService.getUserById(req.userId)
-    const existedComment = await CommentsService.getCommentById(id)
+//     const existedUser = await UsersService.getUserById(req.userId)
+//     const existedComment = await CommentsService.getCommentById(id)
 
-    if (!existedUser) {
-      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-    }
+//     if (!existedUser) {
+//       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+//     }
 
-    if (!existedComment) {
-      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-    }
+//     if (!existedComment) {
+//       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+//     }
 
-    if (existedComment?.commentatorInfo.userId !== existedUser?.accountData.id) {
-      return res.sendStatus(HTTP_STATUSES.FORBIDEN_403)
-    }
+//     if (existedComment?.commentatorInfo.userId !== existedUser?.accountData.id) {
+//       return res.sendStatus(HTTP_STATUSES.FORBIDEN_403)
+//     }
 
-    if (existedComment?.content === req.body.content) {
-      return res.status(HTTP_STATUSES.OK_200).send(existedComment)
-    }
+//     if (existedComment?.content === req.body.content) {
+//       return res.status(HTTP_STATUSES.OK_200).send(existedComment)
+//     }
 
-    const comment = await CommentsService.updateComment(id, req.body)
+//     const comment = await CommentsService.updateComment(id, req.body)
 
-    if (!comment) {
-      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-    }
+//     if (!comment) {
+//       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+//     }
 
-    res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
-  }
-)
+//     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+//   }
+// )
 
-commentsRouter.delete(
-  '/:id',
-  authJWTMiddleware,
-  async (req: RequestWithParams<{ id: string }>, res: Response) => {
-    const { id } = req.params
+// commentsRouter.delete(
+//   '/:id',
+//   authJWTMiddleware,
+//   async (req: RequestWithParams<{ id: string }>, res: Response) => {
+//     const { id } = req.params
 
-    if (!id) {
-      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-    }
+//     if (!id) {
+//       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+//     }
 
-    const existedUser = await UsersService.getUserById(req.userId)
-    const existedComment = await CommentsService.getCommentById(id)
+//     const existedUser = await UsersService.getUserById(req.userId)
+//     const existedComment = await CommentsService.getCommentById(id)
 
-    if (!existedComment) {
-      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-    }
+//     if (!existedComment) {
+//       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+//     }
 
-    if (existedComment?.commentatorInfo.userId !== existedUser?.accountData.id) {
-      return res.sendStatus(HTTP_STATUSES.FORBIDEN_403)
-    }
+//     if (existedComment?.commentatorInfo.userId !== existedUser?.accountData.id) {
+//       return res.sendStatus(HTTP_STATUSES.FORBIDEN_403)
+//     }
 
-    const response = await CommentsService.deleteComment(id)
+//     const response = await CommentsService.deleteComment(id)
 
-    if (!response) {
-      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-    }
+//     if (!response) {
+//       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+//     }
 
-    res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
-  }
-)
+//     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+//   }
+// )

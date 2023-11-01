@@ -32,7 +32,7 @@ import {
   videoAvailableResolutions,
   VideoAvailableResolutions
 } from '../../constants/videos'
-import { BlogsService, UsersService } from '../../services'
+import { BlogsService } from '../../services'
 import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_SIZE,
@@ -57,6 +57,7 @@ import {
   CommentInputFields,
   commentsErrorMessage
 } from '../../constants/comments'
+import { usersService } from '../../compositions/users'
 
 // params
 
@@ -254,9 +255,9 @@ export const confirmationCodeValidation = body([UserInputFields.code])
 export const checkExistedUserByCodeValidation = body([UserInputFields.code])
   .trim()
   .customSanitizer(async (value) => {
-    const existedUser = await UsersService.getUserByVerificationCode(value)
+    const existedUser = await usersService.getUserByVerificationCode(value)
 
-    if (existedUser && existedUser.emailConfirmation.isConfirmed) {
+    if (existedUser?.emailConfirmation.isConfirmed) {
       return null
     }
 
@@ -268,7 +269,7 @@ export const checkExistedUserByCodeValidation = body([UserInputFields.code])
 export const checkExistedVerificationCodeValidation = body([UserInputFields.code])
   .trim()
   .customSanitizer(async (value) => {
-    const existedUser = await UsersService.getUserByVerificationCode(value)
+    const existedUser = await usersService.getUserByVerificationCode(value)
 
     if (!existedUser) {
       return null
@@ -282,7 +283,7 @@ export const checkExistedVerificationCodeValidation = body([UserInputFields.code
 export const checkExistedUserByEmailValidation = body([UserInputFields.email])
   .trim()
   .customSanitizer(async (value) => {
-    const existedUser = await UsersService.getUserByLoginOrEmail(value, value)
+    const existedUser = await usersService.getUserByLoginOrEmail(value, value)
 
     if (existedUser) {
       return null
@@ -296,9 +297,9 @@ export const checkExistedUserByEmailValidation = body([UserInputFields.email])
 export const checkExistedConfirmedUserByEmailValidation = body([UserInputFields.email])
   .trim()
   .customSanitizer(async (value) => {
-    const existedUser = await UsersService.getUserByLoginOrEmail(value, value)
+    const existedUser = await usersService.getUserByLoginOrEmail(value, value)
 
-    if (existedUser && existedUser.emailConfirmation.isConfirmed) {
+    if (existedUser?.emailConfirmation.isConfirmed) {
       return null
     }
 
@@ -310,7 +311,7 @@ export const checkExistedConfirmedUserByEmailValidation = body([UserInputFields.
 export const checkUnexistedUserByEmailValidation = body([UserInputFields.email])
   .trim()
   .customSanitizer(async (value) => {
-    const existedUser = await UsersService.getUserByLoginOrEmail(value, value)
+    const existedUser = await usersService.getUserByLoginOrEmail(value, value)
 
     if (!existedUser) {
       return null
@@ -324,7 +325,7 @@ export const checkUnexistedUserByEmailValidation = body([UserInputFields.email])
 export const checkExistedUserByLoginValidation = body([UserInputFields.login])
   .trim()
   .customSanitizer(async (value) => {
-    const existedUser = await UsersService.getUserByLoginOrEmail(value, value)
+    const existedUser = await usersService.getUserByLoginOrEmail(value, value)
 
     if (existedUser) {
       return null
@@ -338,7 +339,7 @@ export const checkExistedUserByLoginValidation = body([UserInputFields.login])
 export const checkRecoveryCodeValidation = body([UserInputFields.recoveryCode])
   .trim()
   .customSanitizer(async (value) => {
-    const existedUser = await UsersService.getUserByRecoveryCode(value)
+    const existedUser = await usersService.getUserByRecoveryCode(value)
 
     if (!existedUser) {
       return null
