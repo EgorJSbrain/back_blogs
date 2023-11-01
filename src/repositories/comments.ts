@@ -6,7 +6,7 @@ import { IComment } from '../types/comments'
 import { RequestParams, ResponseBody } from '../types/global'
 import { UpdateCommentDto } from '../dtos/comments/update-comment.dto'
 
-export const CommentsRepository = {
+export class CommentsRepository {
   async getCommentsByPostId(params: RequestParams, postId: string): Promise<ResponseBody<IComment> | null> {
     try {
       const {
@@ -46,9 +46,9 @@ export const CommentsRepository = {
     } catch {
       return null
     }
-  },
+  }
 
-  async getCommentById(id: string) {
+  async getCommentById(id: string): Promise<IComment | null> {
     try {
       const comment = await Comment.findOne({ id }, { projection: { _id: 0, postId: 0 } })
 
@@ -56,11 +56,11 @@ export const CommentsRepository = {
     } catch {
       return null
     }
-  },
+  }
 
-  async createComment(data: IComment) {
+  async createComment(data: IComment): Promise<IComment | null> {
     try {
-      let comment
+      let comment: IComment | null = null
 
       const response = await Comment.create(data)
 
@@ -75,11 +75,11 @@ export const CommentsRepository = {
     } catch {
       return null
     }
-  },
+  }
 
-  async updateComment(id: string, data: UpdateCommentDto) {
+  async updateComment(id: string, data: UpdateCommentDto): Promise<IComment | null> {
     try {
-      let comment
+      let comment: IComment | null = null
       const response = await Comment.updateOne({ id }, { $set: data })
 
       if (response.modifiedCount) {
@@ -90,15 +90,15 @@ export const CommentsRepository = {
     } catch {
       return null
     }
-  },
+  }
 
-  async deleteComment(id: string) {
+  async deleteComment(id: string): Promise<boolean> {
     try {
       const response = await Comment.deleteOne({ id })
 
       return !!response.deletedCount
     } catch {
-      return null
+      return false
     }
   }
 }

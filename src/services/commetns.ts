@@ -1,37 +1,32 @@
-import { generateNewComment } from './utils'
 import { CommentsRepository } from '../repositories'
-import { RequestParams } from '../types/global'
+import { RequestParams, ResponseBody } from '../types/global'
 import { CreateCommentDto } from '../dtos/comments/create-comment.dto'
 import { IUser } from '../types/users'
-import { CommentInputFields } from '../constants/comments'
 import { UpdateCommentDto } from '../dtos/comments/update-comment.dto'
+import { Comment, IComment } from '../types/comments'
 
-export const CommentsService = {
-  async getCommentsByPostId(params: RequestParams, postId: string) {
-    return await CommentsRepository.getCommentsByPostId(params, postId)
-  },
+export class CommentsService {
+  constructor(protected commentsRepository: CommentsRepository) {}
 
-  async getCommentById(id: string) {
-    return await CommentsRepository.getCommentById(id)
-  },
+  async getCommentsByPostId(params: RequestParams, postId: string): Promise<ResponseBody<IComment> | null> {
+    return await this.commentsRepository.getCommentsByPostId(params, postId)
+  }
 
-  async createComment(data: CreateCommentDto, user: IUser, postId: string) {
-    const { content } = data
+  async getCommentById(id: string): Promise<IComment | null> {
+    return await this.commentsRepository.getCommentById(id)
+  }
 
-    const creatingData = {
-      [CommentInputFields.content]: content
-    }
+  async createComment(data: CreateCommentDto, user: IUser, postId: string): Promise<IComment | null> {
+    const createdComment = new Comment(data.content, user.accountData.id, user.accountData.login, postId)
 
-    const createdComment = generateNewComment(creatingData, user.accountData.id, user.accountData.login, postId)
+    return await this.commentsRepository.createComment(createdComment)
+  }
 
-    return await CommentsRepository.createComment(createdComment)
-  },
+  async updateComment(id: string, data: UpdateCommentDto): Promise<IComment | null> {
+    return await this.commentsRepository.updateComment(id, data)
+  }
 
-  async updateComment(id: string, data: UpdateCommentDto) {
-    return await CommentsRepository.updateComment(id, data)
-  },
-
-  async deleteComment(id: string) {
-    return await CommentsRepository.deleteComment(id)
+  async deleteComment(id: string): Promise<boolean> {
+    return await this.commentsRepository.deleteComment(id)
   }
 }
