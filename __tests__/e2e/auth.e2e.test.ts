@@ -163,7 +163,7 @@ describe('AUTH tests', () => {
       password: creatingData.password
     },
     {},
-    HTTP_STATUSES.MANY_REUESTS_429
+    HTTP_STATUSES.MANY_REQUESTS_429
     )
   })
 

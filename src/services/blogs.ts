@@ -1,62 +1,55 @@
-import { generateNewBlog, generateNewPost } from './utils'
 import { BlogsRepository, PostsRepository } from '../repositories'
-import { BlogInputFields } from '../constants/blogs'
-import { PostInputFields } from '../constants/posts'
 
 import { CreateBlogDto } from '../dtos/blogs/create-blog.dto'
 import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
-import { IBlog } from '../types/blogs'
+import { Blog, IBlog } from '../types/blogs'
 import { CreatePostDto } from '../dtos/posts/create-post.dto'
-import { RequestParams } from '../types/global'
+import { RequestParams, ResponseBody } from '../types/global'
 import { CommentsRequestParams } from '../types/comments'
+import { IPost, Post } from '../types/posts'
 
-export const BlogsService = {
-  async getBlogs(params: CommentsRequestParams) {
-    return await BlogsRepository.getBlogs(params)
-  },
+export class BlogsService {
+  constructor(
+    protected blogsRepository: BlogsRepository,
+    protected postsRepository: PostsRepository
+  ) {}
 
-  async getBlogById(id: string) {
-    return await BlogsRepository.getBlogById(id)
-  },
+  async getBlogs(params: CommentsRequestParams): Promise<ResponseBody<IBlog> | null> {
+    return await this.blogsRepository.getBlogs(params)
+  }
 
-  async createBlog(data: CreateBlogDto) {
+  async getBlogById(id: string): Promise<IBlog | null> {
+    return await this.blogsRepository.getBlogById(id)
+  }
+
+  async createBlog(data: CreateBlogDto): Promise<IBlog | null> {
     const { name, description, websiteUrl } = data
+    const createdBlog = new Blog(name, description, websiteUrl)
 
-    const creatingData = {
-      [BlogInputFields.name]: name,
-      [BlogInputFields.description]: description,
-      [BlogInputFields.websiteUrl]: websiteUrl
-    }
-    const createdBlog = generateNewBlog(creatingData)
+    return await this.blogsRepository.createBlog(createdBlog)
+  }
 
-    return await BlogsRepository.createBlog(createdBlog)
-  },
+  async updateBlog(id: string, data: UpdateBlogDto): Promise<IBlog | null> {
+    return await this.blogsRepository.updateBlog(id, data)
+  }
 
-  async updateBlog(id: string, data: UpdateBlogDto) {
-    return await BlogsRepository.updateBlog(id, data)
-  },
+  async deleteBlog(id: string): Promise<boolean> {
+    return await this.blogsRepository.deleteBlog(id)
+  }
 
-  async deleteBlog(id: string) {
-    return await BlogsRepository.deleteBlog(id)
-  },
+  async getPostsByBlogId(blogId: string, params: RequestParams): Promise<ResponseBody<IPost> | null> {
+    return await this.postsRepository.getPostsByBlogId(blogId, params)
+  }
 
-  async getPostsByBlogId(blogId: string, params: RequestParams) {
-    return await PostsRepository.getPostsByBlogId(blogId, params)
-  },
+  async createPostByBlogId(data: CreatePostDto, blog: IBlog): Promise<IPost | null> {
+    const createdPost = new Post(
+      {
+        ...data,
+        blogId: blog.id
+      },
+      blog?.name ?? ''
+    )
 
-  async createPostByBlogId(data: CreatePostDto, blog: IBlog) {
-    const { title, shortDescription, content } = data
-
-    const creatingData = {
-      [PostInputFields.title]: title,
-      [PostInputFields.shortDescription]: shortDescription,
-      [PostInputFields.content]: content,
-      [PostInputFields.blogId]: blog.id,
-      [PostInputFields.blogName]: blog?.name ?? ''
-    }
-
-    const createdPost = generateNewPost(creatingData)
-
-    return await PostsRepository.createPostByBlogId(createdPost)
+    return await this.postsRepository.createPostByBlogId(createdPost)
   }
 }

@@ -6,7 +6,7 @@ import { SortDirections } from '../constants/global'
 import { ResponseBody } from '../types/global'
 import { Blog } from '../models'
 
-export const BlogsRepository = {
+export class BlogsRepository {
   async getBlogs(params: BlogsRequestParams): Promise<ResponseBody<IBlog> | null> {
     try {
       const {
@@ -51,9 +51,9 @@ export const BlogsRepository = {
     } catch {
       return null
     }
-  },
+  }
 
-  async getBlogById(id: string) {
+  async getBlogById(id: string): Promise<IBlog | null> {
     try {
       const blog = await Blog.findOne({ id }, { projection: { _id: false } })
 
@@ -61,9 +61,9 @@ export const BlogsRepository = {
     } catch {
       return null
     }
-  },
+  }
 
-  async createBlog(data: IBlog) {
+  async createBlog(data: IBlog): Promise<IBlog | null> {
     try {
       const response = await Blog.create(data)
 
@@ -71,11 +71,11 @@ export const BlogsRepository = {
     } catch {
       return null
     }
-  },
+  }
 
-  async updateBlog(id: string, data: UpdateBlogDto) {
+  async updateBlog(id: string, data: UpdateBlogDto): Promise<IBlog | null> {
     try {
-      let blog
+      let blog = null
 
       const response = await Blog.updateOne({ id }, { $set: data })
 
@@ -87,15 +87,15 @@ export const BlogsRepository = {
     } catch {
       return null
     }
-  },
+  }
 
-  async deleteBlog(id: string) {
+  async deleteBlog(id: string): Promise<boolean> {
     try {
       const response = await Blog.deleteOne({ id })
 
       return !!response.deletedCount
     } catch {
-      return null
+      return false
     }
   }
 }

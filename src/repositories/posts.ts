@@ -6,7 +6,7 @@ import { IPost } from '../types/posts'
 import { RequestParams, ResponseBody } from '../types/global'
 import { UpdatePostDto } from '../dtos/posts/update-post.dto'
 
-export const PostsRepository = {
+export class PostsRepository {
   async getPosts(params: RequestParams): Promise<ResponseBody<IPost> | null> {
     try {
       const {
@@ -45,9 +45,9 @@ export const PostsRepository = {
     } catch {
       return null
     }
-  },
+  }
 
-  async getPostById(id: string) {
+  async getPostById(id: string): Promise<IPost | null> {
     try {
       const post = await Post.findOne({ id }, { projection: { _id: 0 } })
 
@@ -55,11 +55,11 @@ export const PostsRepository = {
     } catch {
       return null
     }
-  },
+  }
 
-  async createPost(data: IPost) {
+  async createPost(data: IPost): Promise<IPost | null> {
     try {
-      let post
+      let post = null
 
       const response = await Post.create(data)
 
@@ -74,11 +74,11 @@ export const PostsRepository = {
     } catch {
       return null
     }
-  },
+  }
 
-  async updatePost(id: string, data: UpdatePostDto) {
+  async updatePost(id: string, data: UpdatePostDto): Promise<IPost | null> {
     try {
-      let post
+      let post = null
       const response = await Post.updateOne({ id }, { $set: data })
 
       if (response.modifiedCount) {
@@ -89,17 +89,17 @@ export const PostsRepository = {
     } catch {
       return null
     }
-  },
+  }
 
-  async deletePost(id: string) {
+  async deletePost(id: string): Promise<boolean> {
     try {
       const response = await Post.deleteOne({ id })
 
       return !!response.deletedCount
     } catch {
-      return null
+      return false
     }
-  },
+  }
 
   async getPostsByBlogId(
     blogId: string,
@@ -142,11 +142,11 @@ export const PostsRepository = {
     } catch {
       return null
     }
-  },
+  }
 
-  async createPostByBlogId(data: IPost) {
+  async createPostByBlogId(data: IPost): Promise<IPost | null> {
     try {
-      let post
+      let post = null
 
       const response = await Post.create(data)
 
@@ -154,7 +154,7 @@ export const PostsRepository = {
         post = await Post.findOne(
           { _id: response._id },
           { projection: { _id: 0 } }
-        )
+        ).lean()
       }
 
       return post

@@ -1,4 +1,34 @@
 import { RequestParams } from './global'
+import { v4 } from 'uuid'
+import add from 'date-fns/add'
+
+export class User {
+  accountData: IUserAccountData
+  emailConfirmation: IUserEmailConfirmation
+
+  constructor(
+    login: string,
+    email: string,
+    public passwordHash: string,
+    public passwordSalt: string,
+    isConfirmed?: boolean
+  ) {
+    this.accountData = {
+      id: Number(new Date()).toString(),
+      login,
+      email,
+      createdAt: new Date().toISOString()
+    }
+    this.emailConfirmation = {
+      confirmationCode: v4(),
+      expirationDate: add(new Date(), {
+        hours: 1,
+        minutes: 10
+      }),
+      isConfirmed: !!isConfirmed
+    }
+  }
+}
 
 export interface IUser {
   accountData: IUserAccountData

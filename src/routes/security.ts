@@ -37,38 +37,38 @@ securityRouter.delete(
   }
 )
 
-securityRouter.delete(
-  '/devices/:deviceId',
-  async (req: Request<{ deviceId: string }>, res: Response) => {
-    const { deviceId } = req.params
-    const token = req.cookies.refreshToken ?? ''
-    const deviceTitle = req.headers['user-agent'] ?? ''
+// securityRouter.delete(
+//   '/devices/:deviceId',
+//   async (req: Request<{ deviceId: string }>, res: Response) => {
+//     const { deviceId } = req.params
+//     const token = req.cookies.refreshToken ?? ''
+//     const deviceTitle = req.headers['user-agent'] ?? ''
 
-    if (!deviceId) {
-      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-    }
+//     if (!deviceId) {
+//       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+//     }
 
-    if (!token) {
-      return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
-    }
+//     if (!token) {
+//       return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+//     }
 
-    const userId = await JwtService.verifyExperationToken(token)
-    const existedToken = await TokensService.getTokenByDeviceId(deviceId, deviceTitle)
+//     const userId = await JwtService.verifyExperationToken(token)
+//     const existedToken = await TokensService.getTokenByDeviceId(deviceId, deviceTitle)
 
-    if (!existedToken) {
-      return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-    }
+//     if (!existedToken) {
+//       return res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+//     }
 
-    if (existedToken?.userId !== userId) {
-      return res.sendStatus(HTTP_STATUSES.FORBIDEN_403)
-    }
+//     if (existedToken?.userId !== userId) {
+//       return res.sendStatus(HTTP_STATUSES.FORBIDEN_403)
+//     }
 
-    if (!userId) {
-      return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
-    }
+//     if (!userId) {
+//       return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+//     }
 
-    await TokensService.deleteRefreshToken(deviceId)
+//     await TokensService.deleteRefreshToken(deviceId)
 
-    res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
-  }
-)
+//     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+//   }
+// )

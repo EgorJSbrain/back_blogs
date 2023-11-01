@@ -1,18 +1,8 @@
 import { v4 } from 'uuid'
 import add from 'date-fns/add'
 
-import { IBlog } from '../types/blogs'
-import { IPost } from '../types/posts'
 import { IVideo } from '../types/videos'
-import { CreateBlogDto } from '../dtos/blogs/create-blog.dto'
-import { CreatePostDto } from '../dtos/posts/create-post.dto'
 import { CreateVideoDto } from '../dtos/videos/create-video.dto'
-import { CreateUserDto } from '../dtos/users/create-user.dto'
-import { ICreatingUser } from '../types/users'
-import { CreateCommentDto } from '../dtos/comments/create-comment.dto'
-import { IComment } from '../types/comments'
-import { CreateRequestDto } from '../dtos/requests/create-request.dto'
-import { IRequest } from '../types/requests'
 import { IRefreshTokenMeta } from '../types/tokens'
 import { CreateRefreshTokenDto } from '../dtos/tokens/create-refresh-token.dto'
 
@@ -30,72 +20,6 @@ export const generateNewVideo = (data: CreateVideoDto): IVideo => {
     publicationDate: new Date().toISOString()
   }
 }
-
-export const generateNewBlog = (data: CreateBlogDto): IBlog => ({
-  id: Number(new Date()).toString(),
-  name: data.name,
-  description: data.description,
-  websiteUrl: data.websiteUrl,
-  createdAt: new Date().toISOString(),
-  isMembership: false
-})
-
-export const generateNewPost = (data: CreatePostDto): IPost => ({
-  id: Number(new Date()).toString(),
-  blogId: data.blogId,
-  title: data.title,
-  content: data.content,
-  shortDescription: data.shortDescription,
-  blogName: data.blogName,
-  createdAt: new Date().toISOString()
-})
-
-export const generateNewUser = (
-  data: CreateUserDto,
-  passwordSalt: string,
-  passwordHash: string,
-  isConfirmed?: boolean
-): ICreatingUser => ({
-  accountData: {
-    id: Number(new Date()).toString(),
-    login: data.login,
-    email: data.email,
-    createdAt: new Date().toISOString()
-  },
-  emailConfirmation: {
-    confirmationCode: v4(),
-    expirationDate: add(new Date(), {
-      hours: 1,
-      minutes: 10
-    }),
-    isConfirmed: !!isConfirmed
-  },
-  passwordHash,
-  passwordSalt
-})
-
-export const generateNewComment = (
-  data: CreateCommentDto,
-  userId: string,
-  userLogin: string,
-  postId: string
-): IComment => ({
-  id: Number(new Date()).toString(),
-  content: data.content,
-  postId,
-  commentatorInfo: {
-    userId,
-    userLogin
-  },
-  createdAt: new Date().toISOString()
-})
-
-export const generateNewReuest = (data: CreateRequestDto): IRequest => ({
-  id: Number(new Date()).toString(),
-  ip: data.ip,
-  url: data.url,
-  date: new Date().toISOString()
-})
 
 export const generateNewRefreshToken = (
   data: CreateRefreshTokenDto
