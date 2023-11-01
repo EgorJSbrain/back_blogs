@@ -1,13 +1,15 @@
-import { dbClear } from '../db/mongo-db'
+import { GlobalRepository } from '../repositories'
 
-export const GlobalService = {
-  async deleteAll() {
+export class GlobalService {
+  constructor(protected globalRepository: GlobalRepository) {}
+
+  async deleteAll(): Promise<boolean> {
     try {
-      await dbClear()
+      await this.globalRepository.deleteAll()
 
       return true
     } catch {
-      return null
+      return false
     }
   }
 }
