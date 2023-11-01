@@ -1,10 +1,8 @@
 import { v4 } from 'uuid'
 import add from 'date-fns/add'
 
-import { IBlog } from '../types/blogs'
 import { IPost } from '../types/posts'
 import { IVideo } from '../types/videos'
-import { CreateBlogDto } from '../dtos/blogs/create-blog.dto'
 import { CreatePostDto } from '../dtos/posts/create-post.dto'
 import { CreateVideoDto } from '../dtos/videos/create-video.dto'
 import { CreateCommentDto } from '../dtos/comments/create-comment.dto'
@@ -29,15 +27,6 @@ export const generateNewVideo = (data: CreateVideoDto): IVideo => {
   }
 }
 
-export const generateNewBlog = (data: CreateBlogDto): IBlog => ({
-  id: Number(new Date()).toString(),
-  name: data.name,
-  description: data.description,
-  websiteUrl: data.websiteUrl,
-  createdAt: new Date().toISOString(),
-  isMembership: false
-})
-
 export const generateNewPost = (data: CreatePostDto): IPost => ({
   id: Number(new Date()).toString(),
   blogId: data.blogId,
@@ -48,57 +37,33 @@ export const generateNewPost = (data: CreatePostDto): IPost => ({
   createdAt: new Date().toISOString()
 })
 
-// export class User {
-//   accountData: any
-//   emailConfirmation: any
+export class User {
+  accountData: any
+  emailConfirmation: any
 
-//   constructor(
-//     login: string,
-//     email: string,
-//     public passwordHash: string,
-//     public passwordSalt: string,
-//     isConfirmed?: boolean
-//   ) {
-//     this.accountData = {
-//       id: Number(new Date()).toString(),
-//       login,
-//       email,
-//       createdAt: new Date().toISOString()
-//     }
-//     this.emailConfirmation = {
-//       confirmationCode: v4(),
-//       expirationDate: add(new Date(), {
-//         hours: 1,
-//         minutes: 10
-//       }),
-//       isConfirmed: !!isConfirmed
-//     }
-//   }
-// }
-
-// export const generateNewUser = (
-//   data: CreateUserDto,
-//   passwordSalt: string,
-//   passwordHash: string,
-//   isConfirmed?: boolean
-// ): ICreatingUser => ({
-//   accountData: {
-//     id: Number(new Date()).toString(),
-//     login: data.login,
-//     email: data.email,
-//     createdAt: new Date().toISOString()
-//   },
-//   emailConfirmation: {
-//     confirmationCode: v4(),
-//     expirationDate: add(new Date(), {
-//       hours: 1,
-//       minutes: 10
-//     }),
-//     isConfirmed: !!isConfirmed
-//   },
-//   passwordHash,
-//   passwordSalt
-// })
+  constructor(
+    login: string,
+    email: string,
+    public passwordHash: string,
+    public passwordSalt: string,
+    isConfirmed?: boolean
+  ) {
+    this.accountData = {
+      id: Number(new Date()).toString(),
+      login,
+      email,
+      createdAt: new Date().toISOString()
+    }
+    this.emailConfirmation = {
+      confirmationCode: v4(),
+      expirationDate: add(new Date(), {
+        hours: 1,
+        minutes: 10
+      }),
+      isConfirmed: !!isConfirmed
+    }
+  }
+}
 
 export const generateNewComment = (
   data: CreateCommentDto,
