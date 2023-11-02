@@ -17,19 +17,19 @@ export class DevicesService {
     return await this.devicesRepository.getDeviceByDate(lastActiveDate)
   }
 
-  async getDeviceByDeviceId(deviceId: string, deviceTitle: string): Promise<IDevice | null> {
-    return await this.devicesRepository.getTokenByDeviceId(deviceId, deviceTitle)
+  async getDeviceByDeviceId(deviceId: string): Promise<IDevice | null> {
+    return await this.devicesRepository.getDeviceByDeviceId(deviceId)
   }
 
-  async createRefreshToken(data: CreateDeviceDto): Promise<IDevice | null> {
-    const newRefreshToken = new Device(data)
+  async createDevice(data: CreateDeviceDto): Promise<IDevice | null> {
+    const newDevice = new Device(data)
 
-    await this.devicesRepository.createRefreshToken(newRefreshToken)
+    await this.devicesRepository.createDevice(newDevice)
 
-    return newRefreshToken
+    return newDevice
   }
 
-  async updateRefreshToken(date: string): Promise<IDevice | null> {
+  async updateDevice(date: string): Promise<IDevice | null> {
     const newDate = new Date()
     const newExpiredDate = add(newDate, {
       seconds: 20

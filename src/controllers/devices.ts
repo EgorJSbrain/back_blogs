@@ -34,7 +34,7 @@ export class DevicesController {
   async deleteDevice (req: Request<{ deviceId: string }>, res: Response): Promise<undefined> {
     const { deviceId } = req.params
     const token = req.cookies.refreshToken ?? ''
-    const deviceTitle = req.headers['user-agent'] ?? ''
+    // const deviceTitle = req.headers['user-agent'] ?? ''
 
     if (!deviceId) {
       res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -47,7 +47,7 @@ export class DevicesController {
     }
 
     const userId = await JwtService.verifyExperationToken(token)
-    const existedToken = await this.devicesService.getDeviceByDeviceId(deviceId, deviceTitle)
+    const existedToken = await this.devicesService.getDeviceByDeviceId(deviceId)
 
     if (!existedToken) {
       res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
