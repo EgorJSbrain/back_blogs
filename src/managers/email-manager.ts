@@ -1,4 +1,4 @@
-import { MailAdapter } from '../adapters/email-adapter'
+import { mailAdapter } from '../adapters/email-adapter'
 import { IUser } from '../types/users'
 
 export const emailManager = {
@@ -12,7 +12,7 @@ export const emailManager = {
           </a>
         </p>
       `
-      await MailAdapter.sendActivationMail(
+      await mailAdapter.sendActivationMail(
         user.accountData.email,
         'Confirm registration',
         message
@@ -32,7 +32,7 @@ export const emailManager = {
           <a href='https://somesite.com/password-recovery?recoveryCode=${user.userSecurity.recoveryPasswordCode}'>recovery password</a>
         </p>
       `
-      await MailAdapter.sendActivationMail(
+      await mailAdapter.sendActivationMail(
         user.accountData.email,
         'Confirm registration',
         message

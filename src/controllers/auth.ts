@@ -5,11 +5,15 @@ import { HTTP_STATUSES } from '../constants/global'
 import { RequestWithBody } from '../types/global'
 import { CreateUserDto } from '../dtos/users/create-user.dto'
 import { LoginUserDto } from '../dtos/users/login-user.dto'
+import { JwtService } from '../applications/jwt-service'
+import { MailService } from '../domain/mail-service'
 
 export class AuthController {
   constructor(
     protected usersService: UsersService,
-    protected devicesService: DevicesService
+    protected devicesService: DevicesService,
+    protected jwtService: JwtService,
+    protected mailService: MailService
   ) {}
 
   async login(
@@ -40,15 +44,15 @@ export class AuthController {
       userId: user.accountData.id
     })
 
-    // const accessToken = JwtService.createAccessJWT(user.accountData.id)
-    // const refreshToken = JwtService.createRefreshJWT(
-    //   device?.userId,
-    //   device?.lastActiveDate,
-    //   device?.deviceId
-    // )
+    const accessToken = this.jwtService.createAccessJWT(user.accountData.id)
+    const refreshToken = this.jwtService.createRefreshJWT(
+      device?.userId ?? '',
+      device?.lastActiveDate ?? '',
+      device?.deviceId ?? ''
+    )
 
-    // res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true })
-    // res.status(HTTP_STATUSES.OK_200).send({ accessToken })
+    res.cookie('refreshToken', refreshToken, { httpOnly: true, secure: true })
+    res.status(HTTP_STATUSES.OK_200).send({ accessToken })
   }
 
   async registration(
@@ -62,12 +66,12 @@ export class AuthController {
       return
     }
 
-    // const responseConfirmMail = await mailService.sendRegistrationConfirmationMail(user)
+    const responseConfirmMail = await this.mailService.sendRegistrationConfirmationMail(user)
 
-    // if (!responseConfirmMail) {
-    //   res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
-    //   return
-    // }
+    if (!responseConfirmMail) {
+      res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+      return
+    }
 
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
   }
@@ -91,12 +95,12 @@ export class AuthController {
       return
     }
 
-    // const responseConfirmMail = await mailService.sendRegistrationConfirmationMail(updatedUser)
+    const responseConfirmMail = await this.mailService.sendRegistrationConfirmationMail(updatedUser)
 
-    // if (!responseConfirmMail) {
-    //   res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
-    //   return
-    // }
+    if (!responseConfirmMail) {
+      res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
+      return
+    }
 
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
   }
@@ -205,12 +209,12 @@ export class AuthController {
       return
     }
 
-    // const userId = await JwtService.verifyExperationToken(token)
+    const userId = await this.jwtService.verifyExperationToken(token)
 
-    // if (!userId) {
-    //   res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
-    //   return
-    // }
+    if (!userId) {
+      res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+      return
+    }
 
     const existedToken = await this.devicesService.getDevice(token)
 
@@ -226,7 +230,7 @@ export class AuthController {
       return
     }
 
-    const tokens = await JwtService.refreshTokens(
+    const tokens = await this.jwtService.refreshTokens(
       updatedToken.userId,
       updatedToken.deviceId,
       updatedToken.lastActiveDate
@@ -255,7 +259,7 @@ export class AuthController {
       return
     }
 
-    const userId = await JwtService.verifyExperationToken(token)
+    const userId = await this.jwtService.verifyExperationToken(token)
 
     if (!userId) {
       res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)

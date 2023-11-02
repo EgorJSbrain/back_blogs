@@ -5,7 +5,10 @@ import { HTTP_STATUSES } from '../constants/global'
 import { JwtService } from '../applications/jwt-service'
 
 export class DevicesController {
-  constructor(protected devicesService: DevicesService) {}
+  constructor(
+    protected devicesService: DevicesService,
+    protected jwtService: JwtService
+  ) {}
 
   async getAllDevices (req: Request, res: Response): Promise<undefined> {
     const tokens = await this.devicesService.getAllDevices(req.userId)
@@ -46,7 +49,7 @@ export class DevicesController {
       return
     }
 
-    const userId = await JwtService.verifyExperationToken(token)
+    const userId = await this.jwtService.verifyExperationToken(token)
     const existedToken = await this.devicesService.getDeviceByDeviceId(deviceId)
 
     if (!existedToken) {

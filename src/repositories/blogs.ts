@@ -55,7 +55,7 @@ export class BlogsRepository {
 
   async getBlogById(id: string): Promise<IBlog | null> {
     try {
-      const blog = await Blog.findOne({ id }, { projection: { _id: false } })
+      const blog = await Blog.findOne({ id }, { projection: { _id: 0 } })
 
       return blog
     } catch {
