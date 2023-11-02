@@ -31,7 +31,7 @@ export class UsersService {
     return await this.usersRepository.getUserByData({ 'userSecurity.recoveryPasswordCode': code })
   }
 
-  async getUserByVerificationCode(code: string): Promise<any> {
+  async getUserByVerificationCode(code: string): Promise<IUser | null> {
     return await this.usersRepository.getUserByVerificationCode(code)
   }
 

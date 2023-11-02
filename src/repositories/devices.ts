@@ -4,12 +4,12 @@ import { IDevice } from '../types/devices'
 export class DevicesRepository {
   async getAllDevicesByUserId(userId: string): Promise<IDevice[] | null> {
     try {
-      const tokens = await Device.find(
+      const devices = await Device.find(
         { userId },
         { projection: { _id: 0, expiredDate: 0, userId: 0 } }
       ).lean()
 
-      return tokens
+      return devices
     } catch {
       return null
     }
@@ -17,33 +17,33 @@ export class DevicesRepository {
 
   async getDeviceByDate(lastActiveDate: string): Promise<IDevice | null> {
     try {
-      const token = await Device.findOne(
+      const device = await Device.findOne(
         { lastActiveDate },
         { projection: { _id: 0 } }
       )
 
-      return token
+      return device
     } catch {
       return null
     }
   }
 
-  async getTokenByDeviceId(deviceId: string, deviceTitle: string): Promise<IDevice | null> {
+  async getDeviceByDeviceId(deviceId: string): Promise<IDevice | null> {
     try {
-      const token = await Device.findOne(
+      const device = await Device.findOne(
         { deviceId },
         { projection: { _id: 0 } }
       )
 
-      return token
+      return device
     } catch {
       return null
     }
   }
 
-  async createRefreshToken(token: IDevice): Promise<boolean> {
+  async createDevice(device: IDevice): Promise<boolean> {
     try {
-      const response = await Device.create(token)
+      const response = await Device.create(device)
 
       return !!response._id
     } catch {
