@@ -2,7 +2,7 @@ import { Video } from '../models'
 import { UpdateVideoDto } from '../dtos/videos/update-video.dto'
 import { IVideo } from '../types/videos'
 
-export const VideosRepository = {
+export class VideosRepository {
   async getVideos(): Promise<IVideo[]> {
     try {
       const videos = await Video.find({}, { projection: { _id: 0 } }).lean()
@@ -11,7 +11,7 @@ export const VideosRepository = {
     } catch {
       return []
     }
-  },
+  }
 
   async getVideoById(id: string): Promise<IVideo | undefined | null> {
     try {
@@ -21,9 +21,9 @@ export const VideosRepository = {
     } catch {
       return null
     }
-  },
+  }
 
-  async createVideo(data: IVideo) {
+  async createVideo(data: IVideo): Promise<IVideo | null> {
     try {
       let video = null
 
@@ -37,11 +37,11 @@ export const VideosRepository = {
     } catch {
       return null
     }
-  },
+  }
 
-  async updateVideo(id: string, data: UpdateVideoDto) {
+  async updateVideo(id: string, data: UpdateVideoDto): Promise<IVideo | null> {
     try {
-      let video
+      let video = null
 
       const response = await Video.updateOne({ id }, { $set: data })
 
@@ -53,15 +53,15 @@ export const VideosRepository = {
     } catch {
       return null
     }
-  },
+  }
 
-  async deleteVideo(id: string) {
+  async deleteVideo(id: string): Promise<boolean> {
     try {
       const response = await Video.deleteOne({ id })
 
       return !!response.deletedCount
     } catch {
-      return null
+      return false
     }
   }
 }
