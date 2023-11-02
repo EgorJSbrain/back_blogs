@@ -15,7 +15,7 @@ export class UsersService {
     return await this.usersRepository.getUsers(params)
   }
 
-  async getUserById(id: string): Promise<any> {
+  async getUserById(id: string): Promise<IUser | null> {
     return await this.usersRepository.getUserById(id)
   }
 

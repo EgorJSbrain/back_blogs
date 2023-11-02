@@ -5,14 +5,17 @@ import { Device, IDevice } from '../types/devices'
 import { CreateDeviceDto } from '../dtos/devices/create-device.dto'
 
 export class DevicesService {
-  constructor(protected devicesRepository: DevicesRepository) {}
+  constructor(
+    protected devicesRepository: DevicesRepository,
+    protected jwtService: JwtService
+  ) {}
 
   async getAllDevices(userId: string): Promise<IDevice[] | null> {
     return await this.devicesRepository.getAllDevicesByUserId(userId)
   }
 
   async getDevice(token: string): Promise<IDevice | null> {
-    const { lastActiveDate } = JwtService.decodeRefreshToken(token)
+    const { lastActiveDate } = this.jwtService.decodeRefreshToken(token)
 
     return await this.devicesRepository.getDeviceByDate(lastActiveDate)
   }
@@ -43,7 +46,7 @@ export class DevicesService {
   }
 
   async deleteDevices(token: string): Promise<boolean> {
-    const { lastActiveDate, userId } = JwtService.decodeRefreshToken(token)
+    const { lastActiveDate, userId } = this.jwtService.decodeRefreshToken(token)
 
     return await this.devicesRepository.deleteDevices(userId, lastActiveDate)
   }
