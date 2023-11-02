@@ -156,7 +156,7 @@ export class AuthController {
         return
       }
 
-      // await mailService.sendRecoveryPasswordMail(updatedUser)
+      await this.mailService.sendRecoveryPasswordMail(updatedUser)
     }
 
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)

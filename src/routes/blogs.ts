@@ -30,7 +30,7 @@ blogsRouter.put(
 blogsRouter.delete(
   '/:id',
   authMiddleware,
-  blogsController.createBlog.bind(blogsController)
+  blogsController.deleteBlog.bind(blogsController)
 )
 
 blogsRouter.get(
