@@ -1,30 +1,30 @@
-import { generateNewVideo } from './utils'
 import { VideosRepository } from '../repositories/videos'
 
 import { CreateVideoDto } from '../dtos/videos/create-video.dto'
 import { UpdateVideoDto } from '../dtos/videos/update-video.dto'
-import { IVideo } from '../types/videos'
+import { IVideo, Video } from '../types/videos'
 
-export const VideosService = {
+export class VideosService {
+  constructor (protected videosRepository: VideosRepository) {}
   async getVideos(): Promise<IVideo[]> {
-    return await VideosRepository.getVideos()
-  },
+    return await this.videosRepository.getVideos()
+  }
 
   async getVideoById(id: string): Promise<IVideo | undefined | null> {
-    return await VideosRepository.getVideoById(id)
-  },
+    return await this.videosRepository.getVideoById(id)
+  }
 
-  async createVideo(data: CreateVideoDto) {
-    const createdVideo = generateNewVideo(data)
+  async createVideo(data: CreateVideoDto): Promise<IVideo | null> {
+    const video = new Video(data)
 
-    return await VideosRepository.createVideo(createdVideo)
-  },
+    return await this.videosRepository.createVideo(video)
+  }
 
-  async updateVideo(id: string, data: UpdateVideoDto) {
-    return await VideosRepository.updateVideo(id, data)
-  },
+  async updateVideo(id: string, data: UpdateVideoDto): Promise<IVideo | null> {
+    return await this.videosRepository.updateVideo(id, data)
+  }
 
-  async deleteVideo(id: string) {
-    return await VideosRepository.deleteVideo(id)
+  async deleteVideo(id: string): Promise<boolean> {
+    return await this.videosRepository.deleteVideo(id)
   }
 }
