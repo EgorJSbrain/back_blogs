@@ -5,5 +5,5 @@ export const globalRouter = Router({})
 
 globalRouter.delete(
   '/all-data',
-  globalController.clearDataBase.bind(globalController) as any
+  globalController.clearDataBase.bind(globalController)
 )

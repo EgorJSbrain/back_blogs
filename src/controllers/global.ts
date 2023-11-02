@@ -1,4 +1,4 @@
-import { Response } from 'express'
+import { Response, Request } from 'express'
 import { GlobalService } from '../services'
 import { HTTP_STATUSES } from '../constants/global'
 
