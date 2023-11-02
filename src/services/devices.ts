@@ -1,9 +1,8 @@
 import add from 'date-fns/add'
 import { JwtService } from '../applications/jwt-service'
-import { CreateRefreshTokenDto } from '../dtos/tokens/create-refresh-token.dto'
 import { DevicesRepository } from '../repositories'
-import { generateNewRefreshToken } from './utils'
-import { IDevice } from '../types/devices'
+import { Device, IDevice } from '../types/devices'
+import { CreateDeviceDto } from '../dtos/devices/create-device.dto'
 
 export class DevicesService {
   constructor(protected devicesRepository: DevicesRepository) {}
@@ -22,8 +21,8 @@ export class DevicesService {
     return await this.devicesRepository.getTokenByDeviceId(deviceId, deviceTitle)
   }
 
-  async createRefreshToken(data: CreateRefreshTokenDto): Promise<IDevice | null> {
-    const newRefreshToken = generateNewRefreshToken(data)
+  async createRefreshToken(data: CreateDeviceDto): Promise<IDevice | null> {
+    const newRefreshToken = new Device(data)
 
     await this.devicesRepository.createRefreshToken(newRefreshToken)
 

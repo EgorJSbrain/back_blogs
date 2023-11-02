@@ -10,7 +10,7 @@ import {
   usersRouter,
   authRouter,
   commentsRouter,
-  securityRouter
+  devicesRouter
 } from './routes'
 import { RouterPaths } from './constants/global'
 import { requestLogMiddleware, requestsCountMiddleware } from './middlewares'
@@ -33,7 +33,7 @@ export const generateApp = (): any => {
     authRouter
   )
   app.use(RouterPaths.comments, requestLogMiddleware, commentsRouter)
-  app.use(RouterPaths.security, requestLogMiddleware, securityRouter)
+  app.use(RouterPaths.security, requestLogMiddleware, devicesRouter)
 
   return app
 }
