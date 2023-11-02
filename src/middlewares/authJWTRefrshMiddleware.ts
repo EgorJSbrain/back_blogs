@@ -1,27 +1,29 @@
 import { NextFunction, Request, Response } from 'express'
 import { HTTP_STATUSES } from '../constants/global'
-import { JwtService } from '../applications/jwt-service'
+import { jwtService } from '../applications/jwt-service'
 
 export const authJWTRefrshMiddleware = async (
   req: Request,
   res: Response,
   next: NextFunction
-) => {
-  // const token = req.cookies.refreshToken
+): Promise<undefined> => {
+  const token = req.cookies.refreshToken
 
-  // if (!token) {
-  //   return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
-  // }
+  if (!token) {
+    res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+    return
+  }
 
-  // const userId = await JwtService.verifyExperationToken(token)
+  const userId = await jwtService.verifyExperationToken(token)
 
-  // if (!userId) {
-  //   return res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
-  // }
+  if (!userId) {
+    res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+    return
+  }
 
-  // if (userId) {
-  //   req.userId = userId
+  if (userId) {
+    req.userId = userId
 
-  //   next()
-  // }
+    next()
+  }
 }
