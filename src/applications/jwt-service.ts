@@ -2,16 +2,16 @@ import jwt, { JwtPayload } from 'jsonwebtoken'
 import { APP_CONFIG } from '../app-config'
 import { usersService } from '../compositions/users'
 
-export const JwtService = {
-  createAccessJWT(userId: string) {
+export class JwtService {
+  createAccessJWT(userId: string): string {
     const token = jwt.sign({ userId }, APP_CONFIG.ACCESS_JWT_SECRET, {
       expiresIn: '10s'
     })
 
     return token
-  },
+  }
 
-  createRefreshJWT(userId: string, lastActiveDate: string, deviceId: string) {
+  createRefreshJWT(userId: string, lastActiveDate: string, deviceId: string): string {
     const token = jwt.sign(
       { userId, lastActiveDate, deviceId },
       APP_CONFIG.REFRESH_JWT_SECRET,
@@ -19,7 +19,7 @@ export const JwtService = {
     )
 
     return token
-  },
+  }
 
   getUserIdByToken(token: string): string | null {
     try {
@@ -29,15 +29,15 @@ export const JwtService = {
     } catch {
       return null
     }
-  },
+  }
 
-  decodeRefreshToken(token: string) {
+  decodeRefreshToken(token: string): { userId: string, deviceId: string, lastActiveDate: string } {
     const { userId, deviceId, lastActiveDate } = jwt.decode(token) as jwt.JwtPayload
 
     return { userId, deviceId, lastActiveDate }
-  },
+  }
 
-  async verifyExperationToken(token: string) {
+  async verifyExperationToken(token: string): Promise<string | null> {
     const { userId, exp } = jwt.decode(token) as jwt.JwtPayload
 
     if (!exp) return null
@@ -53,7 +53,7 @@ export const JwtService = {
     }
 
     return user.accountData.id
-  },
+  }
 
   async refreshTokens(
     userId: string,
@@ -70,3 +70,5 @@ export const JwtService = {
     }
   }
 }
+
+export const jwtService = new JwtService()
