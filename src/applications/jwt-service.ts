@@ -5,7 +5,7 @@ import { usersService } from '../compositions/users'
 export class JwtService {
   createAccessJWT(userId: string): string {
     const token = jwt.sign({ userId }, APP_CONFIG.ACCESS_JWT_SECRET, {
-      expiresIn: '10s'
+      expiresIn: '10m'
     })
 
     return token
@@ -15,7 +15,7 @@ export class JwtService {
     const token = jwt.sign(
       { userId, lastActiveDate, deviceId },
       APP_CONFIG.REFRESH_JWT_SECRET,
-      { expiresIn: '20s' }
+      { expiresIn: '20m' }
     )
 
     return token
