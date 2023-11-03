@@ -5,12 +5,17 @@ import {
   RequestWithParamsAndBody
 } from '../types/global'
 
-import { HTTP_STATUSES } from '../constants/global'
+import { HTTP_STATUSES, LikeStatus } from '../constants/global'
 import { IComment } from '../types/comments'
 import { UpdateCommentDto } from '../dtos/comments/update-comment.dto'
+import { LikesService } from '../services/likes'
 
 export class CommentsController {
-  constructor(protected commentsService: CommentsService, protected usersService: UsersService) {}
+  constructor(
+    protected commentsService: CommentsService,
+    protected usersService: UsersService,
+    protected likesService: LikesService
+  ) {}
 
   async getCommentById (req: RequestWithParams<{ id: string }>, res: Response<IComment>): Promise<undefined> {
     const { id } = req.params
@@ -70,6 +75,64 @@ export class CommentsController {
       res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
       return
     }
+
+    res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+  }
+
+  async likeComment (
+    req: RequestWithParamsAndBody<{ commentId: string }, { likeStatus: LikeStatus }>,
+    res: Response
+  ): Promise<undefined> {
+    const { commentId } = req.params
+    const { likeStatus } = req.body
+    if (!commentId) {
+      res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+      return
+    }
+
+    const existedUser = await this.usersService.getUserById(req.userId)
+    // console.log("existedUser:", existedUser)
+    const existedComment = await this.commentsService.getCommentById(commentId)
+
+    if (!existedUser) {
+      res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+      return
+    }
+
+    if (!existedComment) {
+      res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+      return
+    }
+
+    const like = await this.likesService.getLikeBySourceIdAndAuthorId(commentId, existedUser?.accountData.id)
+
+    if (!like && (likeStatus === LikeStatus.like || likeStatus === LikeStatus.dislike)) {
+      const like = await this.likesService.createLike({
+        sourceId: commentId,
+        authorId: existedUser?.accountData.id,
+        status: likeStatus
+      })
+    }
+    console.log('---like---', like)
+
+    console.log('---', req.body)
+
+    // if (existedComment?.commentatorInfo.userId !== existedUser?.accountData.id) {
+    //   res.sendStatus(HTTP_STATUSES.FORBIDEN_403)
+    //   return
+    // }
+
+    // if (existedComment?.content === req.body.content) {
+    //   res.status(HTTP_STATUSES.OK_200).send(existedComment)
+    //   return
+    // }
+
+    // const comment = await this.commentsService.updateComment(id, req.body)
+
+    // if (!comment) {
+    //   res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+    //   return
+    // }
 
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
   }

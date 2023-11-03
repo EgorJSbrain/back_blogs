@@ -28,3 +28,9 @@ export enum SortDirections {
   asc = 'asc',
   desc = 'desc'
 }
+
+export enum LikeStatus {
+  like = 'Like',
+  dislike = 'Dislike',
+  none = 'None',
+}
