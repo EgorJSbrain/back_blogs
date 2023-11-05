@@ -30,7 +30,7 @@ export class CommentsRepository {
       const pagesCount = Math.ceil(count / pageSizeNumber)
 
       const comments = await Comment
-        .find(filter, { projection: { _id: 0, postId: 0 } })
+        .find(filter, { projection: { _id: 0, postId: 0, __v: 0 } })
         .sort(sort)
         .skip(skip)
         .limit(pageSizeNumber)
@@ -48,11 +48,20 @@ export class CommentsRepository {
     }
   }
 
-  async getCommentById(id: string): Promise<CommentType | null> {
+  async getCommentById(id: string): Promise<IComment | null> {
     try {
-      const comment = await Comment.findOne({ id }, { projection: { _id: 0, postId: 0 } }).lean()
+      const comment = await Comment.findOne({ id }, { projection: { _id: 0, postId: 0, __v: 0 } }).lean()
 
-      return comment
+      if (!comment) {
+        return null
+      }
+
+      return {
+        id: comment?.id,
+        content: comment?.content,
+        commentatorInfo: comment?.commentatorInfo,
+        createdAt: comment?.createdAt
+      }
     } catch {
       return null
     }

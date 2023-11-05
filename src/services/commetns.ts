@@ -12,7 +12,7 @@ export class CommentsService {
     return await this.commentsRepository.getCommentsByPostId(params, postId)
   }
 
-  async getCommentById(id: string): Promise<CommentType | null> {
+  async getCommentById(id: string): Promise<IComment | null> {
     return await this.commentsRepository.getCommentById(id)
   }
 

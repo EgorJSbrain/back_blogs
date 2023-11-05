@@ -41,9 +41,9 @@ export interface IComment {
   id: string
   content: string
   createdAt: string
-  postId: string
+  // postId: string
   commentatorInfo: ICommentInfo
-  likesInfo: ILikeInfo
+  likesInfo?: ILikeInfo
   // likes: ILike[]
 }
 
