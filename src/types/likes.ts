@@ -34,6 +34,12 @@ export interface ILikes {
   // myStatus: LikeStatus
 }
 
+export interface ILikeInfo {
+  dislikesCount: number
+  likesCount: number
+  myStatus: LikeStatus
+}
+
 export interface ILike {
   authorId: number
   status: LikeStatus
