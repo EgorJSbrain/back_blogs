@@ -32,7 +32,17 @@ export class CommentsController {
       return
     }
 
-    res.status(HTTP_STATUSES.OK_200).send(comment)
+    const likesCounts = await this.likesService.getLikesCountsBySourceId(comment?.id)
+    const myLike = await this.likesService.getLikeBySourceIdAndAuthorId(comment?.id, comment.commentatorInfo.userId)
+
+    res.status(HTTP_STATUSES.OK_200).send({
+      ...comment,
+      likesInfo: {
+        likesCount: likesCounts?.likesCount ?? 0,
+        dislikesCount: likesCounts?.dislikesCount ?? 0,
+        myStatus: myLike?.status ?? LikeStatus.none
+      }
+    })
   }
 
   async updateComment (
@@ -105,34 +115,30 @@ export class CommentsController {
     }
 
     const like = await this.likesService.getLikeBySourceIdAndAuthorId(commentId, existedUser?.accountData.id)
+    // console.log('---like---', like)
+    // console.log('---', likeStatus)
 
     if (!like && (likeStatus === LikeStatus.like || likeStatus === LikeStatus.dislike)) {
-      const like = await this.likesService.createLike({
+      const response = await this.likesService.createLike({
         sourceId: commentId,
         authorId: existedUser?.accountData.id,
         status: likeStatus
       })
+
+      if (!response) {
+        res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+        return
+      }
     }
-    console.log('---like---', like)
 
-    console.log('---', req.body)
+    if (like && likeStatus !== like.status) {
+      const response = await this.likesService.updateLike(like.id, likeStatus)
 
-    // if (existedComment?.commentatorInfo.userId !== existedUser?.accountData.id) {
-    //   res.sendStatus(HTTP_STATUSES.FORBIDEN_403)
-    //   return
-    // }
-
-    // if (existedComment?.content === req.body.content) {
-    //   res.status(HTTP_STATUSES.OK_200).send(existedComment)
-    //   return
-    // }
-
-    // const comment = await this.commentsService.updateComment(id, req.body)
-
-    // if (!comment) {
-    //   res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-    //   return
-    // }
+      if (!response) {
+        res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+        return
+      }
+    }
 
     res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
   }

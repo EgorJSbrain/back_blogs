@@ -2,16 +2,15 @@ import { FilterQuery } from 'mongoose'
 
 import { LikeStatus } from '../constants/global'
 import { Like } from '../models'
-import { ILike, ILikes, LikesRequestParams } from '../types/likes'
-import { Like as LikeType } from '../types/likes'
+import { Like as LikeType, ILikes, LikesRequestParams } from '../types/likes'
 
 export class LikesRepository {
   async getLikesCountsBySourceId(sourceId: string): Promise<ILikes | null> {
     try {
       const filter: FilterQuery<ILikes> = { sourceId }
 
-      const likesCount = await Like.countDocuments({ ...filter, likesCount: 'likesCount' })
-      const dislikesCount = await Like.countDocuments({ ...filter, dislikesCount: 'dislikesCount' })
+      const likesCount = await Like.countDocuments({ ...filter, status: 'Like' })
+      const dislikesCount = await Like.countDocuments({ ...filter, status: 'Dislike' })
 
       // const like = await Like
       //   .findOne({ authorId: params.authorId }, { projection: { _id: 0 } })
@@ -27,7 +26,7 @@ export class LikesRepository {
     }
   }
 
-  async getLikeBySourceIdAndAuthorId(params: LikesRequestParams): Promise<{ myStatus: LikeStatus } | null> {
+  async getLikeBySourceIdAndAuthorId(params: LikesRequestParams): Promise<LikeType | null> {
     try {
       const like = await Like
         .findOne({ sourceId: params.sourceId, authorId: params.authorId }, { projection: { _id: 0 } })
@@ -37,9 +36,7 @@ export class LikesRepository {
         return null
       }
 
-      return {
-        myStatus: like ? like.status : LikeStatus.none
-      }
+      return like
     } catch {
       return null
     }
@@ -50,6 +47,16 @@ export class LikesRepository {
       const response = await Like.create(data)
 
       return !!response._id
+    } catch {
+      return false
+    }
+  }
+
+  async updateLike(id: string, newStatus: LikeStatus): Promise<boolean> {
+    try {
+      const response = await Like.updateOne({ id }, { status: newStatus })
+
+      return !!response
     } catch {
       return false
     }

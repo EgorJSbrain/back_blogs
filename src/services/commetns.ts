@@ -3,21 +3,21 @@ import { RequestParams, ResponseBody } from '../types/global'
 import { CreateCommentDto } from '../dtos/comments/create-comment.dto'
 import { IUser } from '../types/users'
 import { UpdateCommentDto } from '../dtos/comments/update-comment.dto'
-import { Comment, IComment } from '../types/comments'
+import { Comment as CommentType, IComment } from '../types/comments'
 
 export class CommentsService {
   constructor(protected commentsRepository: CommentsRepository) {}
 
-  async getCommentsByPostId(params: RequestParams, postId: string): Promise<ResponseBody<IComment> | null> {
+  async getCommentsByPostId(params: RequestParams, postId: string): Promise<ResponseBody<CommentType> | null> {
     return await this.commentsRepository.getCommentsByPostId(params, postId)
   }
 
-  async getCommentById(id: string): Promise<IComment | null> {
+  async getCommentById(id: string): Promise<CommentType | null> {
     return await this.commentsRepository.getCommentById(id)
   }
 
-  async createComment(data: CreateCommentDto, user: IUser, postId: string): Promise<IComment | null> {
-    const createdComment = new Comment(data.content, user.accountData.id, user.accountData.login, postId)
+  async createComment(data: CreateCommentDto, user: IUser, postId: string): Promise<CommentType | null> {
+    const createdComment = new CommentType(data.content, user.accountData.id, user.accountData.login, postId)
 
     return await this.commentsRepository.createComment(createdComment)
   }

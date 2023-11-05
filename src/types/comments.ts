@@ -1,5 +1,6 @@
 // import { LikeStatus } from '../constants/global'
 import { RequestParams } from './global'
+import { ILikeInfo } from './likes'
 // import { ILike } from './likes'
 
 export class Comment {
@@ -42,6 +43,7 @@ export interface IComment {
   createdAt: string
   postId: string
   commentatorInfo: ICommentInfo
+  likesInfo: ILikeInfo
   // likes: ILike[]
 }
 
