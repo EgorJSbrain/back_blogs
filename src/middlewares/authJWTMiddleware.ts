@@ -16,6 +16,11 @@ export const authJWTMiddleware = async(
       return
     }
 
+    if (bearer !== 'Bearer') {
+      res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
+      return
+    }
+
     const userId = await jwtService.verifyExperationToken(token)
 
     if (!userId) {

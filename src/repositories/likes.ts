@@ -12,14 +12,9 @@ export class LikesRepository {
       const likesCount = await Like.countDocuments({ ...filter, status: 'Like' })
       const dislikesCount = await Like.countDocuments({ ...filter, status: 'Dislike' })
 
-      // const like = await Like
-      //   .findOne({ authorId: params.authorId }, { projection: { _id: 0 } })
-      //   .lean()
-
       return {
         dislikesCount,
         likesCount
-        // myStatus: like ? like.myStatus : LikeStatus.none
       }
     } catch {
       return null
