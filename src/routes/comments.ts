@@ -10,6 +10,7 @@ export const commentsRouter = Router({})
 
 commentsRouter.get(
   '/:id',
+  authJWTMiddleware,
   commentsController.getCommentById.bind(commentsController)
 )
 
