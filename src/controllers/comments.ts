@@ -9,7 +9,6 @@ import { HTTP_STATUSES, LikeStatus } from '../constants/global'
 import { IComment } from '../types/comments'
 import { UpdateCommentDto } from '../dtos/comments/update-comment.dto'
 import { LikesService } from '../services/likes'
-import { body } from 'express-validator'
 
 export class CommentsController {
   constructor(
