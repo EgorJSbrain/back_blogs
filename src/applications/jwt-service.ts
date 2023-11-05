@@ -38,6 +38,10 @@ export class JwtService {
   }
 
   async verifyExperationToken(token: string): Promise<string | null> {
+    const decoded = jwt.decode(token) as jwt.JwtPayload
+
+    if (!decoded) return null
+
     const { userId, exp } = jwt.decode(token) as jwt.JwtPayload
 
     if (!exp) return null
