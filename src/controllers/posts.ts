@@ -8,7 +8,7 @@ import {
   ResponseBody
 } from '../types/global'
 
-import { HTTP_STATUSES } from '../constants/global'
+import { HTTP_STATUSES, LikeStatus } from '../constants/global'
 import { IPost } from '../types/posts'
 import { CreatePostDto } from '../dtos/posts/create-post.dto'
 import { UpdatePostDto } from '../dtos/posts/update-post.dto'
@@ -70,14 +70,14 @@ export class PostsController {
       return
     }
 
-    const blog = await this.postsService.createPost(req.body, existedBlog)
+    const post = await this.postsService.createPost(req.body, existedBlog)
 
-    if (!blog) {
+    if (!post) {
       res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
       return
     }
 
-    res.status(HTTP_STATUSES.CREATED_201).send(blog)
+    res.status(HTTP_STATUSES.CREATED_201).send(post)
   }
 
   async updatePost(
@@ -209,6 +209,13 @@ export class PostsController {
       return
     }
 
-    res.status(HTTP_STATUSES.CREATED_201).send(response)
+    res.status(HTTP_STATUSES.CREATED_201).send({
+      ...response,
+      likesInfo: {
+        likesCount: 0,
+        dislikesCount: 0,
+        myStatus: LikeStatus.none
+      }
+    })
   }
 }
