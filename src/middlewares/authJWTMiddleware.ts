@@ -16,7 +16,7 @@ export const authJWTMiddleware = async(
       return
     }
 
-    if (bearer !== 'Bearer') {
+    if (!token) {
       res.sendStatus(HTTP_STATUSES.NOT_AUTHORIZED_401)
       return
     }
