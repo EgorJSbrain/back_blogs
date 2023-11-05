@@ -9,6 +9,7 @@ import { HTTP_STATUSES, LikeStatus } from '../constants/global'
 import { IComment } from '../types/comments'
 import { UpdateCommentDto } from '../dtos/comments/update-comment.dto'
 import { LikesService } from '../services/likes'
+import { body } from 'express-validator'
 
 export class CommentsController {
   constructor(
@@ -40,7 +41,7 @@ export class CommentsController {
       likesInfo: {
         likesCount: likesCounts?.likesCount ?? 0,
         dislikesCount: likesCounts?.dislikesCount ?? 0,
-        myStatus: myLike?.status ?? LikeStatus.none
+        myStatus: !req.userId ? myLike?.status ?? LikeStatus.none : LikeStatus.none
       }
     })
   }
