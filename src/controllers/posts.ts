@@ -8,7 +8,7 @@ import {
   ResponseBody
 } from '../types/global'
 
-import { HTTP_STATUSES, LikeStatus } from '../constants/global'
+import { HTTP_STATUSES } from '../constants/global'
 import { IPost } from '../types/posts'
 import { CreatePostDto } from '../dtos/posts/create-post.dto'
 import { UpdatePostDto } from '../dtos/posts/update-post.dto'
@@ -209,13 +209,6 @@ export class PostsController {
       return
     }
 
-    res.status(HTTP_STATUSES.CREATED_201).send({
-      ...response,
-      likesInfo: {
-        likesCount: 0,
-        dislikesCount: 0,
-        myStatus: LikeStatus.none
-      }
-    })
+    res.status(HTTP_STATUSES.CREATED_201).send(response)
   }
 }
