@@ -32,17 +32,23 @@ export class CommentsController {
       return
     }
 
-    const likesCounts = await this.likesService.getLikesCountsBySourceId(comment?.id)
-    const myLike = await this.likesService.getLikeBySourceIdAndAuthorId(comment?.id, comment.commentatorInfo.userId)
+    let commentForResponse = comment as IComment
 
-    res.status(HTTP_STATUSES.OK_200).send({
-      ...comment,
-      likesInfo: {
-        likesCount: likesCounts?.likesCount ?? 0,
-        dislikesCount: likesCounts?.dislikesCount ?? 0,
-        myStatus: myLike?.status ?? LikeStatus.none
+    const likesCounts = await this.likesService.getLikesCountsBySourceId(comment?.id)
+    // const myLike = await this.likesService.getLikeBySourceIdAndAuthorId(comment?.id, comment.commentatorInfo.userId)
+
+    if (!!likesCounts?.dislikesCount || !!likesCounts?.likesCount) {
+      commentForResponse = {
+        ...comment,
+        likesInfo: {
+          likesCount: likesCounts.likesCount,
+          dislikesCount: likesCounts.dislikesCount,
+          myStatus: LikeStatus.none
+        }
       }
-    })
+    }
+
+    res.status(HTTP_STATUSES.OK_200).send(commentForResponse)
   }
 
   async updateComment (
