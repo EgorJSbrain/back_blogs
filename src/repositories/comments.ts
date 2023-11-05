@@ -79,7 +79,7 @@ export class CommentsRepository {
           { projection: { _id: 0, postId: 0 } }
         )
       }
-
+      console.log("----comment:", comment)
       return comment
     } catch {
       return null

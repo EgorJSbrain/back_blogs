@@ -40,7 +40,7 @@ export class CommentsController {
       likesInfo: {
         likesCount: likesCounts?.likesCount ?? 0,
         dislikesCount: likesCounts?.dislikesCount ?? 0,
-        myStatus: !req.userId ? myLike?.status ?? LikeStatus.none : LikeStatus.none
+        myStatus: myLike?.status ?? LikeStatus.none
       }
     })
   }
