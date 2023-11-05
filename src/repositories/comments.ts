@@ -2,12 +2,12 @@ import { FilterQuery, SortOrder } from 'mongoose'
 import { Comment } from '../models'
 import { SortDirections } from '../constants/global'
 
-import { IComment } from '../types/comments'
+import { IComment, Comment as CommentType } from '../types/comments'
 import { RequestParams, ResponseBody } from '../types/global'
 import { UpdateCommentDto } from '../dtos/comments/update-comment.dto'
 
 export class CommentsRepository {
-  async getCommentsByPostId(params: RequestParams, postId: string): Promise<ResponseBody<IComment> | null> {
+  async getCommentsByPostId(params: RequestParams, postId: string): Promise<ResponseBody<CommentType> | null> {
     try {
       const {
         sortBy = 'createdAt',
@@ -16,7 +16,7 @@ export class CommentsRepository {
         pageSize = 10
       } = params
 
-      const filter: FilterQuery<IComment> = { postId }
+      const filter: FilterQuery<CommentType> = { postId }
       const sort: Record<string, SortOrder> = {}
 
       if (sortBy && sortDirection) {
@@ -48,9 +48,9 @@ export class CommentsRepository {
     }
   }
 
-  async getCommentById(id: string): Promise<IComment | null> {
+  async getCommentById(id: string): Promise<CommentType | null> {
     try {
-      const comment = await Comment.findOne({ id }, { projection: { _id: 0, postId: 0 } })
+      const comment = await Comment.findOne({ id }, { projection: { _id: 0, postId: 0 } }).lean()
 
       return comment
     } catch {
@@ -58,9 +58,9 @@ export class CommentsRepository {
     }
   }
 
-  async createComment(data: IComment): Promise<IComment | null> {
+  async createComment(data: CommentType): Promise<CommentType | null> {
     try {
-      let comment: IComment | null = null
+      let comment: CommentType | null = null
 
       const response = await Comment.create(data)
 
