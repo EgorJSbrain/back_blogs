@@ -30,7 +30,8 @@ import {
   checkExistedVerificationCodeValidation,
   checkUnexistedUserByEmailValidation,
   checkExistedConfirmedUserByEmailValidation,
-  checkRecoveryCodeValidation
+  checkRecoveryCodeValidation,
+  commentLikeValidation
 } from './validationRules'
 import { Error } from '../../types/global'
 import { UserInputFields } from '../../constants/users'
@@ -103,6 +104,10 @@ export const UserEmailValidation = (): ValidationChain[] => [
 
 export const CommentsValidation = (): ValidationChain[] => [
   commentContentValidation
+]
+
+export const CommentsLikeValidation = (): ValidationChain[] => [
+  commentLikeValidation
 ]
 
 export const requestParamsValidation = (): ValidationChain[] => [
