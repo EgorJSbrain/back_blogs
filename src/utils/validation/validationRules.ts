@@ -35,6 +35,7 @@ import {
 import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_SIZE,
+  LikeStatuses,
   SortDirections
 } from '../../constants/global'
 import {
@@ -244,6 +245,18 @@ export const commentContentValidation = body([CommentInputFields.content])
   .trim()
   .isLength({ min: COMMENT_CONTENT_MIN_LENGTH, max: COMMENT_CONTENT_MAX_LENGTH })
   .withMessage(commentsErrorMessage.contentLength)
+
+export const commentLikeValidation = body([CommentInputFields.likeStatus])
+  .trim()
+  .customSanitizer(async (value: string) => {
+    if (value || !LikeStatuses[value]) {
+      return null
+    }
+
+    return value
+  })
+  .exists({ checkNull: true })
+  .withMessage(CommentInputFields.likeStatus)
 
 // auth
 
