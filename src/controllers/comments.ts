@@ -114,11 +114,6 @@ export class CommentsController {
       return
     }
 
-    if (!likeStatus) {
-      res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
-      return
-    }
-
     const existedUser = await this.usersService.getUserById(req.userId)
     const existedComment = await this.commentsService.getCommentById(commentId)
 

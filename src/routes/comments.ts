@@ -1,7 +1,7 @@
 import { Router } from 'express'
 
 import { validationMiddleware } from '../middlewares'
-import { CommentsValidation } from '../utils/validation/inputValidations'
+import { CommentsLikeValidation, CommentsValidation } from '../utils/validation/inputValidations'
 
 import { authJWTMiddleware } from '../middlewares/authJWTMiddleware'
 import { commentsController } from '../compositions/comments'
@@ -24,6 +24,8 @@ commentsRouter.put(
 commentsRouter.put(
   '/:commentId/like-status',
   authJWTMiddleware,
+  CommentsLikeValidation(),
+  validationMiddleware,
   commentsController.likeComment.bind(commentsController)
 )
 
