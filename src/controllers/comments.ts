@@ -110,7 +110,7 @@ export class CommentsController {
     const { likeStatus } = req.body
 
     if (!commentId) {
-      res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+      res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
       return
     }
 
