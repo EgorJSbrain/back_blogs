@@ -13,6 +13,7 @@ export class LikesRepository {
       const dislikesCount = await Like.countDocuments({ ...filter, status: 'Dislike' })
 
       return {
+        sourceId,
         dislikesCount,
         likesCount
       }

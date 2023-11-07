@@ -29,6 +29,7 @@ export class Like {
 }
 
 export interface ILikes {
+  sourceId: string
   dislikesCount: number
   likesCount: number
   // myStatus: LikeStatus
