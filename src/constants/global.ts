@@ -36,7 +36,7 @@ export enum LikeStatus {
 }
 
 export const LikeStatuses: Record<string, LikeStatus> = {
-  like: LikeStatus.like,
-  dislike: LikeStatus.dislike,
-  none: LikeStatus.none
+  Like: LikeStatus.like,
+  Dislike: LikeStatus.dislike,
+  None: LikeStatus.none
 }
