@@ -108,13 +108,18 @@ export class CommentsController {
   ): Promise<undefined> {
     const { commentId } = req.params
     const { likeStatus } = req.body
+
     if (!commentId) {
       res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
       return
     }
 
+    if (!likeStatus) {
+      res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+      return
+    }
+
     const existedUser = await this.usersService.getUserById(req.userId)
-    // console.log("existedUser:", existedUser)
     const existedComment = await this.commentsService.getCommentById(commentId)
 
     if (!existedUser) {
@@ -128,8 +133,6 @@ export class CommentsController {
     }
 
     const like = await this.likesService.getLikeBySourceIdAndAuthorId(commentId, existedUser?.accountData.id)
-    // console.log('---like---', like)
-    // console.log('---', likeStatus)
 
     if (!like && (likeStatus === LikeStatus.like || likeStatus === LikeStatus.dislike)) {
       const response = await this.likesService.createLike({
