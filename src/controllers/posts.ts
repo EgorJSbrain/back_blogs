@@ -170,6 +170,7 @@ export class PostsController {
       req.query,
       existedPost.id
     )
+    console.log("comments:", comments)
 
     if (!comments) {
       res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -200,7 +201,10 @@ export class PostsController {
       }
     }))
 
-    res.status(HTTP_STATUSES.OK_200).send(commentsWithInfoAboutLikes)
+    res.status(HTTP_STATUSES.OK_200).send({
+      ...comments,
+      items: commentsWithInfoAboutLikes
+    })
   }
 
   async createComment(
