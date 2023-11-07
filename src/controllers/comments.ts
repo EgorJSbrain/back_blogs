@@ -9,16 +9,21 @@ import { HTTP_STATUSES, LikeStatus } from '../constants/global'
 import { IComment } from '../types/comments'
 import { UpdateCommentDto } from '../dtos/comments/update-comment.dto'
 import { LikesService } from '../services/likes'
+import { JwtService } from '../applications/jwt-service'
+import { Like } from '../types/likes'
 
 export class CommentsController {
   constructor(
     protected commentsService: CommentsService,
     protected usersService: UsersService,
-    protected likesService: LikesService
+    protected likesService: LikesService,
+    protected jwtService: JwtService
   ) {}
 
   async getCommentById (req: RequestWithParams<{ id: string }>, res: Response<IComment>): Promise<undefined> {
     const { id } = req.params
+    let userId: string | null = null
+    let myLike: Like | null = null
 
     if (!id) {
       res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -32,8 +37,16 @@ export class CommentsController {
       return
     }
 
+    if (req.headers.authorization) {
+      const token = req.headers.authorization.split(' ')[1]
+      userId = await this.jwtService.verifyExperationToken(token)
+    }
+
     const likesCounts = await this.likesService.getLikesCountsBySourceId(comment?.id)
-    const myLike = await this.likesService.getLikeBySourceIdAndAuthorId(comment?.id, comment.commentatorInfo.userId)
+
+    if (userId) {
+      myLike = await this.likesService.getLikeBySourceIdAndAuthorId(comment?.id, userId)
+    }
 
     res.status(HTTP_STATUSES.OK_200).send({
       ...comment,
