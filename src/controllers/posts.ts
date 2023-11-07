@@ -8,20 +8,24 @@ import {
   ResponseBody
 } from '../types/global'
 
-import { HTTP_STATUSES } from '../constants/global'
+import { HTTP_STATUSES, LikeStatus } from '../constants/global'
 import { IPost } from '../types/posts'
 import { CreatePostDto } from '../dtos/posts/create-post.dto'
 import { UpdatePostDto } from '../dtos/posts/update-post.dto'
 import { PostInputFields } from '../constants/posts'
 import { CommentsRequestParams } from '../types/comments'
 import { CreateCommentDto } from '../dtos/comments/create-comment.dto'
+import { LikesService } from '../services/likes'
+import { JwtService } from '../applications/jwt-service'
 
 export class PostsController {
   constructor(
     protected postsService: PostsService,
     protected blogsService: BlogsService,
     protected commentsService: CommentsService,
-    protected usersService: UsersService
+    protected usersService: UsersService,
+    protected likesService: LikesService,
+    protected jwtService: JwtService
   ) {}
 
   async getPosts(
@@ -148,6 +152,7 @@ export class PostsController {
     res: Response
   ): Promise<undefined> {
     const { postId } = req.params
+    let userId: string | null = null
 
     if (!postId) {
       res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
@@ -161,17 +166,41 @@ export class PostsController {
       return
     }
 
-    const response = await this.commentsService.getCommentsByPostId(
+    const comments = await this.commentsService.getCommentsByPostId(
       req.query,
       existedPost.id
     )
 
-    if (!response) {
+    if (!comments) {
       res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
       return
     }
 
-    res.status(HTTP_STATUSES.OK_200).send(response)
+    if (req.headers.authorization) {
+      const token = req.headers.authorization.split(' ')[1]
+      userId = await this.jwtService.verifyExperationToken(token)
+    }
+
+    const commentsWithInfoAboutLikes = await Promise.all(comments.items.map(async (comment) => {
+      const likesCounts = await this.likesService.getLikesCountsBySourceId(comment.id)
+
+      let likesUserInfo
+
+      if (userId) {
+        likesUserInfo = await this.likesService.getLikeBySourceIdAndAuthorId(comment.id, userId)
+      }
+
+      return {
+        ...comment,
+        likesInfo: {
+          likesCount: likesCounts?.likesCount,
+          dislikesCount: likesCounts?.dislikesCount,
+          myStatus: likesUserInfo ? likesUserInfo.status : LikeStatus.none
+        }
+      }
+    }))
+
+    res.status(HTTP_STATUSES.OK_200).send(commentsWithInfoAboutLikes)
   }
 
   async createComment(
