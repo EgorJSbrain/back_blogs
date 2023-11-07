@@ -73,7 +73,7 @@ export class CommentsRepository {
       if (response._id) {
         comment = await Comment.findOne(
           { _id: response._id },
-          { _id: 0, postId: 0 }
+          { _id: 0, postId: 0, __v: 0, 'commentatorInfo._id': 0 }
         )
       }
 
