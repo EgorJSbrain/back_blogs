@@ -227,17 +227,24 @@ export class PostsController {
       return
     }
 
-    const response = await this.commentsService.createComment(
+    const comment = await this.commentsService.createComment(
       req.body,
       existedUser,
       postId
     )
 
-    if (!response) {
+    if (!comment) {
       res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
       return
     }
 
-    res.status(HTTP_STATUSES.CREATED_201).send(response)
+    res.status(HTTP_STATUSES.CREATED_201).send({
+      ...comment,
+      likesInfo: {
+        dislikesCount: 0,
+        likesCount: 0,
+        myStatus: LikeStatus.none
+      }
+    })
   }
 }

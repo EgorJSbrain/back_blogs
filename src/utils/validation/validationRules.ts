@@ -249,14 +249,14 @@ export const commentContentValidation = body([CommentInputFields.content])
 export const commentLikeValidation = body([CommentInputFields.likeStatus])
   .trim()
   .customSanitizer(async (value: string) => {
-    if (value || !LikeStatuses[value]) {
+    if (!value || !LikeStatuses[value]) {
       return null
     }
 
     return value
   })
   .exists({ checkNull: true })
-  .withMessage(CommentInputFields.likeStatus)
+  .withMessage(commentsErrorMessage.likeInfo)
 
 // auth
 
