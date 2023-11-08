@@ -6,11 +6,10 @@ import { likesService } from './likes'
 import { jwtService } from '../applications/jwt-service'
 
 const commentsRepository = new CommentsRepository()
-export const commentsService = new CommentsService(commentsRepository)
+export const commentsService = new CommentsService(commentsRepository, likesService)
 
 export const commentsController = new CommentsController(
   commentsService,
   usersService,
-  likesService,
   jwtService
 )
