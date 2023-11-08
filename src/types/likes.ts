@@ -1,18 +1,5 @@
-import { LikeStatus } from '../constants/global'
+import { LikeStatus } from '../constants/likes'
 import { LikeDto } from '../dtos/likes/like.dto'
-
-// export class Like {
-//   id: string
-//   constructor(
-//     public sourceId: string,
-//     public authorId: string,
-//     public dislikesCount: number,
-//     public likesCount: number,
-//     public myStatus: LikeStatus
-//   ) {
-//     this.id = Number(new Date()).toString()
-//   }
-// }
 
 export class Like {
   id: string
@@ -32,7 +19,6 @@ export interface ILikes {
   sourceId: string
   dislikesCount: number
   likesCount: number
-  // myStatus: LikeStatus
 }
 
 export interface ILikeInfo {

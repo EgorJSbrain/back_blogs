@@ -1,10 +1,12 @@
 import { LikesRepository } from '../repositories/likes'
 import { ILikes, Like } from '../types/likes'
-import { LikeStatus } from '../constants/global'
+import { LikeStatus } from '../constants/likes'
 import { LikeDto } from '../dtos/likes/like.dto'
 
 export class LikesService {
-  constructor(protected likesRepository: LikesRepository) {}
+  constructor(
+    protected likesRepository: LikesRepository
+  ) {}
 
   async getLikesCountsBySourceId(sourceId: string): Promise<ILikes | null> {
     return await this.likesRepository.getLikesCountsBySourceId(sourceId)
@@ -27,5 +29,35 @@ export class LikesService {
 
   async updateLike(likeId: string, newStatus: LikeStatus): Promise<any> {
     return await this.likesRepository.updateLike(likeId, newStatus)
+  }
+
+  async likeEntity(
+    likeStatus: LikeStatus,
+    sourceId: string,
+    userId: string
+  ): Promise<boolean> {
+    const like = await this.getLikeBySourceIdAndAuthorId(sourceId, userId)
+
+    if (!like && (likeStatus === LikeStatus.like || likeStatus === LikeStatus.dislike)) {
+      const newLike = await this.createLike({
+        sourceId,
+        authorId: userId,
+        status: likeStatus
+      })
+
+      if (!newLike) {
+        return false
+      }
+    }
+
+    if (like && likeStatus !== like.status) {
+      const updatedLike = await this.updateLike(like.id, likeStatus)
+
+      if (!updatedLike) {
+        return false
+      }
+    }
+
+    return true
   }
 }

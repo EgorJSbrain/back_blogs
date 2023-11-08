@@ -1,6 +1,6 @@
 import { Router } from 'express'
 
-import { CommentsValidation, PostsCreateUpdateValidation } from '../utils/validation/inputValidations'
+import { CommentsValidation, LikeValidation, PostsCreateUpdateValidation } from '../utils/validation/inputValidations'
 import { authMiddleware, validationMiddleware } from '../middlewares'
 import { authJWTMiddleware } from '../middlewares/authJWTMiddleware'
 import { postsController } from '../compositions/posts'
@@ -50,4 +50,12 @@ postsRouter.post(
   CommentsValidation(),
   validationMiddleware,
   postsController.createComment.bind(postsController)
+)
+
+postsRouter.put(
+  '/:postId/like-status',
+  authJWTMiddleware,
+  LikeValidation(),
+  validationMiddleware,
+  postsController.likePost.bind(postsController)
 )
