@@ -5,16 +5,19 @@ import {
   RequestWithParamsAndBody
 } from '../types/global'
 
-import { HTTP_STATUSES, LikeStatus } from '../constants/global'
+import { HTTP_STATUSES } from '../constants/global'
+import { LikeStatus } from '../constants/likes'
 import { IComment } from '../types/comments'
 import { UpdateCommentDto } from '../dtos/comments/update-comment.dto'
 import { JwtService } from '../applications/jwt-service'
+import { LikesService } from '../services/likes'
 
 export class CommentsController {
   constructor(
     protected commentsService: CommentsService,
     protected usersService: UsersService,
-    protected jwtService: JwtService
+    protected jwtService: JwtService,
+    protected likesService: LikesService
   ) {}
 
   async getCommentById (req: RequestWithParams<{ id: string }>, res: Response<IComment>): Promise<undefined> {
@@ -110,7 +113,7 @@ export class CommentsController {
       return
     }
 
-    const like = await this.commentsService.likeComment(likeStatus, commentId, existedUser?.accountData.id)
+    const like = await this.likesService.likeEntity(likeStatus, commentId, existedUser?.accountData.id)
 
     if (!like) {
       res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)

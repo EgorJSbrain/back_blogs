@@ -11,5 +11,6 @@ export const commentsService = new CommentsService(commentsRepository, likesServ
 export const commentsController = new CommentsController(
   commentsService,
   usersService,
-  jwtService
+  jwtService,
+  likesService
 )
