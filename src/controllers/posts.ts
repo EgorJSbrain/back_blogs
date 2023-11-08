@@ -166,45 +166,23 @@ export class PostsController {
       return
     }
 
+    if (req.headers.authorization) {
+      const token = req.headers.authorization.split(' ')[1]
+      userId = await this.jwtService.verifyExperationToken(token)
+    }
+
     const comments = await this.commentsService.getCommentsByPostId(
       req.query,
-      existedPost.id
+      existedPost.id,
+      userId
     )
-    console.log("comments:", comments)
 
     if (!comments) {
       res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
       return
     }
 
-    if (req.headers.authorization) {
-      const token = req.headers.authorization.split(' ')[1]
-      userId = await this.jwtService.verifyExperationToken(token)
-    }
-
-    const commentsWithInfoAboutLikes = await Promise.all(comments.items.map(async (comment) => {
-      const likesCounts = await this.likesService.getLikesCountsBySourceId(comment.id)
-
-      let likesUserInfo
-
-      if (userId) {
-        likesUserInfo = await this.likesService.getLikeBySourceIdAndAuthorId(comment.id, userId)
-      }
-
-      return {
-        ...comment,
-        likesInfo: {
-          likesCount: likesCounts?.likesCount,
-          dislikesCount: likesCounts?.dislikesCount,
-          myStatus: likesUserInfo ? likesUserInfo.status : LikeStatus.none
-        }
-      }
-    }))
-
-    res.status(HTTP_STATUSES.OK_200).send({
-      ...comments,
-      items: commentsWithInfoAboutLikes
-    })
+    res.status(HTTP_STATUSES.OK_200).send(comments)
   }
 
   async createComment(
