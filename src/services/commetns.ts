@@ -5,7 +5,7 @@ import { IUser } from '../types/users'
 import { UpdateCommentDto } from '../dtos/comments/update-comment.dto'
 import { Comment as CommentType, IComment } from '../types/comments'
 import { LikesService } from './likes'
-import { LikeStatus } from '../constants/global'
+import { LikeStatus } from '../constants/likes'
 import { Like } from '../types/likes'
 
 export class CommentsService {
@@ -98,36 +98,6 @@ export class CommentsService {
     data: UpdateCommentDto
   ): Promise<IComment | null> {
     return await this.commentsRepository.updateComment(id, data)
-  }
-
-  async likeComment(
-    likeStatus: LikeStatus,
-    commentId: string,
-    userId: string
-  ): Promise<boolean> {
-    const like = await this.likesService.getLikeBySourceIdAndAuthorId(commentId, userId)
-
-    if (!like && (likeStatus === LikeStatus.like || likeStatus === LikeStatus.dislike)) {
-      const newLike = await this.likesService.createLike({
-        sourceId: commentId,
-        authorId: userId,
-        status: likeStatus
-      })
-
-      if (!newLike) {
-        return false
-      }
-    }
-
-    if (like && likeStatus !== like.status) {
-      const updatedLike = await this.likesService.updateLike(like.id, likeStatus)
-
-      if (!updatedLike) {
-        return false
-      }
-    }
-
-    return true
   }
 
   async deleteComment(id: string): Promise<boolean> {

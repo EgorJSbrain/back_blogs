@@ -1,6 +1,6 @@
 import { FilterQuery } from 'mongoose'
 
-import { LikeStatus } from '../constants/global'
+import { LikeStatus } from '../constants/likes'
 import { Like } from '../models'
 import { Like as LikeType, ILikes, LikesRequestParams } from '../types/likes'
 

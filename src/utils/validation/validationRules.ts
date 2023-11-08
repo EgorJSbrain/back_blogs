@@ -35,7 +35,6 @@ import {
 import {
   DEFAULT_PAGE_NUMBER,
   DEFAULT_PAGE_SIZE,
-  LikeStatuses,
   SortDirections
 } from '../../constants/global'
 import {
@@ -59,6 +58,7 @@ import {
 } from '../../constants/comments'
 import { usersService } from '../../compositions/users'
 import { blogsService } from '../../compositions/blogs'
+import { LikeStatuses, LikesInputFields, likesErrorMessage } from '../../constants/likes'
 
 // params
 
@@ -246,18 +246,6 @@ export const commentContentValidation = body([CommentInputFields.content])
   .isLength({ min: COMMENT_CONTENT_MIN_LENGTH, max: COMMENT_CONTENT_MAX_LENGTH })
   .withMessage(commentsErrorMessage.contentLength)
 
-export const commentLikeValidation = body([CommentInputFields.likeStatus])
-  .trim()
-  .customSanitizer(async (value: string) => {
-    if (!value || !LikeStatuses[value]) {
-      return null
-    }
-
-    return value
-  })
-  .exists({ checkNull: true })
-  .withMessage(commentsErrorMessage.likeInfo)
-
 // auth
 
 export const confirmationCodeValidation = body([UserInputFields.code])
@@ -362,3 +350,15 @@ export const checkRecoveryCodeValidation = body([UserInputFields.recoveryCode])
   })
   .exists({ checkNull: true })
   .withMessage(usersErrorMessage.recoveryPasswordInvalid)
+
+export const likeValidation = body([LikesInputFields.likeStatus])
+  .trim()
+  .customSanitizer(async (value: string) => {
+    if (!value || !LikeStatuses[value]) {
+      return null
+    }
+
+    return value
+  })
+  .exists({ checkNull: true })
+  .withMessage(likesErrorMessage.likeInfo)

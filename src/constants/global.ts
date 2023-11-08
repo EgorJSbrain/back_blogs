@@ -28,15 +28,3 @@ export enum SortDirections {
   asc = 'asc',
   desc = 'desc'
 }
-
-export enum LikeStatus {
-  like = 'Like',
-  dislike = 'Dislike',
-  none = 'None',
-}
-
-export const LikeStatuses: Record<string, LikeStatus> = {
-  Like: LikeStatus.like,
-  Dislike: LikeStatus.dislike,
-  None: LikeStatus.none
-}

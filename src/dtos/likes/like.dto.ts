@@ -1,4 +1,4 @@
-import { LikeStatus } from '../../constants/global'
+import { LikeStatus } from '../../constants/likes'
 
 export interface LikeDto {
   readonly sourceId: string

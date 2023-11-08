@@ -8,7 +8,8 @@ import {
   ResponseBody
 } from '../types/global'
 
-import { HTTP_STATUSES, LikeStatus } from '../constants/global'
+import { HTTP_STATUSES } from '../constants/global'
+import { LikeStatus } from '../constants/likes'
 import { IPost } from '../types/posts'
 import { CreatePostDto } from '../dtos/posts/create-post.dto'
 import { UpdatePostDto } from '../dtos/posts/update-post.dto'
@@ -233,5 +234,40 @@ export class PostsController {
     }
 
     res.status(HTTP_STATUSES.CREATED_201).send(comment)
+  }
+
+  async likePost (
+    req: RequestWithParamsAndBody<{ postId: string }, { likeStatus: LikeStatus }>,
+    res: Response
+  ): Promise<undefined> {
+    const { postId } = req.params
+    const { likeStatus } = req.body
+
+    if (!postId) {
+      res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
+      return
+    }
+
+    const existedUser = await this.usersService.getUserById(req.userId)
+    const existedPost = await this.postsService.getPostById(postId)
+
+    if (!existedUser) {
+      res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+      return
+    }
+
+    if (!existedPost) {
+      res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+      return
+    }
+
+    const like = await this.likesService.likeEntity(likeStatus, postId, existedUser?.accountData.id)
+
+    if (!like) {
+      res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
+      return
+    }
+
+    res.sendStatus(HTTP_STATUSES.NO_CONTENT_204)
   }
 }
