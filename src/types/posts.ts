@@ -1,4 +1,5 @@
 import { CreatePostDto } from '../dtos/posts/create-post.dto'
+import { ILikeInfo } from './likes'
 
 export class Post {
   id: string
@@ -29,4 +30,5 @@ export interface IPost {
   shortDescription: string
   blogName: string
   createdAt: string
+  likesInfo?: ILikeInfo
 }
