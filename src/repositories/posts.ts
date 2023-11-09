@@ -29,7 +29,7 @@ export class PostsRepository {
       const pagesCount = Math.ceil(count / pageSizeNumber)
 
       const posts = await Post
-        .find({}, { projection: { _id: 0, __v: 0 } })
+        .find({}, { _id: 0, __v: 0 })
         .sort(sort)
         .skip(skip)
         .limit(pageSizeNumber)
@@ -49,7 +49,7 @@ export class PostsRepository {
 
   async getPostById(id: string): Promise<IPost | null> {
     try {
-      const post = await Post.findOne({ id }, { projection: { _id: 0, __v: 0 } })
+      const post = await Post.findOne({ id }, { _id: 0, __v: 0 })
 
       return post
     } catch {
@@ -66,7 +66,7 @@ export class PostsRepository {
       if (response._id) {
         post = await Post.findOne(
           { _id: response._id },
-          { projection: { _id: 0, __v: 0 } }
+          { _id: 0, __v: 0 }
         )
       }
 
@@ -82,7 +82,7 @@ export class PostsRepository {
       const response = await Post.updateOne({ id }, { $set: data })
 
       if (response.modifiedCount) {
-        post = await Post.findOne({ id }, { projection: { _id: 0, __v: 0 } })
+        post = await Post.findOne({ id }, { _id: 0, __v: 0 })
       }
 
       return post
@@ -126,7 +126,7 @@ export class PostsRepository {
       }
 
       const posts = await Post
-        .find({ blogId }, { projection: { _id: 0, __v: 0 } })
+        .find({ blogId }, { _id: 0, __v: 0 })
         .sort(sort)
         .skip(skip)
         .limit(pageSizeNumber)
@@ -153,7 +153,7 @@ export class PostsRepository {
       if (response._id) {
         post = await Post.findOne(
           { _id: response._id },
-          { projection: { _id: 0, __v: 0 } }
+          { _id: 0, __v: 0 }
         ).lean()
       }
 

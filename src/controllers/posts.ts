@@ -1,5 +1,11 @@
 import { Response } from 'express'
-import { BlogsService, CommentsService, PostsService, UsersService } from '../services'
+import {
+  BlogsService,
+  CommentsService,
+  PostsService,
+  UsersService,
+  LikesService
+} from '../services'
 import {
   RequestParams,
   RequestWithBody,
@@ -8,16 +14,17 @@ import {
   ResponseBody
 } from '../types/global'
 
+import { JwtService } from '../applications/jwt-service'
+
+import { PostInputFields } from '../constants/posts'
 import { HTTP_STATUSES } from '../constants/global'
 import { LikeStatus } from '../constants/likes'
+
 import { IPost } from '../types/posts'
 import { CreatePostDto } from '../dtos/posts/create-post.dto'
 import { UpdatePostDto } from '../dtos/posts/update-post.dto'
-import { PostInputFields } from '../constants/posts'
-import { CommentsRequestParams } from '../types/comments'
 import { CreateCommentDto } from '../dtos/comments/create-comment.dto'
-import { LikesService } from '../services/likes'
-import { JwtService } from '../applications/jwt-service'
+import { CommentsRequestParams } from '../types/comments'
 
 export class PostsController {
   constructor(
@@ -33,7 +40,14 @@ export class PostsController {
     req: RequestWithParams<RequestParams>,
     res: Response<ResponseBody<IPost>>
   ): Promise<undefined> {
-    const posts = await this.postsService.getPosts(req.query)
+    let userId: string | null = null
+
+    if (req.headers.authorization) {
+      const token = req.headers.authorization.split(' ')[1]
+      userId = await this.jwtService.verifyExperationToken(token)
+    }
+
+    const posts = await this.postsService.getPosts(req.query, userId)
 
     if (!posts) {
       res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
@@ -48,13 +62,19 @@ export class PostsController {
     res: Response<IPost>
   ): Promise<undefined> {
     const { id } = req.params
+    let userId: string | null = null
+
+    if (req.headers.authorization) {
+      const token = req.headers.authorization.split(' ')[1]
+      userId = await this.jwtService.verifyExperationToken(token)
+    }
 
     if (!id) {
       res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
       return
     }
 
-    const blog = await this.postsService.getPostById(id)
+    const blog = await this.postsService.getPostById(id, userId)
 
     if (!blog) {
       res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
