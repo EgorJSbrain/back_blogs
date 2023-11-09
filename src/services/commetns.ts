@@ -62,10 +62,10 @@ export class CommentsService {
       return null
     }
 
-    const likesCounts = await this.likesService.getLikesCountsBySourceId(comment?.id)
+    const likesCounts = await this.likesService.getLikesCountsBySourceId(comment.id)
 
     if (userId) {
-      myLike = await this.likesService.getLikeBySourceIdAndAuthorId(comment?.id, userId)
+      myLike = await this.likesService.getLikeBySourceIdAndAuthorId(comment.id, userId)
     }
 
     return {
