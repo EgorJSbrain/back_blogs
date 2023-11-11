@@ -281,7 +281,12 @@ export class PostsController {
       return
     }
 
-    const like = await this.likesService.likeEntity(likeStatus, postId, existedUser?.accountData.id)
+    const like = await this.likesService.likeEntity(
+      likeStatus,
+      postId,
+      existedUser?.accountData.id,
+      existedUser?.accountData.login
+    )
 
     if (!like) {
       res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)

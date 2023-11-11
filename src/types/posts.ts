@@ -9,6 +9,7 @@ export class Post {
   content: string
   shortDescription: string
   blogName: string
+  extendedLikesInfo?: IExtendedLikesInfo
 
   constructor(data: CreatePostDto, blogName: string) {
     const { blogId, title, content, shortDescription } = data

@@ -82,8 +82,28 @@ export class PostsService {
   }
 
   async createPost(data: CreatePostDto, blog: IBlog): Promise<IPost | null> {
-    const post = new Post(data, blog?.name ?? '')
-    return await this.postsRepository.createPost(post)
+    const createdPost = new Post(data, blog?.name ?? '')
+    const post = await this.postsRepository.createPost(createdPost)
+
+    if (!post) {
+      return null
+    }
+
+    return {
+      id: post.id,
+      createdAt: post.createdAt,
+      blogId: post.blogId,
+      title: post.title,
+      content: post.content,
+      shortDescription: post.shortDescription,
+      blogName: post.blogName,
+      extendedLikesInfo: {
+        dislikesCount: 0,
+        likesCount: 0,
+        myStatus: LikeStatus.none,
+        newestLikes: []
+      }
+    }
   }
 
   async updatePost(id: string, data: UpdatePostDto): Promise<IPost | null> {
