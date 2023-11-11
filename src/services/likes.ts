@@ -1,5 +1,5 @@
 import { LikesRepository } from '../repositories/likes'
-import { ILikes, Like } from '../types/likes'
+import { ILikesInfo, Like } from '../types/likes'
 import { LikeStatus } from '../constants/likes'
 import { LikeDto } from '../dtos/likes/like.dto'
 
@@ -8,7 +8,7 @@ export class LikesService {
     protected likesRepository: LikesRepository
   ) {}
 
-  async getLikesCountsBySourceId(sourceId: string): Promise<ILikes | null> {
+  async getLikesCountsBySourceId(sourceId: string): Promise<ILikesInfo | null> {
     return await this.likesRepository.getLikesCountsBySourceId(sourceId)
   }
 
@@ -20,6 +20,18 @@ export class LikesService {
       sourceId,
       authorId
     })
+  }
+
+  async getSegmentOfLikesByParams(
+    sourceId: string,
+    limit: number,
+    authorId?: string
+  ): Promise<Like[]> {
+    return await this.likesRepository.getSegmentOfLikesByParams(
+      sourceId,
+      limit,
+      authorId
+    ) || []
   }
 
   async createLike(data: LikeDto): Promise<boolean> {

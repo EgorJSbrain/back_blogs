@@ -2,6 +2,7 @@ import { PostsRepository } from '../repositories'
 import { LikesService } from './likes'
 
 import { LikeStatus } from '../constants/likes'
+import { LENGTH_OF_NEWEST_LIKES } from '../constants/posts'
 
 import { CreatePostDto } from '../dtos/posts/create-post.dto'
 import { UpdatePostDto } from '../dtos/posts/update-post.dto'
@@ -57,6 +58,7 @@ export class PostsService {
     }
 
     const likesCounts = await this.likesService.getLikesCountsBySourceId(post.id)
+    const newestLikes = await this.likesService.getSegmentOfLikesByParams(post.id, LENGTH_OF_NEWEST_LIKES)
 
     if (userId) {
       myLike = await this.likesService.getLikeBySourceIdAndAuthorId(post.id, userId)
@@ -70,10 +72,11 @@ export class PostsService {
       shortDescription: post.shortDescription,
       blogName: post.blogName,
       createdAt: post.createdAt,
-      likesInfo: {
+      extendedLikesInfo: {
         likesCount: likesCounts?.likesCount ?? 0,
         dislikesCount: likesCounts?.dislikesCount ?? 0,
-        myStatus: myLike?.status ?? LikeStatus.none
+        myStatus: myLike?.status ?? LikeStatus.none,
+        newestLikes
       }
     }
   }

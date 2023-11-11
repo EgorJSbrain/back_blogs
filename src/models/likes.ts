@@ -6,7 +6,8 @@ const LikeSchema = new Schema<LikeType>({
   id: { type: String, required: true },
   authorId: { type: String, required: true },
   sourceId: { type: String, required: true },
-  status: { type: String, enum: LikeStatus, required: true }
+  status: { type: String, enum: LikeStatus, required: true },
+  createdAt: { type: String, required: true }
 })
 
 export const Like = model('likes', LikeSchema)
