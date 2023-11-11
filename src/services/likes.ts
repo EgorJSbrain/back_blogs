@@ -46,7 +46,8 @@ export class LikesService {
   async likeEntity(
     likeStatus: LikeStatus,
     sourceId: string,
-    userId: string
+    userId: string,
+    userLogin: string
   ): Promise<boolean> {
     const like = await this.getLikeBySourceIdAndAuthorId(sourceId, userId)
 
@@ -54,7 +55,8 @@ export class LikesService {
       const newLike = await this.createLike({
         sourceId,
         authorId: userId,
-        status: likeStatus
+        status: likeStatus,
+        login: userLogin
       })
 
       if (!newLike) {
