@@ -2,15 +2,21 @@ import { FilterQuery } from 'mongoose'
 
 import { LikeStatus } from '../constants/likes'
 import { Like } from '../models'
-import { Like as LikeType, ILikes, LikesRequestParams } from '../types/likes'
+import { Like as LikeType, ILikesInfo, LikesRequestParams } from '../types/likes'
 
 export class LikesRepository {
-  async getLikesCountsBySourceId(sourceId: string): Promise<ILikes | null> {
+  async getLikesCountsBySourceId(sourceId: string): Promise<ILikesInfo | null> {
     try {
-      const filter: FilterQuery<ILikes> = { sourceId }
+      const filter: FilterQuery<ILikesInfo> = { sourceId }
 
-      const likesCount = await Like.countDocuments({ ...filter, status: 'Like' })
-      const dislikesCount = await Like.countDocuments({ ...filter, status: 'Dislike' })
+      const likesCount = await Like.countDocuments({
+        ...filter,
+        status: 'Like'
+      })
+      const dislikesCount = await Like.countDocuments({
+        ...filter,
+        status: 'Dislike'
+      })
 
       return {
         sourceId,
@@ -22,11 +28,40 @@ export class LikesRepository {
     }
   }
 
-  async getLikeBySourceIdAndAuthorId(params: LikesRequestParams): Promise<LikeType | null> {
+  async getSegmentOfLikesByParams(
+    sourceId: string,
+    limit: number,
+    authorId?: string
+  ): Promise<LikeType[] | null> {
     try {
-      const like = await Like
-        .findOne({ sourceId: params.sourceId, authorId: params.authorId }, { projection: { _id: 0 } })
-        .lean()
+      let filter: FilterQuery<ILikesInfo> = { sourceId }
+
+      if (authorId) {
+        filter = {
+          $and: [{ sourceId }, { authorId }]
+        }
+      }
+
+      const count = await Like.countDocuments(filter)
+      const newLikes = await Like
+        .find(filter, { _id: 0, __v: 0 })
+        .sort({ createdAt: 1 })
+        .skip(count - limit)
+
+      return newLikes
+    } catch {
+      return null
+    }
+  }
+
+  async getLikeBySourceIdAndAuthorId(
+    params: LikesRequestParams
+  ): Promise<LikeType | null> {
+    try {
+      const like = await Like.findOne(
+        { sourceId: params.sourceId, authorId: params.authorId },
+        { _id: 0 }
+      ).lean()
 
       if (!like) {
         return null
