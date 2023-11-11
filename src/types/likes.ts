@@ -5,15 +5,17 @@ export class Like {
   id: string
   sourceId: string
   authorId: string
+  login: string
   status: LikeStatus
-  createdAt: string
+  addedAt: string
 
   constructor(data: LikeDto) {
     this.id = Number(new Date()).toString()
     this.sourceId = data.sourceId
     this.authorId = data.authorId
     this.status = data.status
-    this.createdAt = new Date().toISOString()
+    this.login = data.login
+    this.addedAt = new Date().toISOString()
   }
 }
 
