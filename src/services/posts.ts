@@ -2,6 +2,7 @@ import { PostsRepository } from '../repositories'
 import { LikesService } from './likes'
 
 import { LikeStatus } from '../constants/likes'
+import { LENGTH_OF_NEWEST_LIKES } from '../constants/posts'
 
 import { CreatePostDto } from '../dtos/posts/create-post.dto'
 import { UpdatePostDto } from '../dtos/posts/update-post.dto'
@@ -9,8 +10,6 @@ import { RequestParams, ResponseBody } from '../types/global'
 import { IBlog } from '../types/blogs'
 import { IPost, Post } from '../types/posts'
 import { Like } from '../types/likes'
-
-const LENGTH_OF_NEWEST_LIKES = 3
 
 export class PostsService {
   constructor(

@@ -26,12 +26,12 @@ export class LikesService {
     sourceId: string,
     limit: number,
     authorId?: string
-  ): Promise<any> {
+  ): Promise<Like[]> {
     return await this.likesRepository.getSegmentOfLikesByParams(
       sourceId,
       limit,
       authorId
-    )
+    ) || []
   }
 
   async createLike(data: LikeDto): Promise<boolean> {

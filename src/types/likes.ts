@@ -6,12 +6,14 @@ export class Like {
   sourceId: string
   authorId: string
   status: LikeStatus
+  createdAt: string
 
   constructor(data: LikeDto) {
     this.id = Number(new Date()).toString()
     this.sourceId = data.sourceId
     this.authorId = data.authorId
     this.status = data.status
+    this.createdAt = new Date().toISOString()
   }
 }
 
@@ -28,7 +30,7 @@ export interface ILikeInfo {
 }
 
 export interface IExtendedLikesInfo extends ILikeInfo {
-  newestLikes: ILike[]
+  newestLikes: Like[]
 }
 
 export interface ILike {

@@ -5,6 +5,7 @@ export const SHORT_DESCRIPTION_MAX_LENGTH = 100
 export const CONTENT_MIN_LENGTH = 1
 export const CONTENT_MAX_LENGTH = 1000
 export const BLOG_ID_MIN_LENGTH = 5
+export const LENGTH_OF_NEWEST_LIKES = 3
 
 export enum PostInputFields {
   title = 'title',
