@@ -10,6 +10,8 @@ import { IBlog } from '../types/blogs'
 import { IPost, Post } from '../types/posts'
 import { Like } from '../types/likes'
 
+const LENGTH_OF_NEWEST_LIKES = 3
+
 export class PostsService {
   constructor(
     protected postsRepository: PostsRepository,
@@ -57,6 +59,7 @@ export class PostsService {
     }
 
     const likesCounts = await this.likesService.getLikesCountsBySourceId(post.id)
+    const newestLikes = await this.likesService.getSegmentOfLikesByParams(post.id, LENGTH_OF_NEWEST_LIKES)
 
     if (userId) {
       myLike = await this.likesService.getLikeBySourceIdAndAuthorId(post.id, userId)
@@ -70,10 +73,11 @@ export class PostsService {
       shortDescription: post.shortDescription,
       blogName: post.blogName,
       createdAt: post.createdAt,
-      likesInfo: {
+      extendedLikesInfo: {
         likesCount: likesCounts?.likesCount ?? 0,
         dislikesCount: likesCounts?.dislikesCount ?? 0,
-        myStatus: myLike?.status ?? LikeStatus.none
+        myStatus: myLike?.status ?? LikeStatus.none,
+        newestLikes
       }
     }
   }

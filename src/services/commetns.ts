@@ -3,7 +3,7 @@ import { RequestParams, ResponseBody } from '../types/global'
 import { CreateCommentDto } from '../dtos/comments/create-comment.dto'
 import { IUser } from '../types/users'
 import { UpdateCommentDto } from '../dtos/comments/update-comment.dto'
-import { Comment as CommentType, IComment } from '../types/comments'
+import { Comment, IComment } from '../types/comments'
 import { LikesService } from './likes'
 import { LikeStatus } from '../constants/likes'
 import { Like } from '../types/likes'
@@ -18,7 +18,7 @@ export class CommentsService {
     params: RequestParams,
     postId: string,
     userId: string | null
-  ): Promise<ResponseBody<CommentType> | null> {
+  ): Promise<ResponseBody<Comment> | null> {
     const comments = await this.commentsRepository.getCommentsByPostId(
       params,
       postId
@@ -82,8 +82,8 @@ export class CommentsService {
     data: CreateCommentDto,
     user: IUser,
     postId: string
-  ): Promise<CommentType | null> {
-    const createdComment = new CommentType(
+  ): Promise<Comment | null> {
+    const createdComment = new Comment(
       data.content,
       user.accountData.id,
       user.accountData.login,

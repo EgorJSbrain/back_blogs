@@ -15,7 +15,7 @@ export class Like {
   }
 }
 
-export interface ILikes {
+export interface ILikesInfo {
   sourceId: string
   dislikesCount: number
   likesCount: number
@@ -25,6 +25,10 @@ export interface ILikeInfo {
   dislikesCount: number
   likesCount: number
   myStatus: LikeStatus
+}
+
+export interface IExtendedLikesInfo extends ILikeInfo {
+  newestLikes: ILike[]
 }
 
 export interface ILike {
