@@ -54,7 +54,8 @@ export class LikesRepository {
         .sort({ createdAt: 1 })
         .skip(countForSkiping)
 
-      const sortedNewsetLikes = newLikes.sort((a, b) => Number(a.createdAt) - Number(b.createdAt))
+      const sortedNewsetLikes = newLikes
+        .sort((a, b) => Number(a.createdAt) - Number(b.createdAt))
 
       return sortedNewsetLikes
     } catch {
