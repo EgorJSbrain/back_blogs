@@ -37,7 +37,7 @@ export class PostsService {
 
       return {
         ...post,
-        likesInfo: {
+        extendedLikesInfo: {
           likesCount: likesCounts?.likesCount ?? 0,
           dislikesCount: likesCounts?.dislikesCount ?? 0,
           myStatus: likesUserInfo ? likesUserInfo.status : LikeStatus.none,
