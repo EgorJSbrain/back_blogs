@@ -30,7 +30,7 @@ export class PostsRepository {
       const pageSizeNumber = Number(pageSize)
       const pageNumberNum = Number(pageNumber)
       const skip = (pageNumberNum - 1) * pageSizeNumber
-      const count = await Post.estimatedDocumentCount()
+      const count = await Post.countDocuments(filter)
       const pagesCount = Math.ceil(count / pageSizeNumber)
 
       const posts = await Post
