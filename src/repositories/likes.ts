@@ -36,13 +36,13 @@ export class LikesRepository {
     try {
       let filter: FilterQuery<ILikesInfo> = {
         sourceId,
-        $or: [{ status: LikeStatus.dislike }, { status: LikeStatus.like }]
+        status: LikeStatus.like
       }
 
       if (authorId) {
         filter = {
           $and: [{ sourceId }, { authorId }],
-          $or: [{ status: LikeStatus.dislike }, { status: LikeStatus.like }]
+          status: LikeStatus.like
         }
       }
 
@@ -53,7 +53,7 @@ export class LikesRepository {
         .find(filter, { _id: 0, __v: 0 })
         .sort({ createdAt: 1 })
         .skip(countForSkiping)
-        // .sort({ createdAt: -1 })
+        .sort({ createdAt: -1 })
 
       return newLikes
     } catch {
