@@ -1,4 +1,4 @@
-import { BlogsRepository, PostsRepository } from '../repositories'
+import { BlogsRepository } from '../repositories'
 
 import { CreateBlogDto } from '../dtos/blogs/create-blog.dto'
 import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
@@ -6,11 +6,12 @@ import { Blog, IBlog } from '../types/blogs'
 import { RequestParams, ResponseBody } from '../types/global'
 import { CommentsRequestParams } from '../types/comments'
 import { IPost } from '../types/posts'
+import { PostsService } from './posts'
 
 export class BlogsService {
   constructor(
     protected blogsRepository: BlogsRepository,
-    protected postsRepository: PostsRepository
+    protected postsService: PostsService
   ) {}
 
   async getBlogs(params: CommentsRequestParams): Promise<ResponseBody<IBlog> | null> {
@@ -37,6 +38,6 @@ export class BlogsService {
   }
 
   async getPostsByBlogId(blogId: string, params: RequestParams): Promise<ResponseBody<IPost> | null> {
-    return await this.postsRepository.getPostsByBlogId(blogId, params)
+    return await this.postsService.getPosts(params, blogId)
   }
 }
