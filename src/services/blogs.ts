@@ -3,10 +3,9 @@ import { BlogsRepository, PostsRepository } from '../repositories'
 import { CreateBlogDto } from '../dtos/blogs/create-blog.dto'
 import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
 import { Blog, IBlog } from '../types/blogs'
-import { CreatePostDto } from '../dtos/posts/create-post.dto'
 import { RequestParams, ResponseBody } from '../types/global'
 import { CommentsRequestParams } from '../types/comments'
-import { IPost, Post } from '../types/posts'
+import { IPost } from '../types/posts'
 
 export class BlogsService {
   constructor(
@@ -39,17 +38,5 @@ export class BlogsService {
 
   async getPostsByBlogId(blogId: string, params: RequestParams): Promise<ResponseBody<IPost> | null> {
     return await this.postsRepository.getPostsByBlogId(blogId, params)
-  }
-
-  async createPostByBlogId(data: CreatePostDto, blog: IBlog): Promise<IPost | null> {
-    const createdPost = new Post(
-      {
-        ...data,
-        blogId: blog.id
-      },
-      blog?.name ?? ''
-    )
-
-    return await this.postsRepository.createPostByBlogId(createdPost)
   }
 }
