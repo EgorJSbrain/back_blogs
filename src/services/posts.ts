@@ -87,7 +87,7 @@ export class PostsService {
   }
 
   async createPost(data: CreatePostDto, blog: IBlog): Promise<IPost | null> {
-    const createdPost = new Post(data, blog?.name ?? '')
+    const createdPost = new Post(data, blog.name, blog.id)
     const post = await this.postsRepository.createPost(createdPost)
 
     if (!post) {
