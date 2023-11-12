@@ -7,7 +7,7 @@ export class Like {
   authorId: string
   login: string
   status: LikeStatus
-  addedAt: string
+  createdAt: string
 
   constructor(data: LikeDto) {
     this.id = Number(new Date()).toString()
@@ -15,7 +15,7 @@ export class Like {
     this.authorId = data.authorId
     this.status = data.status
     this.login = data.login
-    this.addedAt = new Date().toISOString()
+    this.createdAt = new Date().toISOString()
   }
 }
 
@@ -31,8 +31,18 @@ export interface ILikeInfo {
   myStatus: LikeStatus
 }
 
+export interface ILikeForPost {
+  login: string
+  userId: string
+  addedAt: string
+}
+
 export interface IExtendedLikesInfo extends ILikeInfo {
   newestLikes: Like[]
+}
+
+export interface IExtendedLikesForPostInfo extends ILikeInfo {
+  newestLikes: ILikeForPost[]
 }
 
 export interface ILike {

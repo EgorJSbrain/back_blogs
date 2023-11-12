@@ -59,6 +59,11 @@ export class PostsService {
 
     const likesCounts = await this.likesService.getLikesCountsBySourceId(post.id)
     const newestLikes = await this.likesService.getSegmentOfLikesByParams(post.id, LENGTH_OF_NEWEST_LIKES)
+    const updatedNewestLikes = newestLikes.map(newestLike => ({
+      addedAt: newestLike.createdAt,
+      userId: newestLike.authorId,
+      login: newestLike.login
+    }))
 
     if (userId) {
       myLike = await this.likesService.getLikeBySourceIdAndAuthorId(post.id, userId)
@@ -76,7 +81,7 @@ export class PostsService {
         likesCount: likesCounts?.likesCount ?? 0,
         dislikesCount: likesCounts?.dislikesCount ?? 0,
         myStatus: myLike?.status ?? LikeStatus.none,
-        newestLikes
+        newestLikes: updatedNewestLikes
       }
     }
   }

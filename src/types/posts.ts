@@ -1,5 +1,5 @@
 import { CreatePostDto } from '../dtos/posts/create-post.dto'
-import { IExtendedLikesInfo } from './likes'
+import { IExtendedLikesForPostInfo } from './likes'
 
 export class Post {
   id: string
@@ -9,7 +9,7 @@ export class Post {
   content: string
   shortDescription: string
   blogName: string
-  extendedLikesInfo?: IExtendedLikesInfo
+  extendedLikesInfo?: IExtendedLikesForPostInfo
 
   constructor(data: CreatePostDto, blogName: string) {
     const { blogId, title, content, shortDescription } = data
@@ -31,5 +31,5 @@ export interface IPost {
   shortDescription: string
   blogName: string
   createdAt: string
-  extendedLikesInfo?: IExtendedLikesInfo
+  extendedLikesInfo?: IExtendedLikesForPostInfo
 }
