@@ -9,7 +9,7 @@ import { jwtService } from '../applications/jwt-service'
 export const postsRepository = new PostsRepository()
 export const blogsRepository = new BlogsRepository()
 export const postsService = new PostsService(postsRepository, likesService)
-export const blogsService = new BlogsService(blogsRepository, postsRepository)
+export const blogsService = new BlogsService(blogsRepository, postsService)
 
 export const postsController = new PostsController(
   postsService,

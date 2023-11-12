@@ -14,7 +14,9 @@ export class BlogsService {
     protected postsService: PostsService
   ) {}
 
-  async getBlogs(params: CommentsRequestParams): Promise<ResponseBody<IBlog> | null> {
+  async getBlogs(
+    params: CommentsRequestParams
+  ): Promise<ResponseBody<IBlog> | null> {
     return await this.blogsRepository.getBlogs(params)
   }
 
@@ -37,7 +39,11 @@ export class BlogsService {
     return await this.blogsRepository.deleteBlog(id)
   }
 
-  async getPostsByBlogId(blogId: string, params: RequestParams): Promise<ResponseBody<IPost> | null> {
-    return await this.postsService.getPosts(params, blogId)
+  async getPostsByBlogId(
+    blogId: string,
+    params: RequestParams,
+    userId: string | null
+  ): Promise<ResponseBody<IPost> | null> {
+    return await this.postsService.getPosts(params, userId, blogId)
   }
 }
