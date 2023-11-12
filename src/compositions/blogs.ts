@@ -1,9 +1,9 @@
 import { BlogsRepository } from '../repositories'
 import { BlogsController } from '../controllers/blogs'
 import { BlogsService } from '../services'
-import { postsRepository, postsService } from './posts'
+import { postsService } from './posts'
 
 const blogsRepository = new BlogsRepository()
-export const blogsService = new BlogsService(blogsRepository, postsRepository)
+export const blogsService = new BlogsService(blogsRepository, postsService)
 
 export const blogsController = new BlogsController(blogsService, postsService)

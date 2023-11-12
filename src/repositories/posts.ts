@@ -1,4 +1,4 @@
-import { SortOrder } from 'mongoose'
+import { FilterQuery, SortOrder } from 'mongoose'
 import { SortDirections } from '../constants/global'
 import { Post } from '../models'
 
@@ -7,7 +7,7 @@ import { RequestParams, ResponseBody } from '../types/global'
 import { UpdatePostDto } from '../dtos/posts/update-post.dto'
 
 export class PostsRepository {
-  async getPosts(params: RequestParams): Promise<ResponseBody<IPost> | null> {
+  async getPosts(params: RequestParams, blogId?: string): Promise<ResponseBody<IPost> | null> {
     try {
       const {
         sortBy = 'createdAt',
@@ -17,6 +17,11 @@ export class PostsRepository {
       } = params
 
       const sort: Record<string, SortOrder> = {}
+      let filter: FilterQuery<IPost> = {}
+
+      if (blogId) {
+        filter = { blogId }
+      }
 
       if (sortBy && sortDirection) {
         sort[sortBy] = sortDirection === SortDirections.asc ? 1 : -1
@@ -29,7 +34,7 @@ export class PostsRepository {
       const pagesCount = Math.ceil(count / pageSizeNumber)
 
       const posts = await Post
-        .find({}, { _id: 0, __v: 0 })
+        .find(filter, { _id: 0, __v: 0 })
         .sort(sort)
         .skip(skip)
         .limit(pageSizeNumber)
