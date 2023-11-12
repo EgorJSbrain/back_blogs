@@ -47,7 +47,7 @@ export class LikesRepository {
 
       const newLikes = await Like
         .find(filter, { _id: 0, __v: 0 })
-        .sort({ addedAt: 1 })
+        .sort({ createdAt: 1 })
         .skip(countForSkiping)
 
       return newLikes

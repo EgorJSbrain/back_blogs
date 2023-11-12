@@ -1,5 +1,5 @@
 import { Response } from 'express'
-import { BlogsService } from '../services'
+import { BlogsService, PostsService } from '../services'
 import {
   RequestParams,
   RequestWithBody,
@@ -18,7 +18,10 @@ import { IPost } from '../types/posts'
 import { CreatePostDto } from '../dtos/posts/create-post.dto'
 
 export class BlogsController {
-  constructor(protected blogsService: BlogsService) {}
+  constructor(
+    protected blogsService: BlogsService,
+    protected postsService: PostsService
+  ) {}
 
   async getBlogs(
     req: RequestWithParams<BlogsRequestParams>,
@@ -185,7 +188,7 @@ export class BlogsController {
       return
     }
 
-    const post = await this.blogsService.createPostByBlogId(req.body, existedBlog)
+    const post = await this.postsService.createPost(req.body, existedBlog)
 
     if (!post) {
       res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
