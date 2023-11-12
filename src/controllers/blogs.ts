@@ -184,6 +184,7 @@ export class BlogsController {
     const existedBlog = await this.blogsService.getBlogById(blogId)
 
     if (!existedBlog) {
+      console.log('1')
       res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
       return
     }
@@ -191,6 +192,7 @@ export class BlogsController {
     const post = await this.postsService.createPost(req.body, existedBlog)
 
     if (!post) {
+      console.log('2')
       res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
       return
     }

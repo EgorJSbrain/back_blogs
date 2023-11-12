@@ -11,8 +11,8 @@ export class Post {
   blogName: string
   extendedLikesInfo?: IExtendedLikesForPostInfo
 
-  constructor(data: CreatePostDto, blogName: string) {
-    const { blogId, title, content, shortDescription } = data
+  constructor(data: CreatePostDto, blogName: string, blogId: string) {
+    const { title, content, shortDescription } = data
     this.id = Number(new Date()).toString()
     this.createdAt = new Date().toISOString()
     this.blogId = blogId
