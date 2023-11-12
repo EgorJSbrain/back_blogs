@@ -18,8 +18,8 @@ export class PostsService {
     protected likesService: LikesService
   ) {}
 
-  async getPosts(params: RequestParams, userId: string | null): Promise<ResponseBody<IPost> | null> {
-    const posts = await this.postsRepository.getPosts(params)
+  async getPosts(params: RequestParams, userId: string | null, blogId?: string): Promise<ResponseBody<IPost> | null> {
+    const posts = await this.postsRepository.getPosts(params, blogId)
 
     if (!posts) {
       return null

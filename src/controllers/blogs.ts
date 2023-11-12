@@ -16,11 +16,13 @@ import { UpdateBlogDto } from '../dtos/blogs/update-blog.dto'
 import { BlogInputFields } from '../constants/blogs'
 import { IPost } from '../types/posts'
 import { CreatePostDto } from '../dtos/posts/create-post.dto'
+import { JwtService } from '../applications/jwt-service'
 
 export class BlogsController {
   constructor(
     protected blogsService: BlogsService,
-    protected postsService: PostsService
+    protected postsService: PostsService,
+    protected jwtService: JwtService
   ) {}
 
   async getBlogs(
@@ -148,6 +150,7 @@ export class BlogsController {
     res: Response<ResponseBody<IPost>>
   ): Promise<undefined> {
     const { blogId } = req.params
+    let userId: string | null = null
 
     if (!blogId) {
       res.sendStatus(HTTP_STATUSES.BAD_REQUEST_400)
@@ -161,7 +164,12 @@ export class BlogsController {
       return
     }
 
-    const posts = await this.blogsService.getPostsByBlogId(blogId, req.query)
+    if (req.headers.authorization) {
+      const token = req.headers.authorization.split(' ')[1]
+      userId = await this.jwtService.verifyExperationToken(token)
+    }
+
+    const posts = await this.blogsService.getPostsByBlogId(blogId, req.query, userId)
 
     if (!posts) {
       res.sendStatus(HTTP_STATUSES.NOT_FOUND_404)
