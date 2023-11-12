@@ -53,9 +53,10 @@ export class LikesRepository {
         .find(filter, { _id: 0, __v: 0 })
         .sort({ createdAt: 1 })
         .skip(countForSkiping)
-        .sort({ createdAt: -1 })
 
-      return newLikes
+      const sortedNewsetLikes = newLikes.sort((a, b) => Number(a.createdAt) - Number(b.createdAt))
+
+      return sortedNewsetLikes
     } catch {
       return null
     }
